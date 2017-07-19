@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Assets.Classes.EntryProviders.OnlineDatabase;
 using Assets.Classes.GraphElements;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -29,6 +30,9 @@ namespace ArachneeTests
         {
             var onlineDb = new OnlineDatabase();
             var results = onlineDb.GetSearchResults<Movie>("The terminator");
+            
+            Assert.IsTrue(results.Any());
+
             var bestResult = results.Pop();
 
             Assert.AreEqual("The Terminator", bestResult.Title);

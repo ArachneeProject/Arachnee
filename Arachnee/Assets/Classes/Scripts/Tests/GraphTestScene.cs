@@ -3,7 +3,6 @@ using Assets.Classes.EntryProviders;
 using Assets.Classes.EntryProviders.Physical;
 using Assets.Classes.GraphElements;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Assets.Classes.Scripts.Tests
 {
