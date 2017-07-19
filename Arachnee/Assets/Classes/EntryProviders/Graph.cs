@@ -1,13 +1,15 @@
-﻿using Arachnee.GraphElements;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using Assets.Classes.GraphElements;
 
-namespace Arachnee.EntryProvider
+namespace Assets.Classes.EntryProviders
 {
     public class Graph : EntryProvider
     {
+        public override Stack<TEntry> GetSearchResults<TEntry>(string searchQuery)
+        {
+            throw new System.NotImplementedException();
+        }
+
         protected override bool TryLoadEntry(string entryId, out Entry entry)
         {
             if (BiggerProvider != null)

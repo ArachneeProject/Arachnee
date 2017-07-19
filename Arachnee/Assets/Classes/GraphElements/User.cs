@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Arachnee.GraphElements
+﻿namespace Assets.Classes.GraphElements
 {
     public class User : Entry
     {

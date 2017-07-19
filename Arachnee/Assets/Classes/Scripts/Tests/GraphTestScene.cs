@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Arachnee.EntryProvider;
-using Arachnee.GraphElements;
-using Arachnee.View.Utils;
-using Assets.CSharp.EntryProviders.Physical;
+﻿using System.Linq;
+using Assets.Classes.EntryProviders;
+using Assets.Classes.EntryProviders.Physical;
+using Assets.Classes.GraphElements;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Arachnee.Test
+namespace Assets.Classes.Scripts.Tests
 {
     public class GraphTestScene : MonoBehaviour
     {

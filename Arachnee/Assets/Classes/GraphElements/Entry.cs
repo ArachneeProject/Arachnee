@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Collections.Generic;
 
-namespace Arachnee.GraphElements
+namespace Assets.Classes.GraphElements
 {
     public abstract class Entry
     {
         public string Id { get; set; }
 
         public List<Connection> Connections { get; set; }
-
-        public static bool TryGetEntryType(string entryId, out Type type)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -1,10 +1,9 @@
-﻿using Arachnee.GraphElements;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Assets.Classes.GraphElements;
 
-namespace Arachnee.EntryProvider
+namespace Assets.Classes.EntryProviders
 {
     public abstract class EntryProvider : IEntryProvider
     {
@@ -12,6 +11,8 @@ namespace Arachnee.EntryProvider
 
         public IEntryProvider BiggerProvider { get; set; }
 
+        public abstract Stack<TEntry> GetSearchResults<TEntry>(string searchQuery) where TEntry : Entry;
+        
         public bool TryGetEntry(string entryId, out Entry entry)
         {
             if (string.IsNullOrEmpty(entryId))

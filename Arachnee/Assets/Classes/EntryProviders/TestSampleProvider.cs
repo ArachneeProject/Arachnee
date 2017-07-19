@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Arachnee.GraphElements;
+using Assets.Classes.GraphElements;
 
-namespace Arachnee.EntryProvider
+namespace Assets.Classes.EntryProviders
 {
     public class TestSampleProvider : EntryProvider
     {
@@ -68,6 +68,12 @@ namespace Arachnee.EntryProvider
                 }
             };
         }
+
+        public override Stack<TEntry> GetSearchResults<TEntry>(string searchQuery)
+        {
+            return new Stack<TEntry>(Entries.OfType<TEntry>());
+        }
+
         protected override bool TryLoadEntry(string entryId, out Entry entry)
         {
             entry = Entries.First(e => e.Id == entryId);

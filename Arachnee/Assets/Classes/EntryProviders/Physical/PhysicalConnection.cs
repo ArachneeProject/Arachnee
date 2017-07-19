@@ -1,7 +1,7 @@
-﻿using Arachnee.GraphElements;
+﻿using Assets.Classes.GraphElements;
 using UnityEngine;
 
-namespace Assets.CSharp.EntryProviders.Physical
+namespace Assets.Classes.EntryProviders.Physical
 {
     public class PhysicalConnection : Connection
     {

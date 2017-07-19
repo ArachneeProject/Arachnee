@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Assets.Classes.GraphElements;
 
-namespace Assets.Classes.EntryProviders
+namespace Assets.Classes.EntryProviders.OnlineDatabase
 {
-    public class LocalDatabase : EntryProvider
+    public class OnlineDatabase : EntryProvider
     {
         public override Stack<TEntry> GetSearchResults<TEntry>(string searchQuery)
         {

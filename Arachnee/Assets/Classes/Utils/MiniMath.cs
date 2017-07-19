@@ -1,4 +1,4 @@
-﻿namespace Arachnee.View.Utils
+﻿namespace Assets.Classes.Utils
 {
     public static class MiniMath
     {

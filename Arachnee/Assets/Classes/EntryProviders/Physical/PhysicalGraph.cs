@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Arachnee.EntryProvider;
-using Arachnee.GraphElements;
-using Arachnee.View.Utils;
+using Assets.Classes.GraphElements;
+using Assets.Classes.Utils;
 using UnityEngine;
 
-namespace Assets.CSharp.EntryProviders.Physical
+namespace Assets.Classes.EntryProviders.Physical
 {
     public class PhysicalGraph : EntryProvider
     {
@@ -19,6 +18,11 @@ namespace Assets.CSharp.EntryProviders.Physical
         {
             EntryPrefabs = new Dictionary<Type, GameObject>();
             ConnectionPrefabs = new Dictionary<ConnectionFlags, GameObject>();
+        }
+
+        public override Stack<TEntry> GetSearchResults<TEntry>(string searchQuery)
+        {
+            throw new NotImplementedException();
         }
 
         protected override bool TryLoadEntry(string entryId, out Entry entry)
