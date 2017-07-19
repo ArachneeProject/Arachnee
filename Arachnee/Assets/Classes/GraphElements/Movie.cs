@@ -1,0 +1,12 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Arachnee.GraphElements
+{
+    public class Movie : Entry
+    {
+        public string Title { get; set; }
+    }
+}
