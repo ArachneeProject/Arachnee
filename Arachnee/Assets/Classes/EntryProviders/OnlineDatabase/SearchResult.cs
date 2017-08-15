@@ -2,7 +2,7 @@
 
 namespace Assets.Classes.EntryProviders.OnlineDatabase
 {
-    public class MediaResult
+    public class SearchResult
     {
         [JsonProperty("media_type")]
         public string MediaType { get; set; }

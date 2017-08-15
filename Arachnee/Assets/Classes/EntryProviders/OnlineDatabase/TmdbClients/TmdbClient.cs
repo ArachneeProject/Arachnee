@@ -1,11 +1,13 @@
 ﻿using RestSharp;
 using UnityEngine;
 
-namespace Assets.Classes.EntryProviders.OnlineDatabase.Builders
+namespace Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients
 {
     public abstract class TmdbClient
     {
         private readonly RestClient _tmdbClient = new RestClient("https://api.themoviedb.org/3/");
+
+        public const string IdSeparator = "-";
 
         protected bool TryExecuteRequest(IRestRequest request, out string result)
         {

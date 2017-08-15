@@ -4,9 +4,9 @@ using Assets.Classes.EntryProviders.Physical;
 using Assets.Classes.GraphElements;
 using UnityEngine;
 
-namespace Assets.Classes.Scripts.Tests
+namespace Assets.Classes.SceneScripts.Tests
 {
-    public class GraphTestScene : MonoBehaviour
+    public class Test_GraphScene : MonoBehaviour
     {
         public GameObject moviePrefab;
         public GameObject artistPrefab;
@@ -18,8 +18,8 @@ namespace Assets.Classes.Scripts.Tests
         // Use this for initialization
         void Start()
         {
-            var testProvider = new TestSampleProvider();
-            var graph = new PhysicalGraph
+            var testProvider = new MiniSampleProvider();
+            var graph = new PhysicalProvider
             {
                 BiggerProvider = testProvider
             };
@@ -35,11 +35,7 @@ namespace Assets.Classes.Scripts.Tests
                 foreach (var entry in testProvider.Entries)
                 {
                     PhysicalEntry p;
-                    if (!graph.TryGetPhysicalEntry(entry.Id, out p))
-                    {
-                        Debug.LogError("Failed.");
-                    }
-
+                    Debug.Assert(graph.TryGetPhysicalEntry(entry.Id, out p), entry.Id + " not found.");
                     p.GameObject.transform.position = Random.onUnitSphere * 3;
                 }
 
@@ -51,8 +47,8 @@ namespace Assets.Classes.Scripts.Tests
             }
 
             // checks
-            Debug.Log("You should ONLY see two sphere (artists), one cube (movie), one long parallelepiped (actor)," +
-                      " and one long ellipsoid forming a cross with a parallelepiped (director-actor).");
+            Debug.Log("You should see two sphere (artists), one cube (movie), one long parallelepiped (actor)," +
+                      " and one long ellipsoid forming a cross with a parallelepiped (director-actor). Nothing more.");
 
             var count = graph.GetAvailablePhysicalEntries<Movie>().Count();
             Debug.Assert(count == 1, "Count was " + count);

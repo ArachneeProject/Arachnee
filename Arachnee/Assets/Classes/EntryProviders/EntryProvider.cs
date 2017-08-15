@@ -7,7 +7,7 @@ namespace Assets.Classes.EntryProviders
 {
     public abstract class EntryProvider : IEntryProvider
     {
-        private readonly List<Entry> _cachedEntries = new List<Entry>();
+        protected readonly List<Entry> CachedEntries = new List<Entry>();
 
         public IEntryProvider BiggerProvider { get; set; }
 
@@ -20,7 +20,7 @@ namespace Assets.Classes.EntryProviders
                 throw new ArgumentException("Unable to provide an entry because the given id was empty", "entryId");
             }
 
-            entry = _cachedEntries.FirstOrDefault(e => e.Id == entryId);
+            entry = CachedEntries.FirstOrDefault(e => e.Id == entryId);
             if (entry != null)
             {
                 return true;
@@ -31,13 +31,13 @@ namespace Assets.Classes.EntryProviders
                 return false;
             }
 
-            _cachedEntries.Add(entry);
+            CachedEntries.Add(entry);
             return true;
         }
 
         public IEnumerable<TEntry> GetAvailableEntries<TEntry>() where TEntry : Entry
         {
-            return _cachedEntries.OfType<TEntry>();
+            return CachedEntries.OfType<TEntry>();
         }
         
         public bool TryGetConnectedEntries<TEntry>(string entryId, ConnectionFlags connectionFlags, out IEnumerable<TEntry> entries) where TEntry : Entry
@@ -49,7 +49,7 @@ namespace Assets.Classes.EntryProviders
                 return false;
             }
 
-            var validConnections = entry.Connections.Where(c => c.Contains(entryId) && ((c.Flags & connectionFlags) != 0x0));
+            var validConnections = entry.Connections.Where(c => c.Contains(entryId) && ((c.Flags & connectionFlags) != 0));
             var oppositeEntries = new List<Entry>();
             foreach (var validConnection in validConnections)
             {

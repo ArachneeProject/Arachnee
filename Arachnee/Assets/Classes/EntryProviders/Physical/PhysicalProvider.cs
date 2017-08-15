@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Classes.GraphElements;
-using Assets.Classes.Utils;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Assets.Classes.EntryProviders.Physical
 {
-    public class PhysicalGraph : EntryProvider
+    public class PhysicalProvider : EntryProvider
     {
         private readonly List<PhysicalConnection> _cachedConnections = new List<PhysicalConnection>();
 
         public Dictionary<Type, GameObject> EntryPrefabs { get; private set; }
         public Dictionary<ConnectionFlags, GameObject> ConnectionPrefabs { get; private set; }
 
-        public PhysicalGraph()
+        public PhysicalProvider()
         {
             EntryPrefabs = new Dictionary<Type, GameObject>();
             ConnectionPrefabs = new Dictionary<ConnectionFlags, GameObject>();
@@ -37,45 +37,32 @@ namespace Assets.Classes.EntryProviders.Physical
                 return false;
             }
 
-            // instantiate entry game object
+            // instantiate Entry GameObject
             var pEntry = new PhysicalEntry
             {
                 Id = internalEntry.Id,
                 Connections =  internalEntry.Connections,
                 Entry = internalEntry,
-                GameObject = GameObject.Instantiate(entryPrefab)
+                GameObject = Object.Instantiate(entryPrefab)
             };
             
-            // instantiate inexisting connections game objects
+            // The idea here is to instantiate only the Connection GameObjects having their opposite entry already instantiated.
+            // (a) find all connections where the opposite entry already has an associated GameObject
+            // (b) but where the connection-GameObject in itself is still not instantiated
+
+            // TODO:well this Linq query is a bit hardcore, better split it into separate variables
             foreach (var connection in internalEntry.Connections.Where(connection =>
-                this._cachedConnections.FirstOrDefault(c => c.Id == connection.Id) == null))
+                GetAvailableEntries<PhysicalEntry>().Select(p => p.Entry.Id)
+                    .Contains(connection.GetOppositeOf(internalEntry.Id)) // (a)
+                && !this._cachedConnections.Select(c => c.Id)
+                    .Contains(connection.Id))) // (b)
             {
                 GameObject connectionPrefab;
                 if (!ConnectionPrefabs.TryGetValue(connection.Flags, out connectionPrefab))
                 {
-                    // try to find closest prefab
-                    var bestMatch = 0;
-                    foreach (var key in ConnectionPrefabs.Keys)
-                    {
-                        var match = MiniMath.HammingWeight((int) key);
-                        if (match <= bestMatch)
-                        {
-                            continue;
-                        }
-
-                        bestMatch = match;
-                        connectionPrefab = ConnectionPrefabs[key];
-                    }
-
-                    if (connectionPrefab == null)
-                    {
-                        Debug.LogError("Prefab not found for connection " + connection.Id 
-                            + " with flags " + Convert.ToString((int)connection.Flags, 2));
-                        continue;
-                    }
-
-                    Debug.LogWarning("Prefab not found for connection " + connection.Id 
-                        + ", the closest prefab was used instead.");
+                    Debug.LogError("Prefab not found for connection " + connection.Id 
+                                 + " with flags " + Convert.ToString((int)connection.Flags, 2));
+                    continue;
                 }
 
                 var pConnection = new PhysicalConnection
@@ -85,8 +72,10 @@ namespace Assets.Classes.EntryProviders.Physical
                     Right = connection.Right,
                     Flags = connection.Flags,
                     Connection = connection,
-                    GameObject = GameObject.Instantiate(connectionPrefab)
+                    GameObject = Object.Instantiate(connectionPrefab)
                 };
+
+                // TODO: assign vertices to edge
 
                 _cachedConnections.Add(pConnection);
             }
@@ -152,6 +141,11 @@ namespace Assets.Classes.EntryProviders.Physical
 
         #region PhysicalConnections
 
+        /// <summary>
+        /// Gets all <see cref="PhysicalConnection"/> available, having at least one of the given ConnectionFlag.
+        /// </summary>
+        /// <param name="flags">Connection flags to filter by.</param>
+        /// <returns>The collection of <see cref="PhysicalConnection"/>.</returns>
         public IEnumerable<PhysicalConnection> GetAvailablePhysicalConnections(ConnectionFlags flags)
         {
             return _cachedConnections.Where(p => (p.Flags | flags) != 0);

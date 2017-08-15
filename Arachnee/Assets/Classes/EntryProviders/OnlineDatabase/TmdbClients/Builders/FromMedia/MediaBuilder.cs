@@ -1,18 +1,15 @@
 ﻿using Assets.Classes.GraphElements;
-using Newtonsoft.Json;
 using RestSharp;
 
-namespace Assets.Classes.EntryProviders.OnlineDatabase.Builders
+namespace Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients.Builders.FromMedia
 {
-    public abstract class MediaBuilder<TEntry> : EntryBuilder where TEntry : Entry
+    public abstract class MediaBuilder : EntryBuilder
     {
-        protected abstract string ResourceAddress { get; }
-
         public override bool TryToBuild(string id, out Entry entry)
         {
             var request = new RestRequest(ResourceAddress, Method.GET);
             request.RequestFormat = DataFormat.Json;
-            request.AddParameter("id", id);
+            request.AddParameter("id", id, ParameterType.UrlSegment);
             request.AddQueryParameter("api_key", Constant.ApiKey);
 
             string result;
@@ -22,8 +19,9 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.Builders
                 return false;
             }
 
-            entry = JsonConvert.DeserializeObject<TEntry>(result);
-            return true;
+            return TryDeserialize(result, out entry);
         }
+
+        protected abstract bool TryDeserialize(string jsonString, out Entry entry);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Assets.Classes.GraphElements;
+using Assets.Classes.PhysicsEngine;
 using UnityEngine;
 
 namespace Assets.Classes.EntryProviders.Physical

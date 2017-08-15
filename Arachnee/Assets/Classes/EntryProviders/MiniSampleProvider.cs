@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Assets.Classes.GraphElements;
+using UnityEngine;
 
 namespace Assets.Classes.EntryProviders
 {
-    public class TestSampleProvider : EntryProvider
+    public class MiniSampleProvider : EntryProvider
     {
         public readonly List<Entry> Entries;
 
-        public TestSampleProvider()
+        public MiniSampleProvider()
         {
             Entries = new List<Entry>
             {
@@ -69,15 +70,20 @@ namespace Assets.Classes.EntryProviders
             };
         }
 
+        /// <summary>
+        /// Returns a stack with only one random item on top of it.
+        /// </summary>
         public override Stack<TEntry> GetSearchResults<TEntry>(string searchQuery)
         {
-            return new Stack<TEntry>(Entries.OfType<TEntry>());
+            var items = Entries.OfType<TEntry>().ToList();
+            var randomItem = items.ElementAt(Random.Range(0, items.Count - 1));
+            return new Stack<TEntry>(new [] { randomItem });
         }
 
         protected override bool TryLoadEntry(string entryId, out Entry entry)
         {
-            entry = Entries.First(e => e.Id == entryId);
-            return true;
+            entry = Entries.FirstOrDefault(e => e.Id == entryId);
+            return entry != null;
         }
     }
 }
