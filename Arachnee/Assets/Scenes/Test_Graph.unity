@@ -198,6 +198,7 @@ GameObject:
   - component: {fileID: 100893796}
   - component: {fileID: 100893795}
   - component: {fileID: 100893794}
+  - component: {fileID: 100893798}
   m_Layer: 0
   m_Name: MoviePrefab(cube)
   m_TagString: Untagged
@@ -269,6 +270,17 @@ Transform:
   m_Father: {fileID: 1827183345}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &100893798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 100893793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c07b8b4c390cc84b905850296bd24cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &173724834
 GameObject:
   m_ObjectHideFlags: 0
@@ -451,6 +463,7 @@ GameObject:
   - component: {fileID: 1093523699}
   - component: {fileID: 1093523698}
   - component: {fileID: 1093523697}
+  - component: {fileID: 1093523701}
   m_Layer: 0
   m_Name: DirectorPrefab(ellipsoid)
   m_TagString: Untagged
@@ -522,6 +535,17 @@ Transform:
   m_Father: {fileID: 1827183345}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1093523701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1093523696}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4471a24c8f847740be864ef51832045, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1259161908
 GameObject:
   m_ObjectHideFlags: 0
@@ -530,6 +554,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1259161909}
+  - component: {fileID: 1259161910}
   m_Layer: 0
   m_Name: ActorDirectorPrefab(cross)
   m_TagString: Untagged
@@ -552,6 +577,17 @@ Transform:
   m_Father: {fileID: 1827183345}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: -133.403, y: -90, z: 89.99999}
+--- !u!114 &1259161910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1259161908}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4471a24c8f847740be864ef51832045, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1623751944
 GameObject:
   m_ObjectHideFlags: 0
@@ -563,6 +599,7 @@ GameObject:
   - component: {fileID: 1623751947}
   - component: {fileID: 1623751946}
   - component: {fileID: 1623751945}
+  - component: {fileID: 1623751949}
   m_Layer: 0
   m_Name: ActorPrefab(parallelepiped)
   m_TagString: Untagged
@@ -634,6 +671,17 @@ Transform:
   m_Father: {fileID: 1827183345}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1623751949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1623751944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4471a24c8f847740be864ef51832045, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1827183344
 GameObject:
   m_ObjectHideFlags: 0
@@ -760,6 +808,7 @@ GameObject:
   - component: {fileID: 1881748824}
   - component: {fileID: 1881748823}
   - component: {fileID: 1881748822}
+  - component: {fileID: 1881748826}
   m_Layer: 0
   m_Name: ArtistPrefab(sphere)
   m_TagString: Untagged
@@ -831,6 +880,17 @@ Transform:
   m_Father: {fileID: 1827183345}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1881748826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1881748821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c07b8b4c390cc84b905850296bd24cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2043268959
 GameObject:
   m_ObjectHideFlags: 0
@@ -858,11 +918,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36c974ad00a0d77419649721d8ff7294, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moviePrefab: {fileID: 100893793}
-  artistPrefab: {fileID: 1881748821}
-  actorPrefab: {fileID: 1623751944}
-  directorPrefab: {fileID: 1093523696}
-  actorDirectorPrefab: {fileID: 1259161908}
+  moviePrefab: {fileID: 0}
+  artistPrefab: {fileID: 0}
+  actorPrefab: {fileID: 0}
+  directorPrefab: {fileID: 0}
+  actorDirectorPrefab: {fileID: 0}
 --- !u!4 &2043268961
 Transform:
   m_ObjectHideFlags: 0

@@ -15,7 +15,7 @@ namespace Assets.Classes.EntryProviders
             {
                 new Movie
                 {
-                    Id = "218",
+                    Id = "Movie-218",
                     Title = "The Terminator",
                     Connections = new List<Connection>
                     {
@@ -23,47 +23,39 @@ namespace Assets.Classes.EntryProviders
                         new Connection
                         {
                             Flags = ConnectionFlags.Actor | ConnectionFlags.Director,
-                            Id = "218-2710",
-                            Left = "218",
-                            Right = "2710"
+                            ConnectedId = "Artist-2710"
                         },
                         // schwarzenegger
                         new Connection
                         {
                             Flags = ConnectionFlags.Actor,
-                            Id = "218-1100",
-                            Left = "218",
-                            Right = "1100"
+                            ConnectedId = "Artist-1100"
                         }
                     }
                 },
                 new Artist
                 {
-                    Id = "1100",
+                    Id = "Artist-1100",
                     LastName = "Schwarzenegger",
                     Connections = new List<Connection>
                     {
                         new Connection
                         {
                             Flags = ConnectionFlags.Actor,
-                            Id = "218-1100",
-                            Left = "218",
-                            Right = "1100"
+                            ConnectedId = "Movie-218",
                         }
                     }
                 },
                 new Artist
                 {
-                    Id = "2710",
+                    Id = "Artist-2710",
                     LastName = "Cameron",
                     Connections = new List<Connection>
                     {
                         new Connection
                         {
                             Flags = ConnectionFlags.Actor | ConnectionFlags.Director,
-                            Id = "218-2710",
-                            Left = "218",
-                            Right = "2710"
+                            ConnectedId = "Movie-218"
                         }
                     }
                 }

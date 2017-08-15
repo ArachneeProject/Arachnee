@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using Assets.Classes.GraphElements;
+using UnityEngine;
 
 namespace Assets.Classes.PhysicsEngine
 {
     public class Vertex : MonoBehaviour
     {
-        public string Id { get; set; }
+        public Entry Entry { get; set; }
 
         public Rigidbody Rigidbody { get; private set; }
 

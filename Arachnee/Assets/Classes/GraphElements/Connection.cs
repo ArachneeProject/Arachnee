@@ -4,31 +4,21 @@ namespace Assets.Classes.GraphElements
 {
     public class Connection
     {
-        public string Left { get; set; }
-        public string Right { get; set; }
+        private const string Separator = ":";
+
+        public string ConnectedId { get; set; }
 
         public ConnectionFlags Flags { get; set; }
 
-        public string Id { get; set; }
-        
-        public bool Contains(string entryId)
+        public static string GetIdentifier(string fromEntryId, string toEntryId, ConnectionFlags flags)
         {
-            return Left == entryId || Right == entryId;
-        }
-
-        public string GetOppositeOf(string entryId)
-        {
-            if (Left == entryId)
+            string flagsId = Convert.ToString((int) flags, 2);
+            if (string.Compare(fromEntryId, toEntryId, StringComparison.OrdinalIgnoreCase) < 0)
             {
-                return Right;
+                return fromEntryId + Separator + flagsId + Separator + toEntryId;
             }
 
-            if (Right == entryId)
-            {
-                return Left;
-            }
-
-            throw new ArgumentException("Invalid id", "entryId");
+            return toEntryId + Separator + flagsId + Separator + fromEntryId;
         }
     }
 }

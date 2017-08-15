@@ -8,7 +8,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients
 {
     public class MultiSearchClient : TmdbClient
     {
-        public IEnumerable<string> RunSearch(string searchQuery)
+        public IEnumerable<SearchResult> RunSearch(string searchQuery)
         {
             var request = new RestRequest("search/multi", Method.GET)
             {
@@ -21,12 +21,11 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients
             string response;
             if (!TryExecuteRequest(request, out response))
             {
-                return new List<string>(); 
+                return new List<SearchResult>(); 
             }
             
             var obj = JObject.Parse(response).Value<JArray>("results");
-            var results = JsonConvert.DeserializeObject<List<SearchResult>>(obj.ToString());
-            return results.Select(r => r.MediaType + IdSeparator + r.Id);
+            return JsonConvert.DeserializeObject<List<SearchResult>>(obj.ToString());
         }
     }
 }

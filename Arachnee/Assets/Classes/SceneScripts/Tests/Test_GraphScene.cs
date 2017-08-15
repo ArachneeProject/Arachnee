@@ -2,47 +2,47 @@
 using Assets.Classes.EntryProviders;
 using Assets.Classes.EntryProviders.Physical;
 using Assets.Classes.GraphElements;
+using Assets.Classes.PhysicsEngine;
 using UnityEngine;
 
 namespace Assets.Classes.SceneScripts.Tests
 {
     public class Test_GraphScene : MonoBehaviour
     {
-        public GameObject moviePrefab;
-        public GameObject artistPrefab;
+        public Vertex moviePrefab;
+        public Vertex artistPrefab;
 
-        public GameObject actorPrefab;
-        public GameObject directorPrefab;
-        public GameObject actorDirectorPrefab;
+        public Edge actorPrefab;
+        public Edge directorPrefab;
+        public Edge actorDirectorPrefab;
         
-        // Use this for initialization
         void Start()
         {
             var testProvider = new MiniSampleProvider();
-            var graph = new PhysicalProvider
+            var gameObjectProvider = new GameObjectProvider()
             {
                 BiggerProvider = testProvider
             };
-            graph.EntryPrefabs.Add(typeof (Movie), moviePrefab);
-            graph.EntryPrefabs.Add(typeof (Artist), artistPrefab);
-            
-            graph.ConnectionPrefabs.Add(ConnectionFlags.Actor, actorPrefab);
-            graph.ConnectionPrefabs.Add(ConnectionFlags.Director, directorPrefab);
-            graph.ConnectionPrefabs.Add(ConnectionFlags.Actor | ConnectionFlags.Director, actorDirectorPrefab);
 
-            for (int i = 0; i < 10; i++)
+            gameObjectProvider.VertexPrefabs.Add(typeof (Movie), moviePrefab);
+            gameObjectProvider.VertexPrefabs.Add(typeof(Artist), artistPrefab);
+            
+            gameObjectProvider.EdgePrefabs.Add(ConnectionFlags.Actor, actorPrefab);
+            gameObjectProvider.EdgePrefabs.Add(ConnectionFlags.Director, directorPrefab);
+            gameObjectProvider.EdgePrefabs.Add(ConnectionFlags.Actor | ConnectionFlags.Director, actorDirectorPrefab);
+
+            for (int i = 0; i < 30; i++)
             {
                 foreach (var entry in testProvider.Entries)
                 {
-                    PhysicalEntry p;
-                    Debug.Assert(graph.TryGetPhysicalEntry(entry.Id, out p), entry.Id + " not found.");
-                    p.GameObject.transform.position = Random.onUnitSphere * 3;
-                }
+                    Vertex v;
+                    Debug.Assert(gameObjectProvider.TryGetVertex(entry.Id, out v), entry.Id + " not found.");
+                    v.transform.position = Random.onUnitSphere * 3;
 
-                foreach (var pCon in graph.GetAvailablePhysicalConnections(ConnectionFlags.All)
-                                          .Where(p => testProvider.Entries.FirstOrDefault(e => p.Contains(e.Id)) != null))
-                {
-                    pCon.GameObject.transform.position = Random.onUnitSphere * 3;
+                    foreach (var edge in gameObjectProvider.GetEdges(entry, ConnectionFlags.All))
+                    {
+                        edge.transform.position = Random.onUnitSphere * 3;
+                    }
                 }
             }
 
@@ -50,16 +50,16 @@ namespace Assets.Classes.SceneScripts.Tests
             Debug.Log("You should see two sphere (artists), one cube (movie), one long parallelepiped (actor)," +
                       " and one long ellipsoid forming a cross with a parallelepiped (director-actor). Nothing more.");
 
-            var count = graph.GetAvailablePhysicalEntries<Movie>().Count();
+            var count = gameObjectProvider.GetVertices<Movie>().Count();
             Debug.Assert(count == 1, "Count was " + count);
 
-            count = graph.GetAvailablePhysicalEntries<Artist>().Count();
+            count = gameObjectProvider.GetVertices<Artist>().Count();
             Debug.Assert(count == 2, "Count was " + count);
 
-            count = graph.GetAvailablePhysicalEntries<Entry>().Count();
+            count = gameObjectProvider.GetVertices<Entry>().Count();
             Debug.Assert(count == 3, "Count was " + count);
 
-            count = graph.GetAvailablePhysicalConnections(ConnectionFlags.All).Count();
+            count = testProvider.Entries.SelectMany(e => gameObjectProvider.GetEdges(e, ConnectionFlags.All)).Distinct().Count();
             Debug.Assert(count == 2, "Count was " + count);
         }
     }

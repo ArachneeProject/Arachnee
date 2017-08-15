@@ -14,7 +14,7 @@ public class Test_LoadEngineScene : MonoBehaviour
     {
         // sets up provider
         var sample = new MiniSampleProvider();
-        var provider = new PhysicalProvider
+        var provider = new GameObjectProvider()
         {
             BiggerProvider = sample
         };
@@ -22,13 +22,8 @@ public class Test_LoadEngineScene : MonoBehaviour
         // load graph engine
         foreach (var entry in sample.Entries)
         {
-            PhysicalEntry e;
-            Debug.Assert(provider.TryGetPhysicalEntry(entry.Id, out e), "Failed to set up provider.");
-
-
+            Vertex v;
+            Debug.Assert(provider.TryGetVertex(entry.Id, out v), "Failed to set up provider.");
         }
-
-        
-        
     }
 }

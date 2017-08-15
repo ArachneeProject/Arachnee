@@ -14,7 +14,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
         private readonly MultiSearchClient _multiSearchClient = new MultiSearchClient();
         private readonly Dictionary<string, EntryBuilder> _builders = new Dictionary<string, EntryBuilder>
         {
-            {"movie", new MovieBuilder()}
+            {"Movie", new MovieBuilder()}
         };
 
         public override Stack<TEntry> GetSearchResults<TEntry>(string searchQuery)
@@ -22,10 +22,11 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
             var mediaResults = _multiSearchClient.RunSearch(searchQuery);
 
             var results = new Stack<TEntry>();
-            foreach (var result in mediaResults)
+            foreach (var result in mediaResults.Where(r => _builders.ContainsKey(r.MediaType)))
             {
                 Entry e;
-                if (TryGetEntry(result, out e) && e is TEntry)
+                string entryId = result.MediaType + TmdbClient.IdSeparator + result.Id;
+                if (TryGetEntry(entryId, out e) && e is TEntry)
                 {
                     results.Push((TEntry) e); // best result will be the last in the stack
                 }
@@ -50,7 +51,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
                 return builder.TryToBuild(id, out entry);
             }
 
-            Debug.LogWarning("Unable to find builder for unhandled type " + mediaType);
+            throw new ArgumentException("Unable to find builder for unhandled type " + mediaType);
             entry = DefaultEntry.Instance;
             return false;
         }

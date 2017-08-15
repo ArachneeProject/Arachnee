@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Classes.GraphElements;
+using Assets.Classes.Utils;
 
 namespace Assets.Classes.EntryProviders
 {
     public abstract class EntryProvider : IEntryProvider
     {
-        protected readonly List<Entry> CachedEntries = new List<Entry>();
+        protected readonly Dictionary<string, Entry> CachedEntries = new Dictionary<string, Entry>();
 
         public IEntryProvider BiggerProvider { get; set; }
 
@@ -20,18 +21,17 @@ namespace Assets.Classes.EntryProviders
                 throw new ArgumentException("Unable to provide an entry because the given id was empty", "entryId");
             }
 
-            entry = CachedEntries.FirstOrDefault(e => e.Id == entryId);
-            if (entry != null)
+            if (CachedEntries.TryGetValue(entryId, out entry))
             {
                 return true;
             }
-
+            
             if (!TryLoadEntry(entryId, out entry))
             {
                 return false;
             }
 
-            CachedEntries.Add(entry);
+            CachedEntries.Add(entryId, entry);
             return true;
         }
 
@@ -48,13 +48,12 @@ namespace Assets.Classes.EntryProviders
                 entries = Enumerable.Empty<TEntry>();
                 return false;
             }
-
-            var validConnections = entry.Connections.Where(c => c.Contains(entryId) && ((c.Flags & connectionFlags) != 0));
+            
             var oppositeEntries = new List<Entry>();
-            foreach (var validConnection in validConnections)
+            foreach (var connection in entry.Connections.Where(c => (c.Flags & connectionFlags) != 0 ))
             {
                 Entry oppositeEntry;
-                if (this.TryGetEntry(validConnection.GetOppositeOf(entryId), out oppositeEntry))
+                if (this.TryGetEntry(connection.ConnectedId, out oppositeEntry))
                 {
                     oppositeEntries.Add(oppositeEntry);
                 }
