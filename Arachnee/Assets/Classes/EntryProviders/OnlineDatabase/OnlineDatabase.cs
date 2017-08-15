@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients;
 using Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients.Builders;
 using Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients.Builders.FromMedia;
@@ -16,7 +17,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
         {
             {"Movie", new MovieBuilder()}
         };
-
+        
         public override Stack<TEntry> GetSearchResults<TEntry>(string searchQuery)
         {
             var mediaResults = _multiSearchClient.RunSearch(searchQuery);

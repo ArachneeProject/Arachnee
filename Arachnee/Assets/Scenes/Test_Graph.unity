@@ -918,11 +918,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36c974ad00a0d77419649721d8ff7294, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moviePrefab: {fileID: 0}
-  artistPrefab: {fileID: 0}
-  actorPrefab: {fileID: 0}
-  directorPrefab: {fileID: 0}
-  actorDirectorPrefab: {fileID: 0}
+  moviePrefab: {fileID: 100893798}
+  artistPrefab: {fileID: 1881748826}
+  actorPrefab: {fileID: 1623751949}
+  directorPrefab: {fileID: 1093523701}
+  actorDirectorPrefab: {fileID: 1259161910}
 --- !u!4 &2043268961
 Transform:
   m_ObjectHideFlags: 0

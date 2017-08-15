@@ -25,7 +25,7 @@ namespace Assets.Classes.EntryProviders.Physical
 
         public override Stack<TEntry> GetSearchResults<TEntry>(string searchQuery)
         {
-            throw new NotImplementedException();
+            return BiggerProvider.GetSearchResults<TEntry>(searchQuery);
         }
 
         protected override bool TryLoadEntry(string entryId, out Entry entry)
@@ -105,6 +105,12 @@ namespace Assets.Classes.EntryProviders.Physical
         public IEnumerable<Vertex> GetVertices<TEntry>() where TEntry : Entry
         {
             return _cachedVertices.Values.Where(v => v.Entry is TEntry);
+        }
+
+        public Vertex GetVertex(string entryId)
+        {
+            Entry e;
+            return base.TryGetEntry(entryId, out e) ? _cachedVertices[entryId] : null;
         }
     }
 }

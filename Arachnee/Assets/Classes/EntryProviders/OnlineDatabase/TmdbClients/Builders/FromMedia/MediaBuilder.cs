@@ -9,8 +9,8 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients.Builders.From
         {
             var request = new RestRequest(ResourceAddress, Method.GET);
             request.RequestFormat = DataFormat.Json;
-            request.AddParameter("id", id, ParameterType.UrlSegment);
-            request.AddQueryParameter("api_key", Constant.ApiKey);
+            request.AddUrlSegment("id", id);
+            request.AddParameter("api_key", Constant.ApiKey);
 
             string result;
             if (!base.TryExecuteRequest(request, out result))

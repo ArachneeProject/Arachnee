@@ -3,6 +3,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
+using UnityEngine;
 
 namespace Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients
 {
@@ -15,8 +16,8 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients
                 RequestFormat = DataFormat.Json
             };
 
-            request.AddQueryParameter("query", searchQuery);
-            request.AddQueryParameter("api_key", Constant.ApiKey);
+            request.AddParameter("query", searchQuery);
+            request.AddParameter("api_key", Constant.ApiKey);
 
             string response;
             if (!TryExecuteRequest(request, out response))
