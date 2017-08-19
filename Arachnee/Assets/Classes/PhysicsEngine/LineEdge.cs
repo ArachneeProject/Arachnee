@@ -18,8 +18,8 @@ namespace Assets.Classes.PhysicsEngine
 
         void Update()
         {
-            _lineRenderer.SetPosition(0, Left.position);
-            _lineRenderer.SetPosition(1, Right.position);
+            _lineRenderer.SetPosition(0, Left.transform.position);
+            _lineRenderer.SetPosition(1, Right.transform.position);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace ArachneeTests
         public void Test_Search()
         {
             var onlineDb = new OnlineDatabase();
-            var results = onlineDb.GetSearchResults<Movie>("The terminator");
+            var results = onlineDb.GetSearchResults<Movie>("the terminator");
             
             Assert.IsTrue(results.Any());
 
@@ -37,6 +37,9 @@ namespace ArachneeTests
 
             Assert.AreEqual("The Terminator", bestResult.Title);
             Assert.AreEqual("Movie-218", bestResult.Id);
+
+            results = onlineDb.GetSearchResults<Movie>(string.Empty);
+            Assert.IsFalse(results.Any());
         }
     }
 }

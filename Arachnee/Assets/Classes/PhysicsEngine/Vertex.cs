@@ -1,4 +1,5 @@
-﻿using Assets.Classes.GraphElements;
+﻿using System;
+using Assets.Classes.GraphElements;
 using UnityEngine;
 
 namespace Assets.Classes.PhysicsEngine
@@ -12,6 +13,10 @@ namespace Assets.Classes.PhysicsEngine
         void Start()
         {
             Rigidbody = GetComponent<Rigidbody>();
+            if (Rigidbody == null)
+            {
+                throw new Exception("No Rigibody component found on Vertex GameObject.");
+            }
         }
     }
 }

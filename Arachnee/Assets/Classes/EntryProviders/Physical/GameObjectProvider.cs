@@ -42,6 +42,7 @@ namespace Assets.Classes.EntryProviders.Physical
             // instantiate Vertex GameObject
             var vertex = Object.Instantiate(vertexPrefab);
             vertex.Entry = entry;
+            vertex.gameObject.name = entry.ToString() + "(" + entry.Id + ")";
             _cachedVertices.Add(entryId, vertex);
 
             // instantiate Edge GameObjects
@@ -51,12 +52,16 @@ namespace Assets.Classes.EntryProviders.Physical
                 var edgeId = Connection.GetIdentifier(entry.Id, connection.ConnectedId, connection.Flags);
 
                 if (_cachedEdges.ContainsKey(edgeId)
-                    || !EdgePrefabs.TryGetValue(connection.Flags, out edgePrefab))
+                || !EdgePrefabs.TryGetValue(connection.Flags, out edgePrefab))
                 {
                     continue;
                 }
 
                 var edge = Object.Instantiate(edgePrefab);
+                edge.Left = _cachedVertices[entry.Id];
+                edge.Right = _cachedVertices[connection.ConnectedId];
+                edge.gameObject.name = Connection.GetIdentifier(entry.Id, connection.ConnectedId, connection.Flags);
+
                 _cachedEdges.Add(edgeId, edge);
             }
 
@@ -76,6 +81,12 @@ namespace Assets.Classes.EntryProviders.Physical
             return false;
         }
         
+        /// <summary>
+        /// Returns a list of edges having at least one of the given connection flags.
+        /// </summary>
+        /// <param name="entry">Entry to get the edge from.</param>
+        /// <param name="flags">Connection flags.</param>
+        /// <returns>The list of corresponding edges.</returns>
         public List<Edge> GetEdges(Entry entry, ConnectionFlags flags)
         {
             var results = new List<Edge>();

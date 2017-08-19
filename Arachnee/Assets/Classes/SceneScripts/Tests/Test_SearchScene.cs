@@ -45,7 +45,6 @@ namespace Assets.Classes.SceneScripts.Tests
                 Debug.Log("Best is " + best + " (among " + res.Count + " other results)");
 
                 var vertex = _gameObjectProvider.GetVertex(best.Id);
-                vertex.gameObject.name = best.ToString();
                 vertex.transform.position = UnityEngine.Random.onUnitSphere*3;
                 Camera.main.transform.LookAt(vertex.transform.position);
                 

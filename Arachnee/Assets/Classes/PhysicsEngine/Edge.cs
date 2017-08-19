@@ -6,8 +6,8 @@ namespace Assets.Classes.PhysicsEngine
 {
     public class Edge : MonoBehaviour
     {
-        public Transform Left { get; set; }
+        public Vertex Left { get; set; }
 
-        public Transform Right { get; set; }
+        public Vertex Right { get; set; }
     }
 }

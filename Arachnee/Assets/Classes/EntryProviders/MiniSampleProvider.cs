@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Assets.Classes.GraphElements;
-using UnityEngine;
 
 namespace Assets.Classes.EntryProviders
 {
@@ -33,6 +33,26 @@ namespace Assets.Classes.EntryProviders
                         }
                     }
                 },
+                new Movie
+                {
+                    Id = "Movie-280",
+                    Title = "Terminator 2: Judgment Day",
+                    Connections = new List<Connection>
+                    {
+                        // cameron
+                        new Connection
+                        {
+                            Flags = ConnectionFlags.Director,
+                            ConnectedId = "Artist-2710"
+                        },
+                        // schwarzenegger
+                        new Connection
+                        {
+                            Flags = ConnectionFlags.Actor,
+                            ConnectedId = "Artist-1100"
+                        }
+                    }
+                },
                 new Artist
                 {
                     Id = "Artist-1100",
@@ -43,12 +63,18 @@ namespace Assets.Classes.EntryProviders
                         {
                             Flags = ConnectionFlags.Actor,
                             ConnectedId = "Movie-218",
+                        },
+                        new Connection
+                        {
+                            Flags = ConnectionFlags.Actor,
+                            ConnectedId = "Movie-280",
                         }
                     }
                 },
                 new Artist
                 {
                     Id = "Artist-2710",
+                    FirstName = "James",
                     LastName = "Cameron",
                     Connections = new List<Connection>
                     {
@@ -56,6 +82,11 @@ namespace Assets.Classes.EntryProviders
                         {
                             Flags = ConnectionFlags.Actor | ConnectionFlags.Director,
                             ConnectedId = "Movie-218"
+                        },
+                        new Connection
+                        {
+                            Flags = ConnectionFlags.Director,
+                            ConnectedId = "Movie-280"
                         }
                     }
                 }
@@ -63,13 +94,20 @@ namespace Assets.Classes.EntryProviders
         }
 
         /// <summary>
-        /// Returns a stack with only one random item on top of it.
+        /// Returns a stack with the item corresponding to the query on top of it.
         /// </summary>
         public override Stack<TEntry> GetSearchResults<TEntry>(string searchQuery)
         {
+            var stack = new Stack<TEntry>();
+
             var items = Entries.OfType<TEntry>().ToList();
-            var randomItem = items.ElementAt(Random.Range(0, items.Count - 1));
-            return new Stack<TEntry>(new [] { randomItem });
+            var best = items.FirstOrDefault(i => i.ToString().Equals(searchQuery, StringComparison.OrdinalIgnoreCase));
+            if (best != null)
+            {
+                stack.Push(best);
+            }
+
+            return stack;
         }
 
         protected override bool TryLoadEntry(string entryId, out Entry entry)

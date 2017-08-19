@@ -11,6 +11,11 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients
     {
         public IEnumerable<SearchResult> RunSearch(string searchQuery)
         {
+            if (string.IsNullOrEmpty(searchQuery))
+            {
+                return new List<SearchResult>();
+            }
+
             var request = new RestRequest("search/multi", Method.GET)
             {
                 RequestFormat = DataFormat.Json
