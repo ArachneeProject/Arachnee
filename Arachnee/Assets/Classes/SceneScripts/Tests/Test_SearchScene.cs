@@ -38,15 +38,14 @@ namespace Assets.Classes.SceneScripts.Tests
         public void Go()
         {
             Debug.Log("Searching for " + input.text);
-            var res = _gameObjectProvider.GetSearchResults<Entry>(input.text);
+            var res = _gameObjectProvider.GetVerticesResults<Entry>(input.text);
             if (res.Any())
             {
-                var best = res.Pop();
+                var best = res.Dequeue();
                 Debug.Log("Best is " + best + " (among " + res.Count + " other results)");
-
-                var vertex = _gameObjectProvider.GetVertex(best.Id);
-                vertex.transform.position = UnityEngine.Random.onUnitSphere*3;
-                Camera.main.transform.LookAt(vertex.transform.position);
+                
+                best.transform.position = UnityEngine.Random.onUnitSphere*3;
+                Camera.main.transform.LookAt(best.transform.position);
                 
                 return;
             }

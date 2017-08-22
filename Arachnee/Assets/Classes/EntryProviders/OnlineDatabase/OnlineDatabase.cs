@@ -18,22 +18,22 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
             {"Movie", new MovieBuilder()}
         };
         
-        public override Stack<TEntry> GetSearchResults<TEntry>(string searchQuery)
+        public override Queue<TEntry> GetSearchResults<TEntry>(string searchQuery)
         {
             var mediaResults = _multiSearchClient.RunSearch(searchQuery);
 
-            var results = new Stack<TEntry>();
+            var results = new Queue<TEntry>();
             foreach (var result in mediaResults.Where(r => _builders.ContainsKey(r.MediaType)))
             {
                 Entry e;
                 string entryId = result.MediaType + TmdbClient.IdSeparator + result.Id;
                 if (TryGetEntry(entryId, out e) && e is TEntry)
                 {
-                    results.Push((TEntry) e); // best result will be the last in the stack
+                    results.Enqueue((TEntry) e);
                 }
             }
 
-            return new Stack<TEntry>(results); // invert the stack
+            return results;
         }
 
         protected override bool TryLoadEntry(string entryId, out Entry entry)

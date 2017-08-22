@@ -33,7 +33,7 @@ namespace ArachneeTests
             
             Assert.IsTrue(results.Any());
 
-            var bestResult = results.Pop();
+            var bestResult = results.Dequeue();
 
             Assert.AreEqual("The Terminator", bestResult.Title);
             Assert.AreEqual("Movie-218", bestResult.Id);

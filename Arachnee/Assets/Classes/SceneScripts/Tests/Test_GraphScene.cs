@@ -50,13 +50,13 @@ namespace Assets.Classes.SceneScripts.Tests
             Debug.Log("You should see two sphere (artists), one cube (movie), one long parallelepiped (actor)," +
                       " and one long ellipsoid forming a cross with a parallelepiped (director-actor). Nothing more.");
 
-            var count = gameObjectProvider.GetVertices<Movie>().Count();
+            var count = gameObjectProvider.GetAvailableVertices<Movie>().Count();
             Debug.Assert(count == 1, "Count was " + count);
 
-            count = gameObjectProvider.GetVertices<Artist>().Count();
+            count = gameObjectProvider.GetAvailableVertices<Artist>().Count();
             Debug.Assert(count == 2, "Count was " + count);
 
-            count = gameObjectProvider.GetVertices<Entry>().Count();
+            count = gameObjectProvider.GetAvailableVertices<Entry>().Count();
             Debug.Assert(count == 3, "Count was " + count);
 
             count = testProvider.Entries.SelectMany(e => gameObjectProvider.GetEdges(e, ConnectionFlags.All)).Distinct().Count();

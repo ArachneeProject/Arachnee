@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Classes.GraphElements;
 using Assets.Classes.PhysicsEngine;
-using Assets.Classes.Utils;
-using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Assets.Classes.EntryProviders.Physical
@@ -15,17 +13,13 @@ namespace Assets.Classes.EntryProviders.Physical
         private readonly Dictionary<string, Edge> _cachedEdges = new Dictionary<string, Edge>();
 
         public Dictionary<Type, Vertex> VertexPrefabs { get; private set; }
+
         public Dictionary<ConnectionFlags, Edge> EdgePrefabs { get; private set; }
 
         public GameObjectProvider()
         {
             VertexPrefabs = new Dictionary<Type, Vertex>();
             EdgePrefabs = new Dictionary<ConnectionFlags, Edge>();
-        }
-
-        public override Stack<TEntry> GetSearchResults<TEntry>(string searchQuery)
-        {
-            return BiggerProvider.GetSearchResults<TEntry>(searchQuery);
         }
 
         protected override bool TryLoadEntry(string entryId, out Entry entry)
@@ -42,7 +36,7 @@ namespace Assets.Classes.EntryProviders.Physical
             // instantiate Vertex GameObject
             var vertex = Object.Instantiate(vertexPrefab);
             vertex.Entry = entry;
-            vertex.gameObject.name = entry.ToString() + "(" + entry.Id + ")";
+            vertex.gameObject.name = entry.ToString() + " (" + entry.Id + ")";
             _cachedVertices.Add(entryId, vertex);
 
             // instantiate Edge GameObjects
@@ -67,9 +61,27 @@ namespace Assets.Classes.EntryProviders.Physical
 
             return true;
         }
+        
+        public override Queue<TEntry> GetSearchResults<TEntry>(string searchQuery)
+        {
+            return BiggerProvider.GetSearchResults<TEntry>(searchQuery);
+        }
 
         public bool TryGetVertex(string entryId, out Vertex vertex)
         {
+            if (_cachedVertices.ContainsKey(entryId))
+            {
+                vertex = _cachedVertices[entryId];
+                if (vertex != null)
+                {
+                    return true;
+                }
+
+                // gameobject associated to the entryId was destroyed by somebody else
+                _cachedVertices.Remove(entryId);
+                CachedEntries.Remove(entryId);
+            }
+
             Entry e;
             if (base.TryGetEntry(entryId, out e))
             {
@@ -80,7 +92,7 @@ namespace Assets.Classes.EntryProviders.Physical
             vertex = null;
             return false;
         }
-        
+
         /// <summary>
         /// Returns a list of edges having at least one of the given connection flags.
         /// </summary>
@@ -113,15 +125,32 @@ namespace Assets.Classes.EntryProviders.Physical
             return results;
         }
 
-        public IEnumerable<Vertex> GetVertices<TEntry>() where TEntry : Entry
+        public IEnumerable<Vertex> GetAvailableVertices<TEntry>() where TEntry : Entry
         {
-            return _cachedVertices.Values.Where(v => v.Entry is TEntry);
+            // return gameobjects that weren't destroyed by somebody else
+            return _cachedVertices.Values.Where(v => v != null && v.Entry is TEntry);
         }
 
-        public Vertex GetVertex(string entryId)
+        /// <summary>
+        /// Runs a search to get a queue of vertices corresponding to the given query. First vertex in the queue is the best result.
+        /// </summary>
+        /// <typeparam name="TEntry">Type of entry the resulting vertices have to contains.</typeparam>
+        /// <param name="searchQuery">The query to search for.</param>
+        /// <returns>The queue of vertices.</returns>
+        public Queue<Vertex> GetVerticesResults<TEntry>(string searchQuery) where TEntry : Entry
         {
-            Entry e;
-            return base.TryGetEntry(entryId, out e) ? _cachedVertices[entryId] : null;
+            var queue = new Queue<Vertex>();
+            var results = GetSearchResults<TEntry>(searchQuery);
+            foreach (var result in results)
+            {
+                Vertex v;
+                if (TryGetVertex(result.Id, out v))
+                {
+                    queue.Enqueue(v);
+                }
+            }
+
+            return queue;
         }
     }
 }

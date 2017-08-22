@@ -1,4 +1,5 @@
-﻿using Assets.Classes.GraphElements;
+﻿using Assets.Classes.EntryProviders.OnlineProvider;
+using Assets.Classes.GraphElements;
 using RestSharp;
 
 namespace Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients.Builders.FromMedia

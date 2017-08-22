@@ -6,11 +6,11 @@ namespace Assets.Classes.EntryProviders
     public interface IEntryProvider
     {
         /// <summary>
-        /// Runs a search to get a stack of entries corresponding to the given query. Top of the stack is the best result.
+        /// Runs a search to get a queue of entries corresponding to the given query. First item in the queue is the best result.
         /// </summary>
         /// <param name="searchQuery">The query to run.</param>
-        /// <returns>Stack of the results. Best result is on top of the stack.</returns>
-        Stack<TEntry> GetSearchResults<TEntry>(string searchQuery) where TEntry : Entry;
+        /// <returns>Queue of the results. Best result is on top of the queue.</returns>
+        Queue<TEntry> GetSearchResults<TEntry>(string searchQuery) where TEntry : Entry;
 
         /// <summary>
         /// Gets the entry corresponding to the given id.

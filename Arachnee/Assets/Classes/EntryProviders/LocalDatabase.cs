@@ -6,7 +6,7 @@ namespace Assets.Classes.EntryProviders
 {
     public class LocalDatabase : EntryProvider
     {
-        public override Stack<TEntry> GetSearchResults<TEntry>(string searchQuery)
+        public override Queue<TEntry> GetSearchResults<TEntry>(string searchQuery)
         {
             throw new NotImplementedException();
         }

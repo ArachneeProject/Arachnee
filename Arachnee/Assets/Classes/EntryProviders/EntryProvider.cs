@@ -12,7 +12,7 @@ namespace Assets.Classes.EntryProviders
 
         public IEntryProvider BiggerProvider { get; set; }
 
-        public abstract Stack<TEntry> GetSearchResults<TEntry>(string searchQuery) where TEntry : Entry;
+        public abstract Queue<TEntry> GetSearchResults<TEntry>(string searchQuery) where TEntry : Entry;
         
         public bool TryGetEntry(string entryId, out Entry entry)
         {
