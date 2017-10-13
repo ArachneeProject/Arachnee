@@ -25,11 +25,7 @@ namespace Assets.Classes.PhysicsEngine
 
         private void OnMouseUpAsButton()
         {
-            if (OnClicked != null)
-            {
-                OnClicked(this);
-            }
-
+            OnClicked?.Invoke(this);
         }
     }
 }

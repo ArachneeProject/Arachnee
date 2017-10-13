@@ -54,7 +54,7 @@ namespace Assets.Classes.EntryProviders.VisibleEntries
                 var connectionView = Object.Instantiate(connectionViewPrefab);
                 connectionView.Left = _cachedEntryViews[entry.Id];
                 connectionView.Right = _cachedEntryViews[connection.ConnectedId];
-                connectionView.gameObject.name = Connection.GetIdentifier(entry.Id, connection.ConnectedId, connection.Flags);
+                connectionView.gameObject.name = connectionViewId;
 
                 _cachedConnectionViews.Add(connectionViewId, connectionView);
             }
@@ -103,7 +103,7 @@ namespace Assets.Classes.EntryProviders.VisibleEntries
         {
             var results = new List<ConnectionView>();
 
-            foreach (var connection in entry.Connections.Where(c => (c.Flags & flags) != 0))
+            foreach (var connection in entry.Connections.Where(c => c.Flags.HasFlag(flags)))
             {
                 string connectionId = Connection.GetIdentifier(entry.Id, connection.ConnectedId, connection.Flags);
 

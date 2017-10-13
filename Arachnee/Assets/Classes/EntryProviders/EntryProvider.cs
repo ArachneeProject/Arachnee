@@ -49,7 +49,7 @@ namespace Assets.Classes.EntryProviders
             }
             
             var oppositeEntries = new List<Entry>();
-            foreach (var connection in entry.Connections.Where(c => (c.Flags & connectionFlags) != 0 ))
+            foreach (var connection in entry.Connections.Where(c => c.Flags.HasFlag(connectionFlags)))
             {
                 Entry oppositeEntry;
                 if (this.TryGetEntry(connection.ConnectedId, out oppositeEntry))
