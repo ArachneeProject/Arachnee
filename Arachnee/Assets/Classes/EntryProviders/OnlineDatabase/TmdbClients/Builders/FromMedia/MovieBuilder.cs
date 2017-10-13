@@ -6,16 +6,19 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients.Builders.From
 {
     public class MovieBuilder : MediaBuilder
     {
-        protected override string ResourceAddress
-        {
-            get { return "movie/{id}"; }
-        }
+        protected override string ResourceAddress => "movie/{id}";
 
         protected override bool TryDeserialize(string jsonString, out Entry entry)
         {
-            entry = JsonConvert.DeserializeObject<Movie>(jsonString);
-            entry.Id = typeof (Movie).Name + IdSeparator + entry.Id;
+            entry = JsonConvert.DeserializeObject<Movie>(jsonString, JsonSettings.Tmdb);
 
+            if (entry == null)
+            {
+                entry = DefaultEntry.Instance;
+                return false;
+            }
+
+            entry.Id = typeof(Movie).Name + IdSeparator + entry.Id;
             return true;
         }
     }

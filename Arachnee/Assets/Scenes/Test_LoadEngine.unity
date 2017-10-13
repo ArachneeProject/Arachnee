@@ -152,7 +152,7 @@ GameObject:
   - component: {fileID: 537087011}
   - component: {fileID: 537087012}
   m_Layer: 0
-  m_Name: VertexPrefab
+  m_Name: EntryViewPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -259,7 +259,7 @@ GameObject:
   - component: {fileID: 897508678}
   - component: {fileID: 897508677}
   m_Layer: 0
-  m_Name: EdgePrefab
+  m_Name: ConnectionViewPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -402,8 +402,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8b5ba1e269f2d14db67d6bf59bb5a80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vertexPrefab: {fileID: 537087011}
-  edgePrefab: {fileID: 897508678}
+  EntryViewPrefab: {fileID: 537087011}
+  ConnectionViewPrefab: {fileID: 897508678}
   graphEngine: {fileID: 1982180605}
 --- !u!4 &1522930644
 Transform:
@@ -466,20 +466,6 @@ Light:
   m_Lightmapping: 4
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_FalloffTable:
-    m_Table[0]: 0
-    m_Table[1]: 0
-    m_Table[2]: 0
-    m_Table[3]: 0
-    m_Table[4]: 0
-    m_Table[5]: 0
-    m_Table[6]: 0
-    m_Table[7]: 0
-    m_Table[8]: 0
-    m_Table[9]: 0
-    m_Table[10]: 0
-    m_Table[11]: 0
-    m_Table[12]: 0
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
