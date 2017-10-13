@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Classes.GraphElements;
-using Assets.Classes.Utils;
 
 namespace Assets.Classes.EntryProviders
 {
@@ -30,7 +29,7 @@ namespace Assets.Classes.EntryProviders
             {
                 return false;
             }
-
+            
             CachedEntries.Add(entryId, entry);
             return true;
         }

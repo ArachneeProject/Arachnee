@@ -6,14 +6,7 @@ namespace Assets.Classes.GraphElements
     {
         public string Id { get; set; }
         
-        // C# 6.0 not supported
-        private List<Connection>  _connections = new List<Connection>();
-
-        public List<Connection> Connections
-        {
-            get { return _connections; }
-            set { _connections = value; }
-        }
+        public List<Connection> Connections { get; set; } = new List<Connection>();
 
         public override string ToString()
         {

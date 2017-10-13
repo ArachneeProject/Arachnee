@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Classes.EntryProviders.OnlineDatabase;
-using Assets.Classes.EntryProviders.Physical;
+using Assets.Classes.EntryProviders.VisibleEntries;
 using Assets.Classes.GraphElements;
 using Assets.Classes.PhysicsEngine;
 using UnityEngine;
@@ -14,23 +14,23 @@ namespace Assets.Classes.SceneScripts.Tests
     {
         public InputField input;
 
-        public Vertex vertexPrefab;
-        public Edge edgePrefab;
+        public EntryView EntryViewPrefab;
+        public ConnectionView ConnectionViewPrefab;
         
-        private GameObjectProvider _gameObjectProvider;
+        private EntryViewProvider _entryViewProvider;
         
         void Start ()
         {
-            _gameObjectProvider = new GameObjectProvider
+            _entryViewProvider = new EntryViewProvider
             {
                 BiggerProvider = new OnlineDatabase()
             };
 
-            _gameObjectProvider.VertexPrefabs.Add(typeof (Movie), vertexPrefab);
-            _gameObjectProvider.VertexPrefabs.Add(typeof(Artist), vertexPrefab);
+            _entryViewProvider.EntryViewPrefabs.Add(typeof (Movie), EntryViewPrefab);
+            _entryViewProvider.EntryViewPrefabs.Add(typeof(Artist), EntryViewPrefab);
 
-            _gameObjectProvider.EdgePrefabs.Add(ConnectionFlags.Actor, edgePrefab);
-            _gameObjectProvider.EdgePrefabs.Add(ConnectionFlags.Director, edgePrefab);
+            _entryViewProvider.ConnectionViewPrefabs.Add(ConnectionFlags.Actor, ConnectionViewPrefab);
+            _entryViewProvider.ConnectionViewPrefabs.Add(ConnectionFlags.Director, ConnectionViewPrefab);
 
             Debug.Log("Try to type \"the terminator\" for example.");
         }
@@ -38,7 +38,7 @@ namespace Assets.Classes.SceneScripts.Tests
         public void Go()
         {
             Debug.Log("Searching for " + input.text);
-            var res = _gameObjectProvider.GetVerticesResults<Entry>(input.text);
+            var res = _entryViewProvider.GetEntryViewResults<Entry>(input.text);
             if (res.Any())
             {
                 var best = res.Dequeue();

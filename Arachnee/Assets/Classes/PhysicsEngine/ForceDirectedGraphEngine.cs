@@ -14,11 +14,11 @@ namespace Assets.Classes.PhysicsEngine
         public float hookeAttraction = 1;
         public Vector3 centerOfGraph = Vector3.zero;
 
-        private readonly HashSet<Edge> _incompleteEdges = new HashSet<Edge>();
+        private readonly HashSet<ConnectionView> _incompleteEdges = new HashSet<ConnectionView>();
 
-        public override void Add(Vertex vertex)
+        public override void Add(EntryView entryView)
         {
-            this.Vertices.Add(vertex);
+            this.Vertices.Add(entryView);
 
             var completeEdges = _incompleteEdges.Where(e => 
                 this.Vertices.Contains(e.Left) && this.Vertices.Contains(e.Right)).ToList();
@@ -29,21 +29,21 @@ namespace Assets.Classes.PhysicsEngine
             }
         }
 
-        public override void Add(Edge edge)
+        public override void Add(ConnectionView connectionView)
         {
-            if (this.Vertices.Contains(edge.Left) && this.Vertices.Contains(edge.Right))
+            if (this.Vertices.Contains(connectionView.Left) && this.Vertices.Contains(connectionView.Right))
             {
-                this.Edges.Add(edge);
+                this.Edges.Add(connectionView);
             }
             else
             {
-                _incompleteEdges.Add(edge);
+                _incompleteEdges.Add(connectionView);
             }
         }
 
-        public override void Remove(Vertex vertex)
+        public override void Remove(EntryView entryView)
         {
-            this.Vertices.Remove(vertex);
+            this.Vertices.Remove(entryView);
 
             var incompleteEdges = this.Edges.Where(e => 
                 !this.Vertices.Contains(e.Left) || !this.Vertices.Contains(e.Right)).ToList();
@@ -54,10 +54,10 @@ namespace Assets.Classes.PhysicsEngine
             }
         }
 
-        public override void Remove(Edge edge)
+        public override void Remove(ConnectionView connectionView)
         {
-            _incompleteEdges.Remove(edge);
-            this.Edges.Remove(edge);
+            _incompleteEdges.Remove(connectionView);
+            this.Edges.Remove(connectionView);
         }
 
         void FixedUpdate()

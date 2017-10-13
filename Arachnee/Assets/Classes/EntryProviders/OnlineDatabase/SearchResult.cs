@@ -13,6 +13,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
             set { _mediaType = char.ToUpper(value[0]) + value.Substring(1).ToLower(); }
         }
 
-        public string Id { get; set; }
+        [JsonProperty("id")]
+        public string MediaId { get; set; }
     }
 }

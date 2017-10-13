@@ -213,7 +213,7 @@ GameObject:
   - component: {fileID: 293973860}
   - component: {fileID: 293973859}
   m_Layer: 0
-  m_Name: VertexPrefab
+  m_Name: EntryViewPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3832,7 +3832,7 @@ GameObject:
   - component: {fileID: 760452845}
   - component: {fileID: 760452844}
   m_Layer: 0
-  m_Name: EdgePrefab
+  m_Name: ConnectionViewPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4081,9 +4081,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 660ecaa48e2f5e9479aa0e844628abd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vertexPrefab: {fileID: 293973853}
+  entryViewPrefab: {fileID: 293973853}
   input: {fileID: 1445389334}
-  clickedVertexName: {fileID: 1167085487}
+  clickedEntryViewName: {fileID: 1167085487}
   validateButton: {fileID: 309244671}
 --- !u!1 &1167085485
 GameObject:
@@ -4096,7 +4096,7 @@ GameObject:
   - component: {fileID: 1167085488}
   - component: {fileID: 1167085487}
   m_Layer: 5
-  m_Name: ClickedVertexText
+  m_Name: ClickedEntryViewText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4562,20 +4562,6 @@ Light:
   m_Lightmapping: 4
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
-  m_FalloffTable:
-    m_Table[0]: 0
-    m_Table[1]: 0
-    m_Table[2]: 0
-    m_Table[3]: 0
-    m_Table[4]: 0
-    m_Table[5]: 0
-    m_Table[6]: 0
-    m_Table[7]: 0
-    m_Table[8]: 0
-    m_Table[9]: 0
-    m_Table[10]: 0
-    m_Table[11]: 0
-    m_Table[12]: 0
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
   m_ShadowRadius: 0

@@ -4,22 +4,22 @@ using UnityEngine;
 
 namespace Assets.Classes.PhysicsEngine
 {
-    public class Vertex : MonoBehaviour
+    public class EntryView : MonoBehaviour
     {
-        public delegate void VertexClickedDelegate(Vertex v);
+        public delegate void EntryViewClickedDelegate(EntryView v);
 
         public Entry Entry { get; set; }
 
         public Rigidbody Rigidbody { get; private set; }
 
-        public event VertexClickedDelegate OnClicked;
+        public event EntryViewClickedDelegate OnClicked;
 
         private void Start()
         {
             Rigidbody = GetComponent<Rigidbody>();
             if (Rigidbody == null)
             {
-                throw new Exception("No Rigibody component found on Vertex GameObject.");
+                throw new Exception("No Rigibody component found on EntryView GameObject.");
             }
         }
 

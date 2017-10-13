@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Assets.Classes.PhysicsEngine
 {
-    public class LineEdge : Edge
+    public class LineConnectionView : ConnectionView
     {
         private LineRenderer _lineRenderer;
 
@@ -12,7 +12,7 @@ namespace Assets.Classes.PhysicsEngine
             _lineRenderer = GetComponent<LineRenderer>();
             if (_lineRenderer == null)
             {
-                throw new Exception("No LineRenderer component found on Edge GameObject.");
+                throw new Exception("No LineRenderer component found on ConnectionView GameObject.");
             }
         }
 

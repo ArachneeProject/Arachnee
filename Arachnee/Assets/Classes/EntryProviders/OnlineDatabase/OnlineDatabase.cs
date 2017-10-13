@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients;
 using Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients.Builders;
 using Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients.Builders.FromMedia;
@@ -26,7 +25,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
             foreach (var result in mediaResults.Where(r => _builders.ContainsKey(r.MediaType)))
             {
                 Entry e;
-                string entryId = result.MediaType + TmdbClient.IdSeparator + result.Id;
+                string entryId = result.MediaType + TmdbClient.IdSeparator + result.MediaId;
                 if (TryGetEntry(entryId, out e) && e is TEntry)
                 {
                     results.Enqueue((TEntry) e);
@@ -41,7 +40,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
             var split = entryId.Split(new [] {TmdbClient.IdSeparator}, StringSplitOptions.None);
             if (split.Length != 2)
             {
-                throw new ArgumentException(entryId + " is not a valid id", "entryId");
+                throw new ArgumentException(entryId + " is not a valid id", nameof(entryId));
             }
 
             var mediaType = split[0];
@@ -52,7 +51,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
                 return builder.TryToBuild(id, out entry);
             }
 
-            throw new ArgumentException("Unable to find builder for unhandled type " + mediaType);
+            Debug.Log("Unable to find builder for unhandled type " + mediaType);
             entry = DefaultEntry.Instance;
             return false;
         }

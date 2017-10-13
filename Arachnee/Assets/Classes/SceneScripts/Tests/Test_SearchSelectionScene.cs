@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Assets.Classes.EntryProviders.OnlineDatabase;
-using Assets.Classes.EntryProviders.Physical;
+using Assets.Classes.EntryProviders.VisibleEntries;
 using Assets.Classes.GraphElements;
 using Assets.Classes.PhysicsEngine;
 using UnityEngine;
@@ -8,71 +8,71 @@ using UnityEngine.UI;
 
 public class Test_SearchSelectionScene : MonoBehaviour
 {
-    public Vertex vertexPrefab;
+    public EntryView entryViewPrefab;
 
     public InputField input;
-    public Text clickedVertexName;
+    public Text clickedEntryViewName;
     public Button validateButton;
 
-    private readonly GameObjectProvider _provider = new GameObjectProvider();
+    private readonly EntryViewProvider _provider = new EntryViewProvider();
 
-    private Vertex _selectedVertex;
-    private readonly List<Vertex> _searchResults = new List<Vertex>();
+    private EntryView _selectedEntryView;
+    private readonly List<EntryView> _searchResults = new List<EntryView>();
 
     void Start () 
     {
         _provider.BiggerProvider = new OnlineDatabase();
-        _provider.VertexPrefabs.Add(typeof(Movie), vertexPrefab);
-        _provider.VertexPrefabs.Add(typeof(Artist), vertexPrefab);
+        _provider.EntryViewPrefabs.Add(typeof(Movie), entryViewPrefab);
+        _provider.EntryViewPrefabs.Add(typeof(Artist), entryViewPrefab);
 
-        clickedVertexName.gameObject.SetActive(false);
+        clickedEntryViewName.gameObject.SetActive(false);
         validateButton.gameObject.SetActive(false);
     }
 
     public void RunSearch()
     {
         // clear previous search
-        clickedVertexName.gameObject.SetActive(false);
+        clickedEntryViewName.gameObject.SetActive(false);
         validateButton.gameObject.SetActive(false);
 
-        _selectedVertex = null;
+        _selectedEntryView = null;
         foreach (var searchResult in _searchResults)
         {
-            searchResult.OnClicked -= UpdateClickedVertex;
+            searchResult.OnClicked -= UpdateClickedEntryView;
             DestroyImmediate(searchResult.gameObject); // I know what I'm doing here
         }
         _searchResults.Clear();
 
         // run search
-        var results = _provider.GetVerticesResults<Entry>(input.text);
+        var results = _provider.GetEntryViewResults<Entry>(input.text);
         Debug.Log(results.Count + " results for " + input.text);
 
         // update search results
         while (results.Count > 0)
         {
             var result = results.Dequeue();
-            result.OnClicked += UpdateClickedVertex;
+            result.OnClicked += UpdateClickedEntryView;
             result.transform.position = Random.onUnitSphere*2;
             _searchResults.Add(result);
         }
     }
 
-    private void UpdateClickedVertex(Vertex vertex)
+    private void UpdateClickedEntryView(EntryView entryView)
     {
-        _selectedVertex = vertex;
+        _selectedEntryView = entryView;
 
-        clickedVertexName.gameObject.SetActive(true);
-        clickedVertexName.text = vertex.ToString();
+        clickedEntryViewName.gameObject.SetActive(true);
+        clickedEntryViewName.text = entryView.ToString();
 
         validateButton.gameObject.SetActive(true);
     }
     
     public void Validate()
     {
-        var particle = _selectedVertex.gameObject.GetComponent<ParticleSystem>();
+        var particle = _selectedEntryView.gameObject.GetComponent<ParticleSystem>();
         particle.Emit(10);
 
         validateButton.gameObject.SetActive(false);
-        clickedVertexName.gameObject.SetActive(false);
+        clickedEntryViewName.gameObject.SetActive(false);
     }
 }

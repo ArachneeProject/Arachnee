@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using Assets.Classes.EntryProviders;
-using Assets.Classes.EntryProviders.Physical;
+using Assets.Classes.EntryProviders.VisibleEntries;
 using Assets.Classes.GraphElements;
 using Assets.Classes.PhysicsEngine;
 using UnityEngine;
@@ -9,39 +9,39 @@ namespace Assets.Classes.SceneScripts.Tests
 {
     public class Test_GraphScene : MonoBehaviour
     {
-        public Vertex moviePrefab;
-        public Vertex artistPrefab;
+        public EntryView moviePrefab;
+        public EntryView artistPrefab;
 
-        public Edge actorPrefab;
-        public Edge directorPrefab;
-        public Edge actorDirectorPrefab;
+        public ConnectionView actorPrefab;
+        public ConnectionView directorPrefab;
+        public ConnectionView actorDirectorPrefab;
         
         void Start()
         {
             var testProvider = new MiniSampleProvider();
-            var gameObjectProvider = new GameObjectProvider()
+            var gameObjectProvider = new EntryViewProvider()
             {
                 BiggerProvider = testProvider
             };
 
-            gameObjectProvider.VertexPrefabs.Add(typeof (Movie), moviePrefab);
-            gameObjectProvider.VertexPrefabs.Add(typeof(Artist), artistPrefab);
+            gameObjectProvider.EntryViewPrefabs.Add(typeof (Movie), moviePrefab);
+            gameObjectProvider.EntryViewPrefabs.Add(typeof(Artist), artistPrefab);
             
-            gameObjectProvider.EdgePrefabs.Add(ConnectionFlags.Actor, actorPrefab);
-            gameObjectProvider.EdgePrefabs.Add(ConnectionFlags.Director, directorPrefab);
-            gameObjectProvider.EdgePrefabs.Add(ConnectionFlags.Actor | ConnectionFlags.Director, actorDirectorPrefab);
+            gameObjectProvider.ConnectionViewPrefabs.Add(ConnectionFlags.Actor, actorPrefab);
+            gameObjectProvider.ConnectionViewPrefabs.Add(ConnectionFlags.Director, directorPrefab);
+            gameObjectProvider.ConnectionViewPrefabs.Add(ConnectionFlags.Actor | ConnectionFlags.Director, actorDirectorPrefab);
 
             for (int i = 0; i < 30; i++)
             {
                 foreach (var entry in testProvider.Entries)
                 {
-                    Vertex v;
-                    Debug.Assert(gameObjectProvider.TryGetVertex(entry.Id, out v), entry.Id + " not found.");
+                    EntryView v;
+                    Debug.Assert(gameObjectProvider.TryGetEntryView(entry.Id, out v), entry.Id + " not found.");
                     v.transform.position = Random.onUnitSphere * 3;
 
-                    foreach (var edge in gameObjectProvider.GetEdges(entry, ConnectionFlags.All))
+                    foreach (var connectionView in gameObjectProvider.GetConnectionViews(entry, ConnectionFlags.All))
                     {
-                        edge.transform.position = Random.onUnitSphere * 3;
+                        connectionView.transform.position = Random.onUnitSphere * 3;
                     }
                 }
             }
@@ -50,16 +50,16 @@ namespace Assets.Classes.SceneScripts.Tests
             Debug.Log("You should see two sphere (artists), one cube (movie), one long parallelepiped (actor)," +
                       " and one long ellipsoid forming a cross with a parallelepiped (director-actor). Nothing more.");
 
-            var count = gameObjectProvider.GetAvailableVertices<Movie>().Count();
+            var count = gameObjectProvider.GetAvailableEntryViews<Movie>().Count();
             Debug.Assert(count == 1, "Count was " + count);
 
-            count = gameObjectProvider.GetAvailableVertices<Artist>().Count();
+            count = gameObjectProvider.GetAvailableEntryViews<Artist>().Count();
             Debug.Assert(count == 2, "Count was " + count);
 
-            count = gameObjectProvider.GetAvailableVertices<Entry>().Count();
+            count = gameObjectProvider.GetAvailableEntryViews<Entry>().Count();
             Debug.Assert(count == 3, "Count was " + count);
 
-            count = testProvider.Entries.SelectMany(e => gameObjectProvider.GetEdges(e, ConnectionFlags.All)).Distinct().Count();
+            count = testProvider.Entries.SelectMany(e => gameObjectProvider.GetConnectionViews(e, ConnectionFlags.All)).Distinct().Count();
             Debug.Assert(count == 2, "Count was " + count);
         }
     }

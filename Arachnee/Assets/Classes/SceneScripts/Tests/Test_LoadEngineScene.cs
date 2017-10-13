@@ -3,44 +3,43 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Classes.EntryProviders;
-using Assets.Classes.EntryProviders.Physical;
+using Assets.Classes.EntryProviders.VisibleEntries;
 using Assets.Classes.GraphElements;
 using Assets.Classes.PhysicsEngine;
 using UnityEngine;
 
 public class Test_LoadEngineScene : MonoBehaviour
 {
-    public Vertex vertexPrefab;
-    public Edge edgePrefab;
+    public EntryView EntryViewPrefab;
+    public ConnectionView ConnectionViewPrefab;
     public GraphEngine graphEngine;
 
     void Start ()
     {
         // sets up provider
         var sample = new MiniSampleProvider();
-        var provider = new GameObjectProvider()
+        var provider = new EntryViewProvider()
         {
             BiggerProvider = sample
         };
-        provider.VertexPrefabs.Add(typeof(Movie), vertexPrefab);
-        provider.VertexPrefabs.Add(typeof(Artist), vertexPrefab);
-        provider.EdgePrefabs.Add(ConnectionFlags.Actor, edgePrefab);
-        provider.EdgePrefabs.Add(ConnectionFlags.Director, edgePrefab);
-        provider.EdgePrefabs.Add(ConnectionFlags.Director | ConnectionFlags.Actor, edgePrefab);
+        provider.EntryViewPrefabs.Add(typeof(Movie), EntryViewPrefab);
+        provider.EntryViewPrefabs.Add(typeof(Artist), EntryViewPrefab);
+        provider.ConnectionViewPrefabs.Add(ConnectionFlags.Actor, ConnectionViewPrefab);
+        provider.ConnectionViewPrefabs.Add(ConnectionFlags.Director, ConnectionViewPrefab);
+        provider.ConnectionViewPrefabs.Add(ConnectionFlags.Director | ConnectionFlags.Actor, ConnectionViewPrefab);
 
         // load graph engine
         foreach (var entry in sample.Entries)
         {
-            Vertex v;
-            Debug.Assert(provider.TryGetVertex(entry.Id, out v), "Failed to set up provider.");
+            EntryView v;
+            Debug.Assert(provider.TryGetEntryView(entry.Id, out v), "Failed to set up provider.");
             v.transform.position = UnityEngine.Random.onUnitSphere*5;
             
             graphEngine.Add(v);
             
-            var edges = provider.GetEdges(v.Entry, ConnectionFlags.All);
-            foreach (var edge in edges)
+            foreach (var connectionView in provider.GetConnectionViews(v.Entry, ConnectionFlags.All))
             {
-                graphEngine.Add(edge);
+                graphEngine.Add(connectionView);
             }
         }
 

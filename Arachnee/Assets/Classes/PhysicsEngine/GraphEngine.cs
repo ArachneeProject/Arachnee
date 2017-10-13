@@ -1,20 +1,19 @@
 ﻿using System.Collections.Generic;
-using Assets.Classes.EntryProviders.Physical;
 using UnityEngine;
 
 namespace Assets.Classes.PhysicsEngine
 {
     public abstract class GraphEngine : MonoBehaviour
     {
-        protected HashSet<Vertex> Vertices = new HashSet<Vertex>();
-        protected HashSet<Edge> Edges = new HashSet<Edge>();
+        protected HashSet<EntryView> Vertices = new HashSet<EntryView>();
+        protected HashSet<ConnectionView> Edges = new HashSet<ConnectionView>();
 
-        public abstract void Add(Vertex vertex);
+        public abstract void Add(EntryView entryView);
 
-        public abstract void Add(Edge edge);
+        public abstract void Add(ConnectionView connectionView);
 
-        public abstract void Remove(Vertex vertex);
+        public abstract void Remove(EntryView entryView);
 
-        public abstract void Remove(Edge edge);
+        public abstract void Remove(ConnectionView connectionView);
     }
 }
