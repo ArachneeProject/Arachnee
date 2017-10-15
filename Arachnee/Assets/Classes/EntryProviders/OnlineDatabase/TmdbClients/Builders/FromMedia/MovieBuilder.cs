@@ -12,7 +12,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients.Builders.From
         {
             entry = JsonConvert.DeserializeObject<Movie>(jsonString, JsonSettings.Tmdb);
 
-            if (entry == null)
+            if (string.IsNullOrEmpty(entry?.Id))
             {
                 entry = DefaultEntry.Instance;
                 return false;

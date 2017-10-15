@@ -14,7 +14,8 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
         private readonly MultiSearchClient _multiSearchClient = new MultiSearchClient();
         private readonly Dictionary<string, EntryBuilder> _builders = new Dictionary<string, EntryBuilder>
         {
-            {"Movie", new MovieBuilder()}
+            {"Movie", new MovieBuilder()},
+            {"Artist", new ArtistBuilder() }
         };
         
         public override Queue<TEntry> GetSearchResults<TEntry>(string searchQuery)

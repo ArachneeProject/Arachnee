@@ -36,7 +36,7 @@ namespace Assets.Classes.EntryProviders
                 new Artist
                 {
                     Id = "Artist-1100",
-                    LastName = "Schwarzenegger",
+                    Name = "Arnold Schwarzenegger",
                     Connections = new List<Connection>
                     {
                         new Connection
@@ -49,8 +49,7 @@ namespace Assets.Classes.EntryProviders
                 new Artist
                 {
                     Id = "Artist-2710",
-                    FirstName = "James",
-                    LastName = "Cameron",
+                    Name = "James Cameron",
                     Connections = new List<Connection>
                     {
                         new Connection

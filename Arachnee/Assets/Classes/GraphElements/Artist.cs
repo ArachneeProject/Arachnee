@@ -2,13 +2,29 @@
 {
     public class Artist : Entry
     {
-        public string FirstName { get; set; }
+        public string Biography { get; set; }
 
-        public string LastName { get; set; }
+        public string Birthday { get; set; }
+
+        public string Deathday { get; set; }
+
+        public int Gender { get; set; }
+
+        public string Homepage { get; set; }
+
+        public string ImdbId { get; set; }
+
+        public string Name { get; set; }
+        
+        public string PlaceOfBirth { get; set; }
+
+        public float Popularity { get; set; }
+
+        public string ProfilePath { get; set; }
 
         public override string ToString()
         {
-            return FirstName + " " + LastName;
+            return Name;
         }
     }
 }
