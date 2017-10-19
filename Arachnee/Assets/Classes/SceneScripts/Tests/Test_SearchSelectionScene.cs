@@ -28,7 +28,7 @@ public class Test_SearchSelectionScene : MonoBehaviour
         clickedEntryViewName.gameObject.SetActive(false);
         validateButton.gameObject.SetActive(false);
     }
-
+    
     public void RunSearch()
     {
         // clear previous search

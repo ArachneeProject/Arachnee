@@ -3,7 +3,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients.Builders
+namespace Assets.Classes.EntryProviders.OnlineDatabase
 {
     public class JsonSettings
     {

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
+﻿using System.Linq;
 using Assets.Classes.EntryProviders.OnlineDatabase;
-using Assets.Classes.EntryProviders.OnlineDatabase.TmdbClients.Builders.FromMedia;
 using Assets.Classes.GraphElements;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace ArachneeTests
+namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
 {
     [TestClass]
     public class Tests_OnlineDatabase
