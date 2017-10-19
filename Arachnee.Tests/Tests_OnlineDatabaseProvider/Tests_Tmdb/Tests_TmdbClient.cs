@@ -55,7 +55,6 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
             var client = new TmdbClient();
 
             Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetMovie("invalid"));
-            
         }
 
         [TestMethod]

@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Classes.EntryProviders.OnlineDatabase.Tmdb;
+using Assets.Classes.EntryProviders.OnlineDatabase.Tmdb.Exceptions;
 using Assets.Classes.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects;
 using Assets.Classes.GraphElements;
+using Assets.Classes.Logging;
 using Newtonsoft.Json;
 
 namespace Assets.Classes.EntryProviders.OnlineDatabase
@@ -26,34 +28,57 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
             var entryType = split[0];
             var tmdbId = split[1];
 
-            if (entryType == nameof(Movie))
+            // convert the tmdb object to its corresponding Entry
+            switch (entryType)
             {
-                var tmdbMovie = _client.GetMovie(tmdbId);
-                if (tmdbMovie.Id == default(long))
-                {
+                case nameof(Movie):
+                    TmdbMovie tmdbMovie;
+                    try
+                    {
+                        tmdbMovie = _client.GetMovie(tmdbId);
+                    }
+                    catch (TmdbRequestFailedException e)
+                    {
+                        Logger.LogException(e);
+                        entry = DefaultEntry.Instance;
+                        return false;
+                    }
+                    catch (InvalidTmdbRequestException e)
+                    {
+                        Logger.LogException(e);
+                        entry = DefaultEntry.Instance;
+                        return false;
+                    }
+                    
+                    entry = ConvertToMovie(tmdbMovie);
+                    return true;
+                    
+                case nameof(Artist):
+                    TmdbPerson tmdbPerson;
+                    try
+                    {
+                        tmdbPerson = _client.GetPerson(tmdbId);
+                    }
+                    catch (TmdbRequestFailedException e)
+                    {
+                        Logger.LogException(e);
+                        entry = DefaultEntry.Instance;
+                        return false;
+                    }
+                    catch (InvalidTmdbRequestException e)
+                    {
+                        Logger.LogException(e);
+                        entry = DefaultEntry.Instance;
+                        return false;
+                    }
+
+                    entry = ConvertToArtist(tmdbPerson);
+                    return true;
+
+                default:
+                    Logger.LogInfo($"Entry type \"{entryType}\" is not supported.");
                     entry = DefaultEntry.Instance;
                     return false;
-                }
-
-                entry = ConvertToMovie(tmdbMovie);
-                return true;
-            }
-            else if (entryType == nameof(Artist))
-            {
-                var tmdbPerson = _client.GetPerson(tmdbId);
-                if (tmdbPerson.Id == default(long))
-                {
-                    entry = DefaultEntry.Instance;
-                    return false;
-                }
-
-                entry = ConvertToArtist(tmdbPerson);
-                return true;
-            }
-            else
-            {
-                entry = DefaultEntry.Instance;
-                return false;
             }
         }
 
