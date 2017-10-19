@@ -73,13 +73,13 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
 
             var dictionary = new Dictionary<string, ConnectionFlags>();
 
-            foreach (var cast in tmdbMovie.CombinedCredits.Cast)
+            foreach (var cast in tmdbMovie.Credits.Cast)
             {
                 string artistId = nameof(Artist) + IdSeparator + cast.Id;
                 dictionary.Add(artistId, ConnectionFlags.Actor);
             }
 
-            foreach (var cast in tmdbMovie.CombinedCredits.Crew)
+            foreach (var cast in tmdbMovie.Credits.Crew)
             {
                 string artistId = nameof(Artist) + IdSeparator + cast.Id;
 
