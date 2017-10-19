@@ -36,7 +36,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.Tmdb
             request.AddQueryParameter("api_key", Constant.ApiKey);
 
             var responseContent = ExecuteRequest(request);
-            var firstPage = JsonConvert.DeserializeObject<SearchResultPage>(responseContent, JsonSettings.Tmdb);
+            var firstPage = JsonConvert.DeserializeObject<SearchResultPage>(responseContent, TmdbJsonSettings.Instance);
 
             return firstPage.Results;
         }
@@ -60,7 +60,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.Tmdb
 
             var response = ExecuteRequest(request);
 
-            var movie = JsonConvert.DeserializeObject<TmdbMovie>(response, JsonSettings.Tmdb);
+            var movie = JsonConvert.DeserializeObject<TmdbMovie>(response, TmdbJsonSettings.Instance);
             return movie;
         }
         
@@ -83,7 +83,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.Tmdb
 
             var response = ExecuteRequest(request);
 
-            var person = JsonConvert.DeserializeObject<TmdbPerson>(response, JsonSettings.Tmdb);
+            var person = JsonConvert.DeserializeObject<TmdbPerson>(response, TmdbJsonSettings.Instance);
             return person;
         }
 
@@ -97,7 +97,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.Tmdb
             request.AddQueryParameter("api_key", Constant.ApiKey);
 
             var responseContent = ExecuteRequest(request);
-            var officialList = JsonConvert.DeserializeObject<OfficialJobList>(responseContent, JsonSettings.Tmdb);
+            var officialList = JsonConvert.DeserializeObject<OfficialJobList>(responseContent, TmdbJsonSettings.Instance);
 
             return officialList.Jobs.SelectMany(j => j.JobList).ToList();
         }

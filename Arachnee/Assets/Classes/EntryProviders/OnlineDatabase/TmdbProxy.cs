@@ -65,7 +65,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
         private Movie ConvertToMovie(TmdbMovie tmdbMovie)
         {
             // create the Movie from the tmdbMovie
-            var movie = JsonConvert.DeserializeObject<Movie>(JsonConvert.SerializeObject(tmdbMovie, JsonSettings.Tmdb), JsonSettings.Tmdb);
+            var movie = JsonConvert.DeserializeObject<Movie>(JsonConvert.SerializeObject(tmdbMovie, TmdbJsonSettings.Instance), TmdbJsonSettings.Instance);
             movie.Id = nameof(Movie) + IdSeparator + movie.Id;
 
             // create the connections

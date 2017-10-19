@@ -3,13 +3,13 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Assets.Classes.EntryProviders.OnlineDatabase
+namespace Assets.Classes.EntryProviders.OnlineDatabase.Tmdb
 {
-    public class JsonSettings
+    public class TmdbJsonSettings
     {
-        private static JsonSerializerSettings _tmdb;
+        private static JsonSerializerSettings _instance;
 
-        public static JsonSerializerSettings Tmdb => _tmdb ?? (_tmdb = new JsonSerializerSettings
+        public static JsonSerializerSettings Instance => _instance ?? (_instance = new JsonSerializerSettings
         {
             Formatting = Formatting.Indented,
             ContractResolver = new PascalCasePropertyNamesContractResolver()
