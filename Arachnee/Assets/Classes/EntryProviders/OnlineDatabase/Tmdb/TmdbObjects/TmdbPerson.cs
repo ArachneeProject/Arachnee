@@ -9,7 +9,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects
         public string Biography { get; set; }
         public string Birthday { get; set; }
         public CombinedCredits CombinedCredits { get; set; }
-        public object Deathday { get; set; }
+        public string Deathday { get; set; }
         public long Gender { get; set; }
         public string Homepage { get; set; }
         public long Id { get; set; }
