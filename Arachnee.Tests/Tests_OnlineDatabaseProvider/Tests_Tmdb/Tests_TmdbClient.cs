@@ -164,7 +164,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
             Assert.AreEqual("tv", tvResult.MediaType);
 
             Assert.AreEqual(9404, movieResult.Id);
-            Assert.AreEqual(9502, personResult.Id);
+            Assert.AreEqual(18897, personResult.Id);
             Assert.AreEqual(240, tvResult.Id);
 
             Assert.AreEqual("/9i6bhYbxe2g02e3GhljtktuyDMj.jpg", movieResult.PosterPath);
