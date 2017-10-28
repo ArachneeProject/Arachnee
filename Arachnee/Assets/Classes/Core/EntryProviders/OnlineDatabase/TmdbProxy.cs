@@ -128,9 +128,13 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
 
             foreach (var cast in tmdbPerson.CombinedCredits.Cast.Where(c => !string.IsNullOrEmpty(c.PosterPath)))
             {
+                var id = cast.MediaType == "tv"
+                    ? nameof(Serie) + IdSeparator + cast.Id
+                    : nameof(Movie) + IdSeparator + cast.Id;
+
                 artist.Connections.Add(new Connection
                 {
-                    ConnectedId = nameof(Movie) + IdSeparator + cast.Id,
+                    ConnectedId = id,
                     Type = ConnectionType.Actor,
                     Label = cast.Character
                 });

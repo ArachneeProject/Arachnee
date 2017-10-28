@@ -10,7 +10,7 @@ namespace Assets.Classes.Core.EntryProviders
         /// </summary>
         /// <param name="searchQuery">The query to run.</param>
         /// <returns>Queue of the results. Best result is on top of the queue.</returns>
-        Queue<TEntry> GetSearchResults<TEntry>(string searchQuery) where TEntry : Entry;
+        Queue<SearchResult> GetSearchResults(string searchQuery);
 
         /// <summary>
         /// Gets the entry corresponding to the given id.
@@ -21,20 +21,13 @@ namespace Assets.Classes.Core.EntryProviders
         bool TryGetEntry(string entryId, out Entry entry);
 
         /// <summary>
-        /// Gets all available entries in this <see cref="IEntryProvider"/>.
-        /// </summary>
-        /// <typeparam name="TEntry">Type of the entries.</typeparam>
-        /// <returns>Entries available.</returns>
-        IEnumerable<TEntry> GetAvailableEntries<TEntry>() where TEntry : Entry;
-
-        /// <summary>
         /// Gets all entries connected to the given entry id by at least one of the given connection type.
         /// </summary>
         /// <typeparam name="TEntry">Type of the connected entries.</typeparam>
         /// <param name="entryId">Id of the entry.</param>
-        /// <param name="connectionType">Types of connection.</param>
+        /// <param name="connectionTypes">Types of connection.</param>
         /// <param name="entries">The resulting connected entries.</param>
         /// <returns>Wheter or not the function succeded.</returns>
-        bool TryGetConnectedEntries<TEntry>(string entryId, ConnectionType connectionType, out IEnumerable<TEntry> entries) where TEntry : Entry;
+        bool TryGetConnectedEntries<TEntry>(string entryId, List<ConnectionType> connectionTypes, out IEnumerable<TEntry> entries) where TEntry : Entry;
     }
 }

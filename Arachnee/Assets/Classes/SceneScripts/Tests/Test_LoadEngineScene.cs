@@ -42,10 +42,6 @@ namespace Assets.Classes.SceneScripts.Tests
                     graphEngine.Add(connectionView);
                 }
             }
-
-            var expected = sample.GetAvailableEntries<Entry>().Count();
-            var actual = provider.GetAvailableEntries<Entry>().Count();
-            Debug.Assert(expected == actual, "Expected " + expected + " elements, got " + actual);
         }
     }
 }

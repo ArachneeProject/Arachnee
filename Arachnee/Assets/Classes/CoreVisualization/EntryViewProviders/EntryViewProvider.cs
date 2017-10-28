@@ -63,9 +63,9 @@ namespace Assets.Classes.CoreVisualization.EntryViewProviders
             return true;
         }
         
-        public override Queue<TEntry> GetSearchResults<TEntry>(string searchQuery)
+        public override Queue<SearchResult> GetSearchResults(string searchQuery)
         {
-            return BiggerProvider.GetSearchResults<TEntry>(searchQuery);
+            return BiggerProvider.GetSearchResults(searchQuery);
         }
 
         public bool TryGetEntryView(string entryId, out EntryView entryView)
@@ -141,11 +141,11 @@ namespace Assets.Classes.CoreVisualization.EntryViewProviders
         public Queue<EntryView> GetEntryViewResults<TEntry>(string searchQuery) where TEntry : Entry
         {
             var queue = new Queue<EntryView>();
-            var results = GetSearchResults<TEntry>(searchQuery);
+            var results = GetSearchResults(searchQuery);
             foreach (var result in results)
             {
                 EntryView v;
-                if (TryGetEntryView(result.Id, out v))
+                if (TryGetEntryView(result.EntryId, out v))
                 {
                     queue.Enqueue(v);
                 }

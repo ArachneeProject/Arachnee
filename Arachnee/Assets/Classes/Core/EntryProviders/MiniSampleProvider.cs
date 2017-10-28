@@ -79,18 +79,9 @@ namespace Assets.Classes.Core.EntryProviders
         /// <summary>
         /// Returns a queue containing the item corresponding to the query.
         /// </summary>
-        public override Queue<TEntry> GetSearchResults<TEntry>(string searchQuery)
+        public override Queue<SearchResult> GetSearchResults(string searchQuery)
         {
-            var queue = new Queue<TEntry>();
-
-            var items = Entries.OfType<TEntry>().ToList();
-            var best = items.FirstOrDefault(i => i.ToString().Equals(searchQuery, StringComparison.OrdinalIgnoreCase));
-            if (best != null)
-            {
-                queue.Enqueue(best);
-            }
-
-            return queue;
+            throw new NotImplementedException();
         }
 
         protected override bool TryLoadEntry(string entryId, out Entry entry)

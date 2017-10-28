@@ -11,7 +11,7 @@ namespace Assets.Classes.Core.EntryProviders
 
         public IEntryProvider BiggerProvider { get; set; }
 
-        public abstract Queue<TEntry> GetSearchResults<TEntry>(string searchQuery) where TEntry : Entry;
+        public abstract Queue<SearchResult> GetSearchResults(string searchQuery);
         
         public bool TryGetEntry(string entryId, out Entry entry)
         {
@@ -33,13 +33,8 @@ namespace Assets.Classes.Core.EntryProviders
             CachedEntries.Add(entryId, entry);
             return true;
         }
-
-        public IEnumerable<TEntry> GetAvailableEntries<TEntry>() where TEntry : Entry
-        {
-            return CachedEntries.OfType<TEntry>();
-        }
         
-        public bool TryGetConnectedEntries<TEntry>(string entryId, ConnectionType connectionType, out IEnumerable<TEntry> entries) where TEntry : Entry
+        public bool TryGetConnectedEntries<TEntry>(string entryId, List<ConnectionType> connectionTypes, out IEnumerable<TEntry> entries) where TEntry : Entry
         {
             Entry entry;
             if (!TryGetEntry(entryId, out entry))
@@ -49,7 +44,7 @@ namespace Assets.Classes.Core.EntryProviders
             }
             
             var oppositeEntries = new List<Entry>();
-            foreach (var connection in entry.Connections.Where(c => c.Type.HasFlag(connectionType)))
+            foreach (var connection in entry.Connections.Where(c => connectionTypes.Contains(c.Type)))
             {
                 Entry oppositeEntry;
                 if (this.TryGetEntry(connection.ConnectedId, out oppositeEntry))

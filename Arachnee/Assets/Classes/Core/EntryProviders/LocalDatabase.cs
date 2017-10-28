@@ -56,7 +56,7 @@ namespace Assets.Classes.Core.EntryProviders
             return false;
         }
 
-        public override Queue<TEntry> GetSearchResults<TEntry>(string searchQuery)
+        public override Queue<SearchResult> GetSearchResults(string searchQuery)
         {
             throw new NotImplementedException();
         }
