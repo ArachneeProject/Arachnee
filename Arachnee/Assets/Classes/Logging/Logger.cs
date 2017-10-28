@@ -30,6 +30,23 @@ namespace Assets.Classes.Logging
             }
         }
 
+        public static void LogWarning(string message)
+        {
+            switch (Mode)
+            {
+                case LogMode.UnityConsole:
+                    Debug.LogWarning(message);
+                    break;
+
+                case LogMode.SystemConsole:
+                    Console.WriteLine($"WARNING: {message}");
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(Mode), "Log mode is not set.");
+            }
+        }
+
         public static void LogError(string message)
         {
             switch (Mode)

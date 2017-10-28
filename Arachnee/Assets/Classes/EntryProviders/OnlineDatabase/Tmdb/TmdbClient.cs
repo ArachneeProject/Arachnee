@@ -61,6 +61,11 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.Tmdb
             var response = ExecuteRequest(request);
 
             var movie = JsonConvert.DeserializeObject<TmdbMovie>(response, TmdbJsonSettings.Instance);
+            if (movie.Id == default(long))
+            {
+                throw new InvalidTmdbRequestException($"\"{tmdbMovieId}\" didn't return any result.");
+            }
+
             return movie;
         }
         
@@ -84,6 +89,11 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.Tmdb
             var response = ExecuteRequest(request);
 
             var person = JsonConvert.DeserializeObject<TmdbPerson>(response, TmdbJsonSettings.Instance);
+            if (person.Id == default(long))
+            {
+                throw new InvalidTmdbRequestException($"\"{tmdbPersonId}\" didn't return any result.");
+            }
+
             return person;
         }
 

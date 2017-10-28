@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Classes.EntryProviders.OnlineDatabase.Tmdb;
-using Assets.Classes.EntryProviders.OnlineDatabase.Tmdb.Exceptions;
 using Assets.Classes.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects;
 using Assets.Classes.GraphElements;
-using Assets.Classes.Logging;
 using Newtonsoft.Json;
 
 namespace Assets.Classes.EntryProviders.OnlineDatabase
@@ -13,11 +11,16 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
     public class TmdbProxy
     {
         private const char IdSeparator = '-';
-        
+
         private readonly TmdbClient _client = new TmdbClient();
-        
-        public bool TryToBuild(string entryId, out Entry entry)
+
+        public Entry GetEntry(string entryId)
         {
+            if (string.IsNullOrEmpty(entryId))
+            {
+                throw new ArgumentException($"\"{entryId}\" is not a valid id.", nameof(entryId));
+            }
+
             var split = entryId.Split(IdSeparator);
 
             if (split.Length != 2)
@@ -28,69 +31,41 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
             var entryType = split[0];
             var tmdbId = split[1];
 
+            if (string.IsNullOrEmpty(entryType) || string.IsNullOrEmpty(tmdbId))
+            {
+                throw new ArgumentException($"\"{entryId}\" is not a valid id.", nameof(entryId));
+            }
+
             // convert the tmdb object to its corresponding Entry
+            Entry entry;
             switch (entryType)
             {
                 case nameof(Movie):
-                    TmdbMovie tmdbMovie;
-                    try
-                    {
-                        tmdbMovie = _client.GetMovie(tmdbId);
-                    }
-                    catch (TmdbRequestFailedException e)
-                    {
-                        Logger.LogException(e);
-                        entry = DefaultEntry.Instance;
-                        return false;
-                    }
-                    catch (InvalidTmdbRequestException e)
-                    {
-                        Logger.LogException(e);
-                        entry = DefaultEntry.Instance;
-                        return false;
-                    }
-                    
+                    var tmdbMovie = _client.GetMovie(tmdbId);
                     entry = ConvertToMovie(tmdbMovie);
-                    return true;
-                    
+                    break;
+
                 case nameof(Artist):
-                    TmdbPerson tmdbPerson;
-                    try
-                    {
-                        tmdbPerson = _client.GetPerson(tmdbId);
-                    }
-                    catch (TmdbRequestFailedException e)
-                    {
-                        Logger.LogException(e);
-                        entry = DefaultEntry.Instance;
-                        return false;
-                    }
-                    catch (InvalidTmdbRequestException e)
-                    {
-                        Logger.LogException(e);
-                        entry = DefaultEntry.Instance;
-                        return false;
-                    }
-
+                    var tmdbPerson = _client.GetPerson(tmdbId);
                     entry = ConvertToArtist(tmdbPerson);
-                    return true;
-
+                    break;
                 default:
-                    Logger.LogInfo($"Entry type \"{entryType}\" is not supported.");
-                    entry = DefaultEntry.Instance;
-                    return false;
+                    throw new ArgumentException($"\"{entryId}\" cannot be processed because \"{entryType}\" is not a handled entry type.", nameof(entryId));
             }
+
+            return entry;
         }
 
-        private Artist ConvertToArtist(TmdbPerson tmdbPerson)
+        private Entry ConvertToArtist(TmdbPerson tmdbPerson)
         {
-            return null;
+            return DefaultEntry.Instance;
         }
 
         private Movie ConvertToMovie(TmdbMovie tmdbMovie)
         {
             // create the Movie from the tmdbMovie
-            var movie = JsonConvert.DeserializeObject<Movie>(JsonConvert.SerializeObject(tmdbMovie, TmdbJsonSettings.Instance), TmdbJsonSettings.Instance);
+            var movie = JsonConvert.DeserializeObject<Movie>(
+                JsonConvert.SerializeObject(tmdbMovie, TmdbJsonSettings.Instance), TmdbJsonSettings.Instance);
             movie.Id = nameof(Movie) + IdSeparator + movie.Id;
 
             // create the connections
@@ -129,8 +104,8 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
         {
             ConnectionFlags flag;
             return Enum.TryParse(jobName, true, out flag)
-            ? flag
-            : 0;
+                ? flag
+                : 0;
         }
     }
 }

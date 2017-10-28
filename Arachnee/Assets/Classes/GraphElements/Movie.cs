@@ -40,7 +40,7 @@ namespace Assets.Classes.GraphElements
 
         public override string ToString()
         {
-            return Title;
+            return $"{Title} ({Id})";
         }
     }
 }

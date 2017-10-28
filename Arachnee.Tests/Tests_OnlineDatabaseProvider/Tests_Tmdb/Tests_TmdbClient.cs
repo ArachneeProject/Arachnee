@@ -8,13 +8,15 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
     [TestClass]
     public class Tests_TmdbClient
     {
+        #region Movie
+
         [TestMethod]
         public void GetMovie_ValidId_CorrectMovie()
         {
             var client = new TmdbClient();
 
             var tmdbMovie = client.GetMovie("218");
-            
+
             Assert.IsNotNull(tmdbMovie);
 
             Assert.IsFalse(tmdbMovie.Adult);
@@ -53,9 +55,33 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
         public void GetMovie_InvalidId_ThrowsInvalidTmdbRequestException()
         {
             var client = new TmdbClient();
-
-            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetMovie("invalid"));
+            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetMovie("-10"));
         }
+
+        [TestMethod]
+        public void GetMovie_NotAnId_ThrowsInvalidTmdbRequestException()
+        {
+            var client = new TmdbClient();
+            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetMovie("#invalid#"));
+        }
+        
+        [TestMethod]
+        public void GetMovie_EmptyId_ThrowsInvalidTmdbRequestException()
+        {
+            var client = new TmdbClient();
+            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetMovie(""));
+        }
+
+        [TestMethod]
+        public void GetMovie_Null_ThrowsInvalidTmdbRequestException()
+        {
+            var client = new TmdbClient();
+            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetMovie(null));
+        }
+
+        #endregion Movie
+
+        #region Person
 
         [TestMethod]
         public void GetPerson_ValidId_CorrectPerson()
@@ -68,8 +94,9 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
 
             Assert.IsFalse(tmdbPerson.Adult);
             Assert.IsTrue(tmdbPerson.AlsoKnownAs.Count > 0);
-            Assert.IsTrue(tmdbPerson.Biography.StartsWith("Arnold Alois Schwarzenegger (born July 30, 1947) is an Austrian-American former professional bodybuilder, " +
-                                                      "actor, model, businessman and politician who served as the 38th Governor of California (2003–2011)."));
+            Assert.IsTrue(tmdbPerson.Biography.StartsWith(
+                "Arnold Alois Schwarzenegger (born July 30, 1947) is an Austrian-American former professional bodybuilder, " +
+                "actor, model, businessman and politician who served as the 38th Governor of California (2003–2011)."));
             Assert.AreEqual("1947-07-30", tmdbPerson.Birthday);
             Assert.IsNotNull(tmdbPerson.CombinedCredits);
             Assert.IsNull(tmdbPerson.Deathday);
@@ -88,16 +115,92 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
         {
             var client = new TmdbClient();
 
-            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetPerson("invalid"));
+            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetPerson("-10"));
         }
 
         [TestMethod]
-        public void GetAllJobs_ListIsNotEmpty()
+        public void GetPerson_NotAnId_ThrowsInvalidTmdbRequestException()
+        {
+            var client = new TmdbClient();
+
+            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetPerson("#invalid#"));
+        }
+        
+        [TestMethod]
+        public void GetPerson_EmptyId_ThrowsInvalidTmdbRequestException()
+        {
+            var client = new TmdbClient();
+            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetPerson(""));
+        }
+
+        [TestMethod]
+        public void GetPerson_Null_ThrowsInvalidTmdbRequestException()
+        {
+            var client = new TmdbClient();
+            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetPerson(null));
+        }
+
+        #endregion Person
+
+        #region CombinedSearch
+
+        [TestMethod]
+        public void GetCombinedSearchResults_ValidQuery_CorrectResults()
+        {
+            var client = new TmdbClient();
+            var results = client.GetCombinedSearchResults("Jackie Chan");
+            var movieResult = results.FirstOrDefault(r => r.Title == "First Strike");
+            var personResult = results.FirstOrDefault(r => r.Name == "Jackie Chan");
+            var tvResult = results.FirstOrDefault(r => r.Name == "Jackie Chan Adventures");
+
+            Assert.IsTrue(results.Count >= 20);
+
+            Assert.IsNotNull(movieResult);
+            Assert.IsNotNull(personResult);
+            Assert.IsNotNull(tvResult);
+
+            Assert.AreEqual("movie", movieResult.MediaType);
+            Assert.AreEqual("person", personResult.MediaType);
+            Assert.AreEqual("tv", tvResult.MediaType);
+
+            Assert.AreEqual(9404, movieResult.Id);
+            Assert.AreEqual(9502, personResult.Id);
+            Assert.AreEqual(240, tvResult.Id);
+
+            Assert.AreEqual("/9i6bhYbxe2g02e3GhljtktuyDMj.jpg", movieResult.PosterPath);
+            Assert.AreEqual("/pmKJ4sGvPQ3imzXaFnjW4Vk5Gyc.jpg", personResult.ProfilePath);
+            Assert.AreEqual("/6bsg03VVkB41Vzs6w1NvpFvq2yH.jpg", tvResult.PosterPath);
+        }
+
+        [TestMethod]
+        public void GetCombinedSearchResults_EmptyQuery_EmptyResult()
+        {
+            var client = new TmdbClient();
+            var results = client.GetCombinedSearchResults("");
+
+            Assert.AreEqual(0, results.Count);
+        }
+
+        [TestMethod]
+        public void GetCombinedSearchResults_Null_EmptyResult()
+        {
+            var client = new TmdbClient();
+            var results = client.GetCombinedSearchResults(null);
+
+            Assert.AreEqual(0, results.Count);
+        }
+
+        #endregion CombinedSearch
+
+        [TestMethod,
+         Description("Official Tmdb job list can increase over time, but will still contains at least 400 items.")]
+        public void GetAllJobs_ListHasMoreThan400Items()
         {
             var client = new TmdbClient();
             var jobs = client.GetAllJobs().OrderBy(t => t).ToList();
 
             Assert.IsTrue(jobs.Count > 400);
         }
+
     }
 }
