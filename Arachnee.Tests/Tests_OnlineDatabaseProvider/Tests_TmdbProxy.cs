@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Assets.Classes.EntryProviders.OnlineDatabase;
 using Assets.Classes.GraphElements;
 using Assets.Classes.Logging;
@@ -22,7 +23,50 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
             var movie = tmdbProxy.GetEntry("Movie-218") as Movie;
 
             Assert.IsNotNull(movie);
-            Assert.Fail();
+            
+            Assert.AreEqual("Movie-218", movie.Id);
+            Assert.AreEqual("The Terminator", movie.Title);
+            
+            Assert.AreEqual("/6yFoLNQgFdVbA8TZMdfgVpszOla.jpg", movie.BackdropPath);
+            Assert.AreEqual(6400000, movie.Budget);
+            Assert.AreEqual(3, movie.Tags.Count);
+            Assert.AreEqual("http://www.mgm.com/#/our-titles/1970/The-Terminator/", movie.Homepage);
+            Assert.AreEqual("tt0088247", movie.ImdbId);
+            Assert.AreEqual("en", movie.OriginalLanguage);
+            Assert.AreEqual("The Terminator", movie.OriginalTitle);
+            Assert.AreEqual("In the post-apocalyptic future, reigning tyrannical supercomputers teleport " +
+                            "a cyborg assassin known as the \"Terminator\" back to 1984 to kill Sarah Connor, " +
+                            "whose unborn son is destined to lead insurgents against 21st century mechanical hegemony. " +
+                            "Meanwhile, the human-resistance movement dispatches a lone warrior to safeguard Sarah. " +
+                            "Can he stop the virtually indestructible killing machine?", movie.Overview);
+            Assert.IsTrue(movie.Popularity > 0);
+            Assert.AreEqual("/q8ffBuxQlYOHrvPniLgCbmKK4Lv.jpg", movie.PosterPath);
+            Assert.AreEqual("1984-10-26", movie.ReleaseDate);
+            Assert.AreEqual(78371200, movie.Revenue);
+            Assert.AreEqual(108, movie.Runtime);
+            Assert.AreEqual("Released", movie.Status);
+            Assert.AreEqual("Your future is in his hands.", movie.Tagline);
+            Assert.IsTrue(movie.VoteAverage > 0);
+            Assert.IsTrue(movie.VoteCount > 0);
+        }
+
+        [TestMethod]
+        public void GetEntry_ValidMovieId_ReturnsMovieWithValidConnections()
+        {
+            var tmdbProxy = new TmdbProxy();
+            var movie = (Movie)tmdbProxy.GetEntry("Movie-218");
+
+            var arnoldConnection = movie.Connections.FirstOrDefault(c =>
+                c.ConnectedId == "Artist-1100" && c.Type == ConnectionType.Actor);
+
+            var cameronConnection = movie.Connections.FirstOrDefault(c =>
+                c.ConnectedId == "Artist-2710" && c.Type == ConnectionType.Director);
+
+            Assert.IsNotNull(arnoldConnection);
+            Assert.AreEqual("The Terminator", arnoldConnection.Label);
+            
+            Assert.IsNotNull(cameronConnection);
+            Assert.AreEqual("Director", cameronConnection.Label);
         }
 
         [TestMethod]
@@ -32,7 +76,35 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
             var artist = tmdbProxy.GetEntry("Artist-1100") as Artist;
 
             Assert.IsNotNull(artist);
-            Assert.Fail();
+
+            Assert.AreEqual("Artist-1100", artist.Id);
+            Assert.AreEqual("Arnold Schwarzenegger", artist.Name);
+
+            Assert.IsTrue(artist.Biography.StartsWith(
+                "Arnold Alois Schwarzenegger (born July 30, 1947) is an Austrian-American former professional bodybuilder, " +
+                "actor, model, businessman and politician who served as the 38th Governor of California (2003–2011)."));
+            Assert.AreEqual("1947-07-30", artist.Birthday);
+            Assert.IsNull(artist.Deathday);
+            Assert.AreEqual(2, artist.Gender);
+            Assert.AreEqual("http://www.schwarzenegger.com/", artist.Homepage);
+            Assert.AreEqual("nm0000216", artist.ImdbId);
+            Assert.IsTrue(artist.NickNames.Count > 3);
+            Assert.AreEqual("Thal, Styria, Austria", artist.PlaceOfBirth);
+            Assert.IsTrue(artist.Popularity > 0);
+            Assert.AreEqual("/sOkCXc9xuSr6v7mdAq9LwEBje68.jpg", artist.ProfilePath);
+        }
+
+        [TestMethod]
+        public void GetEntry_ValidArtistId_ReturnsArtistWithValidConnections()
+        {
+            var tmdbProxy = new TmdbProxy();
+            var artist = (Artist) tmdbProxy.GetEntry("Artist-1100");
+
+            var terminatorConnection = artist.Connections.FirstOrDefault(c =>
+                c.ConnectedId == "Movie-218" && c.Type == ConnectionType.Actor);
+
+            Assert.IsNotNull(terminatorConnection);
+            Assert.AreEqual("The Terminator", terminatorConnection.Label);
         }
 
         [TestMethod]

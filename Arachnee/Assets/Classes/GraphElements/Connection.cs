@@ -6,14 +6,16 @@ namespace Assets.Classes.GraphElements
     {
         public string ConnectedId { get; set; }
 
-        public ConnectionFlags Flags { get; set; }
+        public ConnectionType Type { get; set; }
 
-        public static string GetIdentifier(string fromEntryId, string toEntryId, ConnectionFlags flags)
+        public string Label { get; set; }
+
+        // TODO: should be moved to ConnectionView class
+        public static string GetIdentifier(string fromEntryId, string toEntryId, ConnectionType type)
         {
-            string flagsId = Convert.ToString((int) flags, 2);
-            return string.Compare(fromEntryId, toEntryId, StringComparison.OrdinalIgnoreCase) < 0 
-                ? $"{fromEntryId}::{flagsId}::{toEntryId}" 
-                : $"{toEntryId}::{flagsId}::{fromEntryId}";
+            return string.Compare(fromEntryId, toEntryId, StringComparison.OrdinalIgnoreCase) < 0
+                ? $"{fromEntryId}::{type}::{toEntryId}"
+                : $"{toEntryId}::{type}::{fromEntryId}";
         }
     }
 }

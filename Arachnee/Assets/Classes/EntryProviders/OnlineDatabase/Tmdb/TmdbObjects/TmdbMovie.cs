@@ -9,7 +9,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects
         public BelongsToCollection BelongsToCollection { get; set; }
         public long Budget { get; set; }
         public Credits Credits { get; set; }
-        public List<Genre> Genres { get; set; }
+        public List<IdentifiedName> Genres { get; set; }
         public string Homepage { get; set; }
         public long Id { get; set; }
         public string ImdbId { get; set; }
@@ -18,7 +18,7 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects
         public string Overview { get; set; }
         public double Popularity { get; set; }
         public string PosterPath { get; set; }
-        public List<Genre> ProductionCompanies { get; set; }
+        public List<IdentifiedName> ProductionCompanies { get; set; }
         public List<ProductionCountry> ProductionCountries { get; set; }
         public string ReleaseDate { get; set; }
         public long Revenue { get; set; }

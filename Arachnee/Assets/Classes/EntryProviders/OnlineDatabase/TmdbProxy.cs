@@ -14,6 +14,12 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
 
         private readonly TmdbClient _client = new TmdbClient();
 
+        private readonly Dictionary<string, ConnectionType> _handledCrewJobs = new Dictionary<string, ConnectionType>
+        {
+            {"Director", ConnectionType.Director},
+            {"Boom Operator", ConnectionType.BoomOperator},
+        };
+
         public Entry GetEntry(string entryId)
         {
             if (string.IsNullOrEmpty(entryId))
@@ -56,56 +62,97 @@ namespace Assets.Classes.EntryProviders.OnlineDatabase
             return entry;
         }
 
-        private Entry ConvertToArtist(TmdbPerson tmdbPerson)
+        private Artist ConvertToArtist(TmdbPerson tmdbPerson)
         {
-            return DefaultEntry.Instance;
+            // create the Artist from the tmdbPerson
+            var artist = JsonConvert.DeserializeObject<Artist>(
+                            JsonConvert.SerializeObject(tmdbPerson, TmdbJsonSettings.Instance), TmdbJsonSettings.Instance);
+            artist.Id = nameof(Artist) + IdSeparator + artist.Id;
+            artist.NickNames = tmdbPerson.AlsoKnownAs;
+
+            // create the connections
+            artist.Connections = new List<Connection>();
+
+            foreach (var cast in tmdbPerson.CombinedCredits.Cast.Where(c => !string.IsNullOrEmpty(c.PosterPath)))
+            {
+                artist.Connections.Add(new Connection
+                {
+                    ConnectedId = nameof(Movie) + IdSeparator + cast.Id,
+                    Type = ConnectionType.Actor,
+                    Label = cast.Character
+                });
+            }
+            
+            foreach (var cast in tmdbPerson.CombinedCredits.Crew.Where(c => !string.IsNullOrEmpty(c.PosterPath)))
+            {
+                ConnectionType type;
+                if (_handledCrewJobs.TryGetValue(cast.Job, out type))
+                {
+                    artist.Connections.Add(new Connection
+                    {
+                        ConnectedId = nameof(Movie) + IdSeparator + cast.Id,
+                        Type = type,
+                        Label = cast.Job
+                    });
+                }
+                else
+                {
+                    artist.Connections.Add(new Connection
+                    {
+                        ConnectedId = nameof(Movie) + IdSeparator + cast.Id,
+                        Type = ConnectionType.Crew,
+                        Label = cast.Job
+                    });
+                }
+            }
+
+            return artist;
         }
 
         private Movie ConvertToMovie(TmdbMovie tmdbMovie)
         {
             // create the Movie from the tmdbMovie
-            var movie = JsonConvert.DeserializeObject<Movie>(
-                JsonConvert.SerializeObject(tmdbMovie, TmdbJsonSettings.Instance), TmdbJsonSettings.Instance);
+            var movie = JsonConvert.DeserializeObject<Movie>(JsonConvert.SerializeObject(tmdbMovie));
             movie.Id = nameof(Movie) + IdSeparator + movie.Id;
+            movie.Tags = tmdbMovie.Genres.Select(g => g.Name).ToList();
 
             // create the connections
             movie.Connections = new List<Connection>();
-
-            var dictionary = new Dictionary<string, ConnectionFlags>();
-
-            foreach (var cast in tmdbMovie.Credits.Cast)
+            
+            foreach (var cast in tmdbMovie.Credits.Cast.Where(c => !string.IsNullOrEmpty(c.ProfilePath)))
             {
-                string artistId = nameof(Artist) + IdSeparator + cast.Id;
-                dictionary.Add(artistId, ConnectionFlags.Actor);
-            }
-
-            foreach (var cast in tmdbMovie.Credits.Crew)
-            {
-                string artistId = nameof(Artist) + IdSeparator + cast.Id;
-
-                if (!dictionary.ContainsKey(artistId))
+                movie.Connections.Add(new Connection
                 {
-                    dictionary[artistId] = ConvertJobToFlag(cast.Job);
-                }
-
-                dictionary[artistId] |= ConvertJobToFlag(cast.Job);
+                    ConnectedId = nameof(Artist) + IdSeparator + cast.Id,
+                    Type = ConnectionType.Actor,
+                    Label = cast.Character
+                });
             }
 
-            movie.Connections = dictionary.Select(kvp => new Connection
+            foreach (var cast in tmdbMovie.Credits.Crew.Where(c => !string.IsNullOrEmpty(c.ProfilePath)))
             {
-                ConnectedId = kvp.Key,
-                Flags = kvp.Value
-            }).ToList();
-
+                ConnectionType type;
+                if (_handledCrewJobs.TryGetValue(cast.Job, out type))
+                {
+                    movie.Connections.Add(new Connection
+                    {
+                        ConnectedId = nameof(Artist) + IdSeparator + cast.Id,
+                        Type = type,
+                        Label = cast.Job
+                    });
+                }
+                else
+                {
+                    movie.Connections.Add(new Connection
+                    {
+                        ConnectedId = nameof(Artist) + IdSeparator + cast.Id,
+                        Type = ConnectionType.Crew,
+                        Label = cast.Job
+                    });
+                }
+            }
+            
             return movie;
-        }
-
-        private ConnectionFlags ConvertJobToFlag(string jobName)
-        {
-            ConnectionFlags flag;
-            return Enum.TryParse(jobName, true, out flag)
-                ? flag
-                : 0;
         }
     }
 }

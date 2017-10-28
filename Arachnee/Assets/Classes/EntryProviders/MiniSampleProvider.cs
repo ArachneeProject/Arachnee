@@ -15,21 +15,28 @@ namespace Assets.Classes.EntryProviders
             {
                 new Movie
                 {
-                    Id = "Movie-218",
-                    Title = "The Terminator",
+                    Id = "Movie-280",
+                    Title = "Terminator 2: Judgment Day",
                     Connections = new List<Connection>
                     {
                         // cameron
                         new Connection
                         {
-                            Flags = ConnectionFlags.Actor | ConnectionFlags.Director,
-                            ConnectedId = "Artist-2710"
+                            ConnectedId = "Artist-2710",
+                            Type = ConnectionType.Actor,
+                            Label = "Some guy at the bar"
                         },
+                        new Connection
+                        {
+                            ConnectedId = "Artist-2710",
+                            Type = ConnectionType.Director
+                        },
+
                         // schwarzenegger
                         new Connection
                         {
-                            Flags = ConnectionFlags.Actor,
-                            ConnectedId = "Artist-1100"
+                            ConnectedId = "Artist-1100",
+                            Type = ConnectionType.Actor
                         }
                     }
                 },
@@ -41,8 +48,9 @@ namespace Assets.Classes.EntryProviders
                     {
                         new Connection
                         {
-                            Flags = ConnectionFlags.Actor,
                             ConnectedId = "Movie-218",
+                            Type = ConnectionType.Actor,
+                            Label = "T-800"
                         }
                     }
                 },
@@ -54,9 +62,15 @@ namespace Assets.Classes.EntryProviders
                     {
                         new Connection
                         {
-                            Flags = ConnectionFlags.Actor | ConnectionFlags.Director,
-                            ConnectedId = "Movie-218"
-                        }
+                            ConnectedId = "Movie-280",
+                            Type = ConnectionType.Actor,
+                            Label = "Some guy at the bar"
+                        },
+                        new Connection
+                        {
+                            ConnectedId = "Movie-280",
+                            Type = ConnectionType.Director
+                        },
                     }
                 }
             };

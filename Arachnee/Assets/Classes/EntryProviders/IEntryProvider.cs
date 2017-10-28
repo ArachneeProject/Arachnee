@@ -28,13 +28,13 @@ namespace Assets.Classes.EntryProviders
         IEnumerable<TEntry> GetAvailableEntries<TEntry>() where TEntry : Entry;
 
         /// <summary>
-        /// Gets all entries connected to the given entry id by at least one of the given connection flags.
+        /// Gets all entries connected to the given entry id by at least one of the given connection type.
         /// </summary>
         /// <typeparam name="TEntry">Type of the connected entries.</typeparam>
         /// <param name="entryId">Id of the entry.</param>
-        /// <param name="connectionFlags">Types of connection.</param>
+        /// <param name="connectionType">Types of connection.</param>
         /// <param name="entries">The resulting connected entries.</param>
         /// <returns>Wheter or not the function succeded.</returns>
-        bool TryGetConnectedEntries<TEntry>(string entryId, ConnectionFlags connectionFlags, out IEnumerable<TEntry> entries) where TEntry : Entry;
+        bool TryGetConnectedEntries<TEntry>(string entryId, ConnectionType connectionType, out IEnumerable<TEntry> entries) where TEntry : Entry;
     }
 }

@@ -24,9 +24,9 @@ public class Test_LoadEngineScene : MonoBehaviour
         };
         provider.EntryViewPrefabs.Add(typeof(Movie), EntryViewPrefab);
         provider.EntryViewPrefabs.Add(typeof(Artist), EntryViewPrefab);
-        provider.ConnectionViewPrefabs.Add(ConnectionFlags.Actor, ConnectionViewPrefab);
-        provider.ConnectionViewPrefabs.Add(ConnectionFlags.Director, ConnectionViewPrefab);
-        provider.ConnectionViewPrefabs.Add(ConnectionFlags.Director | ConnectionFlags.Actor, ConnectionViewPrefab);
+        provider.ConnectionViewPrefabs.Add(ConnectionType.Actor, ConnectionViewPrefab);
+        provider.ConnectionViewPrefabs.Add(ConnectionType.Director, ConnectionViewPrefab);
+        provider.ConnectionViewPrefabs.Add(ConnectionType.Director | ConnectionType.Actor, ConnectionViewPrefab);
 
         // load graph engine
         foreach (var entry in sample.Entries)
@@ -37,7 +37,7 @@ public class Test_LoadEngineScene : MonoBehaviour
             
             graphEngine.Add(v);
             
-            foreach (var connectionView in provider.GetConnectionViews(v.Entry, ConnectionFlags.All))
+            foreach (var connectionView in provider.GetConnectionViews(v.Entry, ConnectionType.Actor))
             {
                 graphEngine.Add(connectionView);
             }

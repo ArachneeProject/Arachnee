@@ -29,8 +29,8 @@ namespace Assets.Classes.SceneScripts.Tests
             _entryViewProvider.EntryViewPrefabs.Add(typeof (Movie), EntryViewPrefab);
             _entryViewProvider.EntryViewPrefabs.Add(typeof(Artist), EntryViewPrefab);
 
-            _entryViewProvider.ConnectionViewPrefabs.Add(ConnectionFlags.Actor, ConnectionViewPrefab);
-            _entryViewProvider.ConnectionViewPrefabs.Add(ConnectionFlags.Director, ConnectionViewPrefab);
+            _entryViewProvider.ConnectionViewPrefabs.Add(ConnectionType.Actor, ConnectionViewPrefab);
+            _entryViewProvider.ConnectionViewPrefabs.Add(ConnectionType.Director, ConnectionViewPrefab);
 
             Debug.Log("Try to type \"the terminator\" for example.");
         }

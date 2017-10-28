@@ -39,7 +39,7 @@ namespace Assets.Classes.EntryProviders
             return CachedEntries.OfType<TEntry>();
         }
         
-        public bool TryGetConnectedEntries<TEntry>(string entryId, ConnectionFlags connectionFlags, out IEnumerable<TEntry> entries) where TEntry : Entry
+        public bool TryGetConnectedEntries<TEntry>(string entryId, ConnectionType connectionType, out IEnumerable<TEntry> entries) where TEntry : Entry
         {
             Entry entry;
             if (!TryGetEntry(entryId, out entry))
@@ -49,7 +49,7 @@ namespace Assets.Classes.EntryProviders
             }
             
             var oppositeEntries = new List<Entry>();
-            foreach (var connection in entry.Connections.Where(c => c.Flags.HasFlag(connectionFlags)))
+            foreach (var connection in entry.Connections.Where(c => c.Type.HasFlag(connectionType)))
             {
                 Entry oppositeEntry;
                 if (this.TryGetEntry(connection.ConnectedId, out oppositeEntry))

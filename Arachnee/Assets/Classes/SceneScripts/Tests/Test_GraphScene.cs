@@ -27,9 +27,9 @@ namespace Assets.Classes.SceneScripts.Tests
             gameObjectProvider.EntryViewPrefabs.Add(typeof (Movie), moviePrefab);
             gameObjectProvider.EntryViewPrefabs.Add(typeof(Artist), artistPrefab);
             
-            gameObjectProvider.ConnectionViewPrefabs.Add(ConnectionFlags.Actor, actorPrefab);
-            gameObjectProvider.ConnectionViewPrefabs.Add(ConnectionFlags.Director, directorPrefab);
-            gameObjectProvider.ConnectionViewPrefabs.Add(ConnectionFlags.Actor | ConnectionFlags.Director, actorDirectorPrefab);
+            gameObjectProvider.ConnectionViewPrefabs.Add(ConnectionType.Actor, actorPrefab);
+            gameObjectProvider.ConnectionViewPrefabs.Add(ConnectionType.Director, directorPrefab);
+            gameObjectProvider.ConnectionViewPrefabs.Add(ConnectionType.Actor | ConnectionType.Director, actorDirectorPrefab);
 
             for (int i = 0; i < 30; i++)
             {
@@ -39,7 +39,7 @@ namespace Assets.Classes.SceneScripts.Tests
                     Debug.Assert(gameObjectProvider.TryGetEntryView(entry.Id, out v), entry.Id + " not found.");
                     v.transform.position = Random.onUnitSphere * 3;
 
-                    foreach (var connectionView in gameObjectProvider.GetConnectionViews(entry, ConnectionFlags.All))
+                    foreach (var connectionView in gameObjectProvider.GetConnectionViews(entry, ConnectionType.Actor))
                     {
                         connectionView.transform.position = Random.onUnitSphere * 3;
                     }
@@ -59,7 +59,7 @@ namespace Assets.Classes.SceneScripts.Tests
             count = gameObjectProvider.GetAvailableEntryViews<Entry>().Count();
             Debug.Assert(count == 3, "Count was " + count);
 
-            count = testProvider.Entries.SelectMany(e => gameObjectProvider.GetConnectionViews(e, ConnectionFlags.All)).Distinct().Count();
+            count = testProvider.Entries.SelectMany(e => gameObjectProvider.GetConnectionViews(e, ConnectionType.Actor)).Distinct().Count();
             Debug.Assert(count == 2, "Count was " + count);
         }
     }

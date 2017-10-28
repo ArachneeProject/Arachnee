@@ -14,12 +14,12 @@ namespace Assets.Classes.EntryProviders.VisibleEntries
 
         public Dictionary<Type, EntryView> EntryViewPrefabs { get; }
 
-        public Dictionary<ConnectionFlags, ConnectionView> ConnectionViewPrefabs { get; }
+        public Dictionary<ConnectionType, ConnectionView> ConnectionViewPrefabs { get; }
 
         public EntryViewProvider()
         {
             EntryViewPrefabs = new Dictionary<Type, EntryView>();
-            ConnectionViewPrefabs = new Dictionary<ConnectionFlags, ConnectionView>();
+            ConnectionViewPrefabs = new Dictionary<ConnectionType, ConnectionView>();
         }
 
         protected override bool TryLoadEntry(string entryId, out Entry entry)
@@ -43,10 +43,10 @@ namespace Assets.Classes.EntryProviders.VisibleEntries
             foreach (var connection in entry.Connections.Where(c => _cachedEntryViews.ContainsKey(c.ConnectedId)))
             {
                 ConnectionView connectionViewPrefab;
-                var connectionViewId = Connection.GetIdentifier(entry.Id, connection.ConnectedId, connection.Flags);
+                var connectionViewId = Connection.GetIdentifier(entry.Id, connection.ConnectedId, connection.Type);
 
                 if (_cachedConnectionViews.ContainsKey(connectionViewId)
-                || !ConnectionViewPrefabs.TryGetValue(connection.Flags, out connectionViewPrefab))
+                || !ConnectionViewPrefabs.TryGetValue(connection.Type, out connectionViewPrefab))
                 {
                     continue;
                 }
@@ -94,18 +94,18 @@ namespace Assets.Classes.EntryProviders.VisibleEntries
         }
 
         /// <summary>
-        /// Returns a list of connectionViews having at least one of the given connection flags.
+        /// Returns a list of connectionViews having at least one of the given connection type.
         /// </summary>
         /// <param name="entry">Entry to get the connectionView from.</param>
-        /// <param name="flags">Connection flags.</param>
+        /// <param name="type">Connection type.</param>
         /// <returns>The list of corresponding connectionViews.</returns>
-        public List<ConnectionView> GetConnectionViews(Entry entry, ConnectionFlags flags)
+        public List<ConnectionView> GetConnectionViews(Entry entry, ConnectionType type)
         {
             var results = new List<ConnectionView>();
 
-            foreach (var connection in entry.Connections.Where(c => c.Flags.HasFlag(flags)))
+            foreach (var connection in entry.Connections.Where(c => c.Type.HasFlag(type)))
             {
-                string connectionId = Connection.GetIdentifier(entry.Id, connection.ConnectedId, connection.Flags);
+                string connectionId = Connection.GetIdentifier(entry.Id, connection.ConnectedId, connection.Type);
 
                 if (_cachedConnectionViews.ContainsKey(connectionId))
                 {

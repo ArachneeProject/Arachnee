@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using FSharpx.Collections;
 
 namespace Assets.Classes.GraphElements
 {
@@ -7,6 +9,8 @@ namespace Assets.Classes.GraphElements
         public string BackdropPath { get; set; }
 
         public int Budget { get; set; }
+
+        public List<string> Tags { get; set; }
 
         public string Homepage { get; set; }
 
