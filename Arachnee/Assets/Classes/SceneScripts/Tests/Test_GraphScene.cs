@@ -1,8 +1,8 @@
 ﻿using System.Linq;
-using Assets.Classes.EntryProviders;
-using Assets.Classes.EntryProviders.VisibleEntries;
-using Assets.Classes.GraphElements;
-using Assets.Classes.PhysicsEngine;
+using Assets.Classes.Core.EntryProviders;
+using Assets.Classes.Core.Models;
+using Assets.Classes.CoreVisualization.EntryViewProviders;
+using Assets.Classes.CoreVisualization.ModelViews;
 using UnityEngine;
 
 namespace Assets.Classes.SceneScripts.Tests

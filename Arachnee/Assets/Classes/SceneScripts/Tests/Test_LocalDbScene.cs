@@ -1,6 +1,6 @@
-﻿using Assets.Classes.EntryProviders;
-using Assets.Classes.EntryProviders.OnlineDatabase;
-using Assets.Classes.GraphElements;
+﻿using Assets.Classes.Core.EntryProviders;
+using Assets.Classes.Core.EntryProviders.OnlineDatabase;
+using Assets.Classes.Core.Models;
 using UnityEngine;
 
 namespace Assets.Classes.SceneScripts.Tests

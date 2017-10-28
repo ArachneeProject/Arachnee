@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Assets.Classes.EntryProviders.OnlineDatabase;
-using Assets.Classes.GraphElements;
+using Assets.Classes.Core.EntryProviders.OnlineDatabase;
+using Assets.Classes.Core.Models;
 using Assets.Classes.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

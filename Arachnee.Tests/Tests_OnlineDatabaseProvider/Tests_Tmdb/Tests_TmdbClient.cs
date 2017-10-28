@@ -1,6 +1,6 @@
 ﻿using System.Linq;
-using Assets.Classes.EntryProviders.OnlineDatabase.Tmdb;
-using Assets.Classes.EntryProviders.OnlineDatabase.Tmdb.Exceptions;
+using Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb;
+using Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb.Exceptions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
