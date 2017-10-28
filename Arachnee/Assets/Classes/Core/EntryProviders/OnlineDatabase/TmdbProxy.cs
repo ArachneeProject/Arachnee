@@ -20,6 +20,59 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
             {"Boom Operator", ConnectionType.BoomOperator},
         };
 
+        /// <summary>
+        /// Returns a list of <see cref="SearchResult"/> corresponding to the given query.
+        /// </summary>
+        public List<SearchResult> GetSearchResults(string query)
+        {
+            var results = new List<SearchResult>();
+            if (string.IsNullOrEmpty(query))
+            {
+                return results;
+            }
+
+            var tmdbResults = _client.GetCombinedSearchResults(query);
+            var resultsWithImage = tmdbResults.Where(r => !(string.IsNullOrEmpty(r.PosterPath) && string.IsNullOrEmpty(r.ProfilePath)));
+
+            foreach (var result in resultsWithImage)
+            {
+                switch (result.MediaType)
+                {
+                    case "movie":
+                        results.Add(new SearchResult
+                        {
+                            EntryId = nameof(Movie) + IdSeparator + result.Id,
+                            ImagePath = result.PosterPath,
+                            Name = result.Title
+                        });
+                        break;
+                        
+                    case "person":
+                        results.Add(new SearchResult
+                        {
+                            EntryId = nameof(Artist) + IdSeparator + result.Id,
+                            ImagePath = result.ProfilePath,
+                            Name = result.Name
+                        });
+                        break;
+
+                    case "tv":
+                        results.Add(new SearchResult
+                        {
+                            EntryId = nameof(Serie) + IdSeparator + result.Id,
+                            ImagePath = result.PosterPath,
+                            Name = result.Name
+                        });
+                        break;
+                }
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// Returns the <see cref="Entry"/> corresponding to the given id.
+        /// </summary>
         public Entry GetEntry(string entryId)
         {
             if (string.IsNullOrEmpty(entryId))

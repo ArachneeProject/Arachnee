@@ -154,5 +154,48 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
 
             Assert.ThrowsException<ArgumentException>(() => tmdbProxy.GetEntry(null));
         }
+
+        [TestMethod]
+        public void GetSearchResults_ValidQuery_ReturnsValidResults()
+        {
+            var tmdbProxy = new TmdbProxy();
+            var results = tmdbProxy.GetSearchResults("Jackie Chan");
+
+            Assert.AreEqual(19, results.Count);
+
+            var movieResult = results.FirstOrDefault(r => r.Name == "First Strike");
+            var personResult = results.FirstOrDefault(r => r.Name == "Jackie Chan");
+            var tvResult = results.FirstOrDefault(r => r.Name == "Jackie Chan Adventures");
+
+            Assert.IsNotNull(movieResult);
+            Assert.IsNotNull(personResult);
+            Assert.IsNotNull(tvResult);
+
+            Assert.AreEqual("Movie-9404", movieResult.EntryId);
+            Assert.AreEqual("Artist-18897", personResult.EntryId);
+            Assert.AreEqual("Serie-240", tvResult.EntryId);
+            
+            Assert.AreEqual("/9i6bhYbxe2g02e3GhljtktuyDMj.jpg", movieResult.ImagePath);
+            Assert.AreEqual("/pmKJ4sGvPQ3imzXaFnjW4Vk5Gyc.jpg", personResult.ImagePath);
+            Assert.AreEqual("/6bsg03VVkB41Vzs6w1NvpFvq2yH.jpg", tvResult.ImagePath);
+        }
+        
+        [TestMethod]
+        public void GetSearchResults_EmptyQuery_ReturnsEmptyResults()
+        {
+            var tmdbProxy = new TmdbProxy();
+            var results = tmdbProxy.GetSearchResults("");
+
+            Assert.AreEqual(0, results.Count);
+        }
+
+        [TestMethod]
+        public void GetSearchResults_Null_ReturnsEmptyResults()
+        {
+            var tmdbProxy = new TmdbProxy();
+            var results = tmdbProxy.GetSearchResults(null);
+
+            Assert.AreEqual(0, results.Count);
+        }
     }
 }
