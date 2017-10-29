@@ -33,6 +33,11 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
             _builder.ConnectionViewPrefab = prefab;
         }
 
+        public void SetPrefab(SearchResultView prefab)
+        {
+            _builder.SearchResultViewPrefab = prefab;
+        }
+
         [CanBeNull]
         public EntryView GetEntryView(string entryId)
         {
@@ -102,7 +107,17 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
         
         public Queue<SearchResultView> GetSearchResultViews(string searchQuery)
         {
-            throw new NotImplementedException();
+            var resultsQueue = _provider.GetSearchResults(searchQuery);
+            var resultViewsQueue = new Queue<SearchResultView>();
+
+            while (resultsQueue.Any())
+            {
+                var result = resultsQueue.Dequeue();
+                var resultView = _builder.BuildResultView(result);
+                resultViewsQueue.Enqueue(resultView);
+            }
+
+            return resultViewsQueue;
         }
     }
 }

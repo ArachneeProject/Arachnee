@@ -12,9 +12,9 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
     public class ModelViewBuilder
     {
         public Dictionary<Type, EntryView> EntryViewPrefabs { get; } = new Dictionary<Type, EntryView>();
-
         public ConnectionView ConnectionViewPrefab { get; set; }
-        
+        public SearchResultView SearchResultViewPrefab { get; set; }
+
         [CanBeNull]
         public EntryView BuildEntryView(Entry entry)
         {
@@ -66,6 +66,21 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
             connectionView.gameObject.name = connectionView.Id;
             
             return connectionView;
+        }
+
+        [CanBeNull]
+        public SearchResultView BuildResultView(SearchResult searchResult)
+        {
+            if (searchResult == null)
+            {
+                throw new ArgumentNullException(nameof(searchResult));
+            }
+
+            var searchResultView = Object.Instantiate(this.SearchResultViewPrefab);
+            searchResultView.Result = searchResult;
+            searchResultView.gameObject.name = $"{nameof(SearchResult)}: {searchResult.Name} ({searchResult.EntryId})"; ;
+
+            return searchResultView;
         }
     }
 }

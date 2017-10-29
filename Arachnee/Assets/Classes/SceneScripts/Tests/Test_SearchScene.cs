@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Assets.Classes.Core.EntryProviders.OnlineDatabase;
-using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
 using Assets.Classes.CoreVisualization.ModelViews;
 using UnityEngine;
@@ -12,41 +9,46 @@ namespace Assets.Classes.SceneScripts.Tests
 {
     public class Test_SearchScene : MonoBehaviour
     {
-        public InputField input;
+        public InputField inputField;
+        
+        public SearchResultView searchResultViewPrefab;
 
-        public EntryView EntryViewPrefab;
-        public ConnectionView ConnectionViewPrefab;
-        
         private ModelViewManager _manager;
-        
+
+        private float _searchCounter = -5; // used to shift each search
+
         void Start ()
         {
             _manager = new ModelViewManager(new OnlineDatabase());
-
-            _manager.SetPrefab<Movie>(EntryViewPrefab);
-            _manager.SetPrefab<Artist>(EntryViewPrefab);
-
-            _manager.SetPrefab(ConnectionViewPrefab);
+            _manager.SetPrefab(searchResultViewPrefab);
             
             Debug.Log("Try to type \"the terminator\" for example.");
         }
         
         public void Go()
         {
-            Debug.Log("Searching for " + input.text);
-            var res = _manager.GetSearchResultViews(input.text);
-            if (!res.Any())
+            Debug.Log("Searching for " + inputField.text);
+            var queue = _manager.GetSearchResultViews(inputField.text);
+            if (!queue.Any())
             {
                 Debug.Log("No result.");
                 return;
             }
-            
-            var bestRes = res.Dequeue();
-            Debug.Log("Best is " + bestRes + " (among " + res.Count + " other results)");
 
-            var best = _manager.GetEntryView(bestRes.Result.EntryId);
-            best.transform.position = UnityEngine.Random.onUnitSphere * 3;
-            Camera.main.transform.LookAt(best.transform.position);
+            _searchCounter += 5;
+            
+            var bestRresultView = queue.Dequeue();
+            Debug.Log("Best is " + bestRresultView + " (among " + queue.Count + " other results)");
+
+            bestRresultView.transform.position = new Vector3(_searchCounter, 0, 0);
+            Camera.main.transform.LookAt(bestRresultView.transform.position);
+
+            float i = -2; // used to shift each search result
+            while (queue.Any())
+            {
+                queue.Dequeue().transform.position = new Vector3(_searchCounter, i, 0);
+                i -= 2;
+            }
         }
     }
 }
