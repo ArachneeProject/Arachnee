@@ -1,7 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Assets.Classes.Core.EntryProviders;
 using Assets.Classes.Core.Models;
-using Assets.Classes.CoreVisualization.EntryViewProviders;
+using Assets.Classes.CoreVisualization.ModelViewManagement;
 using Assets.Classes.CoreVisualization.ModelViews;
 using UnityEngine;
 
@@ -9,58 +10,53 @@ namespace Assets.Classes.SceneScripts.Tests
 {
     public class Test_GraphScene : MonoBehaviour
     {
-        public EntryView moviePrefab;
-        public EntryView artistPrefab;
+        public EntryView movieViewPrefab;
+        public EntryView artistViewPrefab;
 
-        public ConnectionView actorPrefab;
-        public ConnectionView directorPrefab;
-        public ConnectionView actorDirectorPrefab;
+        public ConnectionView connectionViewPrefab;
         
         void Start()
         {
             var testProvider = new MiniSampleProvider();
-            var gameObjectProvider = new EntryViewProvider()
-            {
-                BiggerProvider = testProvider
-            };
+            var manager = new ModelViewManager(testProvider);
 
-            gameObjectProvider.EntryViewPrefabs.Add(typeof (Movie), moviePrefab);
-            gameObjectProvider.EntryViewPrefabs.Add(typeof(Artist), artistPrefab);
+            manager.SetPrefab<Movie>(movieViewPrefab);
+            manager.SetPrefab<Artist>(artistViewPrefab);
+            manager.SetPrefab(connectionViewPrefab);
+
+            var entryViewSet = new HashSet<EntryView>();
             
-            gameObjectProvider.ConnectionViewPrefabs.Add(ConnectionType.Actor, actorPrefab);
-            gameObjectProvider.ConnectionViewPrefabs.Add(ConnectionType.Director, directorPrefab);
-            gameObjectProvider.ConnectionViewPrefabs.Add(ConnectionType.Actor | ConnectionType.Director, actorDirectorPrefab);
-
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 100; i++)
             {
-                foreach (var entry in testProvider.Entries)
+                foreach (var entryId in testProvider.Entries.Select(e => e.Id))
                 {
-                    EntryView v;
-                    Debug.Assert(gameObjectProvider.TryGetEntryView(entry.Id, out v), entry.Id + " not found.");
-                    v.transform.position = Random.onUnitSphere * 3;
+                    var entryView = manager.GetEntryView(entryId);
+                    entryView.transform.position = Random.onUnitSphere * 5;
 
-                    foreach (var connectionView in gameObjectProvider.GetConnectionViews(entry, ConnectionType.Actor))
+                    entryViewSet.Add(entryView);
+                }
+            }
+
+            var connectionViewSet = new HashSet<ConnectionView>();
+
+            for (int i = 0; i < 100; i++)
+            {
+                foreach (var entryView in entryViewSet)
+                {
+                    var connectionViews = manager.GetConnectionViews(entryView);
+
+                    foreach (var connectionView in connectionViews)
                     {
-                        connectionView.transform.position = Random.onUnitSphere * 3;
+                        connectionView.transform.position = Random.onUnitSphere * 5;
+                        connectionViewSet.Add(connectionView);
                     }
                 }
             }
 
             // checks
-            Debug.Log("You should see two sphere (artists), one cube (movie), one long parallelepiped (actor)," +
-                      " and one long ellipsoid forming a cross with a parallelepiped (director-actor). Nothing more.");
-
-            var count = gameObjectProvider.GetAvailableEntryViews<Movie>().Count();
-            Debug.Assert(count == 1, "Count was " + count);
-
-            count = gameObjectProvider.GetAvailableEntryViews<Artist>().Count();
-            Debug.Assert(count == 2, "Count was " + count);
-
-            count = gameObjectProvider.GetAvailableEntryViews<Entry>().Count();
-            Debug.Assert(count == 3, "Count was " + count);
-
-            count = testProvider.Entries.SelectMany(e => gameObjectProvider.GetConnectionViews(e, ConnectionType.Actor)).Distinct().Count();
-            Debug.Assert(count == 2, "Count was " + count);
+            Debug.Log("You should see one cube (movie), two sphere (artist), and two ellipsoid (artist-movie connections).");
+            Debug.Assert(entryViewSet.Count == 3, $"Count was {entryViewSet.Count}");
+            Debug.Assert(connectionViewSet.Count == 2, $"Count was {connectionViewSet.Count}");
         }
     }
 }

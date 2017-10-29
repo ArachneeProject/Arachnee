@@ -48,7 +48,7 @@ namespace Assets.Classes.Core.EntryProviders
                     {
                         new Connection
                         {
-                            ConnectedId = "Movie-218",
+                            ConnectedId = "Movie-280",
                             Type = ConnectionType.Actor,
                             Label = "T-800"
                         }

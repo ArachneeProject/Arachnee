@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Assets.Classes.Core.EntryProviders.OnlineDatabase;
 using Assets.Classes.Core.Models;
-using Assets.Classes.CoreVisualization.EntryViewProviders;
+using Assets.Classes.CoreVisualization.ModelViewManagement;
 using Assets.Classes.CoreVisualization.ModelViews;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,17 +16,18 @@ namespace Assets.Classes.SceneScripts.Tests
         public Text clickedEntryViewName;
         public Button validateButton;
 
-        private readonly EntryViewProvider _provider = new EntryViewProvider();
+        private ModelViewManager _manager;
 
         private EntryView _selectedEntryView;
         private readonly List<EntryView> _searchResults = new List<EntryView>();
 
         void Start () 
         {
-            _provider.BiggerProvider = new OnlineDatabase();
-            _provider.EntryViewPrefabs.Add(typeof(Movie), entryViewPrefab);
-            _provider.EntryViewPrefabs.Add(typeof(Artist), entryViewPrefab);
+            _manager = new ModelViewManager(new OnlineDatabase());
 
+            _manager.SetPrefab<Movie>(entryViewPrefab);
+            _manager.SetPrefab<Artist>(entryViewPrefab);
+            
             clickedEntryViewName.gameObject.SetActive(false);
             validateButton.gameObject.SetActive(false);
         }
@@ -46,10 +47,13 @@ namespace Assets.Classes.SceneScripts.Tests
             _searchResults.Clear();
 
             // run search
-            var results = _provider.GetEntryViewResults<Entry>(input.text);
+            var results = _manager.GetSearchResultViews(input.text);
             Debug.Log(results.Count + " results for " + input.text);
 
+
+
             // update search results
+            /*
             while (results.Count > 0)
             {
                 var result = results.Dequeue();
@@ -57,6 +61,7 @@ namespace Assets.Classes.SceneScripts.Tests
                 result.transform.position = Random.onUnitSphere*2;
                 _searchResults.Add(result);
             }
+            */
         }
 
         private void UpdateClickedEntryView(EntryView entryView)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Classes.Core.EntryProviders.OnlineDatabase;
 using Assets.Classes.Core.Models;
-using Assets.Classes.CoreVisualization.EntryViewProviders;
+using Assets.Classes.CoreVisualization.ModelViewManagement;
 using Assets.Classes.CoreVisualization.ModelViews;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,40 +17,36 @@ namespace Assets.Classes.SceneScripts.Tests
         public EntryView EntryViewPrefab;
         public ConnectionView ConnectionViewPrefab;
         
-        private EntryViewProvider _entryViewProvider;
+        private ModelViewManager _manager;
         
         void Start ()
         {
-            _entryViewProvider = new EntryViewProvider
-            {
-                BiggerProvider = new OnlineDatabase()
-            };
+            _manager = new ModelViewManager(new OnlineDatabase());
 
-            _entryViewProvider.EntryViewPrefabs.Add(typeof (Movie), EntryViewPrefab);
-            _entryViewProvider.EntryViewPrefabs.Add(typeof(Artist), EntryViewPrefab);
+            _manager.SetPrefab<Movie>(EntryViewPrefab);
+            _manager.SetPrefab<Artist>(EntryViewPrefab);
 
-            _entryViewProvider.ConnectionViewPrefabs.Add(ConnectionType.Actor, ConnectionViewPrefab);
-            _entryViewProvider.ConnectionViewPrefabs.Add(ConnectionType.Director, ConnectionViewPrefab);
-
+            _manager.SetPrefab(ConnectionViewPrefab);
+            
             Debug.Log("Try to type \"the terminator\" for example.");
         }
         
         public void Go()
         {
             Debug.Log("Searching for " + input.text);
-            var res = _entryViewProvider.GetEntryViewResults<Entry>(input.text);
-            if (res.Any())
+            var res = _manager.GetSearchResultViews(input.text);
+            if (!res.Any())
             {
-                var best = res.Dequeue();
-                Debug.Log("Best is " + best + " (among " + res.Count + " other results)");
-                
-                best.transform.position = UnityEngine.Random.onUnitSphere*3;
-                Camera.main.transform.LookAt(best.transform.position);
-                
+                Debug.Log("No result.");
                 return;
             }
+            
+            var bestRes = res.Dequeue();
+            Debug.Log("Best is " + bestRes + " (among " + res.Count + " other results)");
 
-            Debug.Log("No result.");
+            var best = _manager.GetEntryView(bestRes.Result.EntryId);
+            best.transform.position = UnityEngine.Random.onUnitSphere * 3;
+            Camera.main.transform.LookAt(best.transform.position);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Assets.Classes.Core.EntryProviders;
 using Assets.Classes.Core.Models;
-using Assets.Classes.CoreVisualization.EntryViewProviders;
+using Assets.Classes.CoreVisualization.ModelViewManagement;
 using Assets.Classes.CoreVisualization.ModelViews;
 using Assets.Classes.CoreVisualization.PhysicsEngine;
 using UnityEngine;
@@ -17,27 +17,22 @@ namespace Assets.Classes.SceneScripts.Tests
         void Start ()
         {
             // sets up provider
-            var sample = new MiniSampleProvider();
-            var provider = new EntryViewProvider()
-            {
-                BiggerProvider = sample
-            };
-            provider.EntryViewPrefabs.Add(typeof(Movie), EntryViewPrefab);
-            provider.EntryViewPrefabs.Add(typeof(Artist), EntryViewPrefab);
-            provider.ConnectionViewPrefabs.Add(ConnectionType.Actor, ConnectionViewPrefab);
-            provider.ConnectionViewPrefabs.Add(ConnectionType.Director, ConnectionViewPrefab);
-            provider.ConnectionViewPrefabs.Add(ConnectionType.Director | ConnectionType.Actor, ConnectionViewPrefab);
+            var sampleProvider = new MiniSampleProvider();
+            var manager = new ModelViewManager(sampleProvider);
+
+            manager.SetPrefab<Movie>(EntryViewPrefab);
+            manager.SetPrefab<Artist>(EntryViewPrefab);
+            manager.SetPrefab(ConnectionViewPrefab);
 
             // load graph engine
-            foreach (var entry in sample.Entries)
+            foreach (var entry in sampleProvider.Entries.Select(e => e.Id))
             {
-                EntryView v;
-                Debug.Assert(provider.TryGetEntryView(entry.Id, out v), "Failed to set up provider.");
-                v.transform.position = UnityEngine.Random.onUnitSphere*5;
+                var entryView = manager.GetEntryView(entry);
+                entryView.transform.position = Random.onUnitSphere*5;
             
-                graphEngine.Add(v);
-            
-                foreach (var connectionView in provider.GetConnectionViews(v.Entry, ConnectionType.Actor))
+                graphEngine.Add(entryView);
+
+                foreach (var connectionView in manager.GetConnectionViews(entryView))
                 {
                     graphEngine.Add(connectionView);
                 }
