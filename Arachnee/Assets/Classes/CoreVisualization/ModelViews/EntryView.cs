@@ -18,12 +18,10 @@ namespace Assets.Classes.CoreVisualization.ModelViews
         {
             Rigidbody = GetComponent<Rigidbody>();
             if (Rigidbody == null)
-            {
                 throw new Exception("No Rigibody component found on EntryView GameObject.");
-            }
         }
 
-        private void OnMouseUpAsButton()
+        void OnMouseUpAsButton()
         {
             OnClicked?.Invoke(this);
         }

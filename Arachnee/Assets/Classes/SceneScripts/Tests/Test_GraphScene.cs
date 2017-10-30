@@ -31,7 +31,7 @@ namespace Assets.Classes.SceneScripts.Tests
                 foreach (var entryId in testProvider.Entries.Select(e => e.Id))
                 {
                     var entryView = manager.GetEntryView(entryId);
-                    entryView.transform.position = Random.onUnitSphere * 5;
+                    entryView.transform.position = Random.onUnitSphere * 3;
 
                     entryViewSet.Add(entryView);
                 }
@@ -47,7 +47,7 @@ namespace Assets.Classes.SceneScripts.Tests
 
                     foreach (var connectionView in connectionViews)
                     {
-                        connectionView.transform.position = Random.onUnitSphere * 5;
+                        connectionView.transform.position = Random.onUnitSphere * 3;
                         connectionViewSet.Add(connectionView);
                     }
                 }

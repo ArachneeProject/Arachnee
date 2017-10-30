@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Assets.Classes.Core.EntryProviders.OnlineDatabase;
 using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
@@ -10,77 +11,89 @@ namespace Assets.Classes.SceneScripts.Tests
 {
     public class Test_SearchSelectionScene : MonoBehaviour
     {
-        public EntryView entryViewPrefab;
+        public EntryView movieViewPrefab;
+        public EntryView artistViewPrefab;
+        public EntryView serieViewPrefab;
+        public SearchResultView searchResultViewPrefab;
 
         public InputField input;
-        public Text clickedEntryViewName;
+        public Text clickedEntryViewLabel;
         public Button validateButton;
-
+        
         private ModelViewManager _manager;
 
-        private EntryView _selectedEntryView;
-        private readonly List<EntryView> _searchResults = new List<EntryView>();
+        private SearchResultView _selectedResultView;
+        private readonly List<SearchResultView> _searchResults = new List<SearchResultView>();
 
         void Start () 
         {
             _manager = new ModelViewManager(new OnlineDatabase());
 
-            _manager.SetPrefab<Movie>(entryViewPrefab);
-            _manager.SetPrefab<Artist>(entryViewPrefab);
+            _manager.SetPrefab<Movie>(movieViewPrefab);
+            _manager.SetPrefab<Artist>(artistViewPrefab);
+            _manager.SetPrefab<Serie>(serieViewPrefab);
+            _manager.SetPrefab(searchResultViewPrefab);
             
-            clickedEntryViewName.gameObject.SetActive(false);
-            validateButton.gameObject.SetActive(false);
+            Clear();
+
+            Debug.Log("Try to write \"Jackie Chan\". " +
+                      "Then click on one of the results, and validate. " +
+                      "The corresponding prefab should then be displayed: " +
+                      "cube for a movie, capsule for a serie) or sphere for an artist.");
         }
-    
+        
         public void RunSearch()
         {
-            // clear previous search
-            clickedEntryViewName.gameObject.SetActive(false);
-            validateButton.gameObject.SetActive(false);
-
-            _selectedEntryView = null;
-            foreach (var searchResult in _searchResults)
-            {
-                searchResult.OnClicked -= UpdateClickedEntryView;
-                DestroyImmediate(searchResult.gameObject); // I know what I'm doing here
-            }
-            _searchResults.Clear();
+            Clear();
 
             // run search
             var results = _manager.GetSearchResultViews(input.text);
             Debug.Log(results.Count + " results for " + input.text);
-
-
-
-            // update search results
-            /*
-            while (results.Count > 0)
+            
+            // set up search results
+            while (results.Any())
             {
                 var result = results.Dequeue();
-                result.OnClicked += UpdateClickedEntryView;
-                result.transform.position = Random.onUnitSphere*2;
+                result.OnClicked += UpdateSelectedResultView;
+                result.transform.position = Random.onUnitSphere * 2;
                 _searchResults.Add(result);
             }
-            */
         }
 
-        private void UpdateClickedEntryView(EntryView entryView)
+        private void Clear()
         {
-            _selectedEntryView = entryView;
+            clickedEntryViewLabel.gameObject.SetActive(false);
+            validateButton.gameObject.SetActive(false);
+            _selectedResultView = null;
 
-            clickedEntryViewName.gameObject.SetActive(true);
-            clickedEntryViewName.text = entryView.ToString();
+            foreach (var searchResult in _searchResults)
+            {
+                searchResult.OnClicked -= UpdateSelectedResultView;
+                DestroyImmediate(searchResult.gameObject); // I know what I'm doing here
+            }
+
+            _searchResults.Clear();
+        }
+
+        private void UpdateSelectedResultView(SearchResultView resultView)
+        {
+            _selectedResultView = resultView;
+
+            clickedEntryViewLabel.gameObject.SetActive(true);
+            clickedEntryViewLabel.text = resultView.Result.Name;
 
             validateButton.gameObject.SetActive(true);
         }
     
         public void Validate()
         {
-            var particle = _selectedEntryView.gameObject.GetComponent<ParticleSystem>();
-            particle.Emit(10);
+            var entry = _manager.GetEntryView(_selectedResultView.Result.EntryId);
+            if (entry != null)
+            {
+                entry.transform.position = Random.onUnitSphere * 2;
+            }
 
-            validateButton.gameObject.SetActive(false);
-            clickedEntryViewName.gameObject.SetActive(false);
+            Clear();
         }
     }
 }

@@ -97,7 +97,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
 
             // convert the tmdb object to its corresponding Entry
             Entry entry;
-            switch (entryType)
+            switch (entryType) // TODO: Handle Serie
             {
                 case nameof(Movie):
                     var tmdbMovie = _client.GetMovie(tmdbId);
