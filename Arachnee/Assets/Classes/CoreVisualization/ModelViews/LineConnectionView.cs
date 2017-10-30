@@ -1,21 +1,23 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
+using Logger = Assets.Classes.Logging.Logger;
 
 namespace Assets.Classes.CoreVisualization.ModelViews
 {
+    [RequireComponent(typeof(LineRenderer))]
     public class LineConnectionView : ConnectionView
     {
         private LineRenderer _lineRenderer;
-
+        
         void Start()
         {
             _lineRenderer = GetComponent<LineRenderer>();
             if (_lineRenderer == null)
             {
-                throw new Exception("No LineRenderer component found on ConnectionView GameObject.");
+                Logger.LogError($"No {nameof(LineRenderer)} component found on {nameof(LineConnectionView)} GameObject.");
+                return;
             }
         }
-
+        
         void Update()
         {
             _lineRenderer.SetPosition(0, Left.transform.position);

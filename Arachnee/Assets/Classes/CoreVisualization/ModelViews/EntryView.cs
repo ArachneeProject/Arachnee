@@ -1,9 +1,10 @@
-﻿using System;
-using Assets.Classes.Core.Models;
+﻿using Assets.Classes.Core.Models;
 using UnityEngine;
+using Logger = Assets.Classes.Logging.Logger;
 
 namespace Assets.Classes.CoreVisualization.ModelViews
 {
+    [RequireComponent(typeof(Rigidbody))]
     public class EntryView : MonoBehaviour
     {
         public delegate void EntryViewClickedDelegate(EntryView v);
@@ -14,11 +15,14 @@ namespace Assets.Classes.CoreVisualization.ModelViews
 
         public event EntryViewClickedDelegate OnClicked;
 
-        private void Start()
+        void Start()
         {
             Rigidbody = GetComponent<Rigidbody>();
             if (Rigidbody == null)
-                throw new Exception("No Rigibody component found on EntryView GameObject.");
+            {
+                Logger.LogError($"No {nameof(Rigidbody)} component found on {nameof(EntryView)} GameObject.");
+                return;
+            }
         }
 
         void OnMouseUpAsButton()

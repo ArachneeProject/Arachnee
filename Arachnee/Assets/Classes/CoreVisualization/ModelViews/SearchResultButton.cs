@@ -5,10 +5,10 @@ using Logger = Assets.Classes.Logging.Logger;
 
 namespace Assets.Classes.CoreVisualization.ModelViews
 {
+    [RequireComponent(typeof(Button))]
     public class SearchResultButton : SearchResultView
     {
         private Button _button;
-        private Text _text;
         
         [UsedImplicitly]
         void Start()
@@ -16,17 +16,10 @@ namespace Assets.Classes.CoreVisualization.ModelViews
             _button = this.GetComponent<Button>();
             if (_button == null)
             {
-                Logger.LogError($"No {nameof(Button)} component found on {nameof(SearchResultView)} gameobject.");
+                Logger.LogError($"No {nameof(Button)} component found on {nameof(SearchResultView)} GameObject.");
                 return;
             }
-
-            _text = this.GetComponentInChildren<Text>();
-            if (_text == null)
-            {
-                Logger.LogError($"No {nameof(Text)} component found in children of {nameof(SearchResultView)} gameobject.");
-                return;
-            }
-
+            
             var canvas = GameObject.FindObjectOfType<Canvas>();
             if (canvas == null)
             {
