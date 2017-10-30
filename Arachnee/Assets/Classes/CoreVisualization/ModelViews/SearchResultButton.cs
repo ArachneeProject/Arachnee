@@ -1,6 +1,7 @@
-﻿using Assets.Classes.Logging;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
+using UnityEngine;
 using UnityEngine.UI;
+using Logger = Assets.Classes.Logging.Logger;
 
 namespace Assets.Classes.CoreVisualization.ModelViews
 {
@@ -25,6 +26,15 @@ namespace Assets.Classes.CoreVisualization.ModelViews
                 Logger.LogError($"No {nameof(Text)} component found in children of {nameof(SearchResultView)} gameobject.");
                 return;
             }
+
+            var canvas = GameObject.FindObjectOfType<Canvas>();
+            if (canvas == null)
+            {
+                Logger.LogError($"Canvas was not found for {nameof(SearchResultView)}.");
+                return;
+            }
+
+            this.transform.SetParent(canvas.transform);
 
             _button.onClick.AddListener(OnMouseUpAsButton);
         }
