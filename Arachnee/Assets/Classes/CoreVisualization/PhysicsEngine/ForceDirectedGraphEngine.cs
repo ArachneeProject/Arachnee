@@ -62,6 +62,7 @@ namespace Assets.Classes.CoreVisualization.PhysicsEngine
 
         void FixedUpdate()
         {
+            /* // TODO: fix
             // TODO: can be improved from n² to n(n-1)/2 computations
             foreach (var vertex in this.Vertices.Where(vertex => vertex.Rigidbody != null))
             {
@@ -102,6 +103,7 @@ namespace Assets.Classes.CoreVisualization.PhysicsEngine
                 edge.Left.Rigidbody.AddForce(-attraction);
                 edge.Right.Rigidbody.AddForce(attraction);
             }
+            */
         }
     }
 }
