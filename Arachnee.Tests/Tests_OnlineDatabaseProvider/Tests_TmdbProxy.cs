@@ -122,7 +122,15 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
 
             Assert.ThrowsException<ArgumentException>(() => tmdbProxy.GetEntry("-1100"));
         }
-        
+
+        [TestMethod]
+        public void GetEntry_InvalidIdSegment_ThrowsArgumentException()
+        {
+            var tmdbProxy = new TmdbProxy();
+
+            Assert.ThrowsException<ArgumentException>(() => tmdbProxy.GetEntry("Movie-#invalid#"));
+        }
+
         [TestMethod]
         public void GetEntry_EmptyIdSegment_ThrowsArgumentException()
         {
@@ -130,7 +138,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
 
             Assert.ThrowsException<ArgumentException>(() => tmdbProxy.GetEntry("Movie-"));
         }
-        
+
         [TestMethod]
         public void GetEntry_TooManySegments_ThrowsArgumentException()
         {

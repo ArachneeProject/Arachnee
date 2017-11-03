@@ -8,7 +8,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects
         public string BackdropPath { get; set; }
         public string FirstAirDate { get; set; }
         public List<long> GenreIds { get; set; }
-        public long Id { get; set; }
+        public ulong Id { get; set; }
         public List<KnownFor> KnownFor { get; set; }
         public string MediaType { get; set; }
         public string Name { get; set; }

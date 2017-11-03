@@ -6,7 +6,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects
     {
         public bool? Adult { get; set; }
         public string BackdropPath { get; set; }
-        public long CastId { get; set; }
+        public ulong CastId { get; set; }
         public string Character { get; set; }
         public string CreditId { get; set; }
         public string Department { get; set; }
@@ -14,7 +14,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects
         public string FirstAirDate { get; set; }
         public long Gender { get; set; }
         public List<long> GenreIds { get; set; }
-        public long Id { get; set; }
+        public ulong Id { get; set; }
         public string Job { get; set; }
         public string MediaType { get; set; }
         public string Name { get; set; }

@@ -95,17 +95,23 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
                 throw new ArgumentException($"\"{entryId}\" is not a valid id.", nameof(entryId));
             }
 
+            ulong id;
+            if (!ulong.TryParse(tmdbId, out id))
+            {
+                throw new ArgumentException($"\"{entryId}\" is not a valid id.", nameof(entryId));
+            }
+
             // convert the tmdb object to its corresponding Entry
             Entry entry;
             switch (entryType) // TODO: Handle Serie
             {
                 case nameof(Movie):
-                    var tmdbMovie = _client.GetMovie(tmdbId);
+                    var tmdbMovie = _client.GetMovie(id);
                     entry = ConvertToMovie(tmdbMovie);
                     break;
 
                 case nameof(Artist):
-                    var tmdbPerson = _client.GetPerson(tmdbId);
+                    var tmdbPerson = _client.GetPerson(id);
                     entry = ConvertToArtist(tmdbPerson);
                     break;
                 default:

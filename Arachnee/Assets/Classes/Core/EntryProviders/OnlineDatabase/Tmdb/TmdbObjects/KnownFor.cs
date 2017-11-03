@@ -7,7 +7,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects
         public bool Adult { get; set; }
         public string BackdropPath { get; set; }
         public List<long> GenreIds { get; set; }
-        public long Id { get; set; }
+        public ulong Id { get; set; }
         public string MediaType { get; set; }
         public string OriginalLanguage { get; set; }
         public string OriginalTitle { get; set; }

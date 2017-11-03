@@ -15,7 +15,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
         {
             var client = new TmdbClient();
 
-            var tmdbMovie = client.GetMovie("218");
+            var tmdbMovie = client.GetMovie(218);
 
             Assert.IsNotNull(tmdbMovie);
 
@@ -26,7 +26,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
             Assert.IsNotNull(tmdbMovie.Credits);
             Assert.IsTrue(tmdbMovie.Genres.Count > 0);
             Assert.AreEqual("http://www.mgm.com/#/our-titles/1970/The-Terminator/", tmdbMovie.Homepage);
-            Assert.AreEqual(218, tmdbMovie.Id);
+            Assert.AreEqual(218UL, tmdbMovie.Id);
             Assert.AreEqual("tt0088247", tmdbMovie.ImdbId);
             Assert.AreEqual("en", tmdbMovie.OriginalLanguage);
             Assert.AreEqual("The Terminator", tmdbMovie.OriginalTitle);
@@ -50,35 +50,14 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
             Assert.IsTrue(tmdbMovie.VoteAverage > 0);
             Assert.IsTrue(tmdbMovie.VoteCount > 0);
         }
-
+        
         [TestMethod]
         public void GetMovie_InvalidId_ThrowsInvalidTmdbRequestException()
         {
             var client = new TmdbClient();
-            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetMovie("-10"));
-        }
-
-        [TestMethod]
-        public void GetMovie_NotAnId_ThrowsInvalidTmdbRequestException()
-        {
-            var client = new TmdbClient();
-            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetMovie("#invalid#"));
+            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetMovie(0));
         }
         
-        [TestMethod]
-        public void GetMovie_EmptyId_ThrowsInvalidTmdbRequestException()
-        {
-            var client = new TmdbClient();
-            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetMovie(""));
-        }
-
-        [TestMethod]
-        public void GetMovie_Null_ThrowsInvalidTmdbRequestException()
-        {
-            var client = new TmdbClient();
-            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetMovie(null));
-        }
-
         #endregion Movie
 
         #region Person
@@ -88,7 +67,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
         {
             var client = new TmdbClient();
 
-            var tmdbPerson = client.GetPerson("1100");
+            var tmdbPerson = client.GetPerson(1100);
 
             Assert.IsNotNull(tmdbPerson);
 
@@ -102,42 +81,19 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
             Assert.IsNull(tmdbPerson.Deathday);
             Assert.AreEqual(2, tmdbPerson.Gender);
             Assert.AreEqual("http://www.schwarzenegger.com/", tmdbPerson.Homepage);
-            Assert.AreEqual(1100, tmdbPerson.Id);
+            Assert.AreEqual(1100UL, tmdbPerson.Id);
             Assert.AreEqual("nm0000216", tmdbPerson.ImdbId);
             Assert.AreEqual("Arnold Schwarzenegger", tmdbPerson.Name);
             Assert.AreEqual("Thal, Styria, Austria", tmdbPerson.PlaceOfBirth);
             Assert.IsTrue(tmdbPerson.Popularity > 0);
             Assert.AreEqual("/sOkCXc9xuSr6v7mdAq9LwEBje68.jpg", tmdbPerson.ProfilePath);
         }
-
+        
         [TestMethod]
         public void GetPerson_InvalidId_ThrowsInvalidTmdbRequestException()
         {
             var client = new TmdbClient();
-
-            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetPerson("-10"));
-        }
-
-        [TestMethod]
-        public void GetPerson_NotAnId_ThrowsInvalidTmdbRequestException()
-        {
-            var client = new TmdbClient();
-
-            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetPerson("#invalid#"));
-        }
-        
-        [TestMethod]
-        public void GetPerson_EmptyId_ThrowsInvalidTmdbRequestException()
-        {
-            var client = new TmdbClient();
-            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetPerson(""));
-        }
-
-        [TestMethod]
-        public void GetPerson_Null_ThrowsInvalidTmdbRequestException()
-        {
-            var client = new TmdbClient();
-            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetPerson(null));
+            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetPerson(0));
         }
 
         #endregion Person
@@ -163,9 +119,9 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
             Assert.AreEqual("person", personResult.MediaType);
             Assert.AreEqual("tv", tvResult.MediaType);
 
-            Assert.AreEqual(9404, movieResult.Id);
-            Assert.AreEqual(18897, personResult.Id);
-            Assert.AreEqual(240, tvResult.Id);
+            Assert.AreEqual(9404UL, movieResult.Id);
+            Assert.AreEqual(18897UL, personResult.Id);
+            Assert.AreEqual(240UL, tvResult.Id);
 
             Assert.AreEqual("/9i6bhYbxe2g02e3GhljtktuyDMj.jpg", movieResult.PosterPath);
             Assert.AreEqual("/pmKJ4sGvPQ3imzXaFnjW4Vk5Gyc.jpg", personResult.ProfilePath);
@@ -202,5 +158,46 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
             Assert.IsTrue(jobs.Count > 400);
         }
 
+        [TestMethod]
+        public void GetConfiguration_ValidConfiguration()
+        {
+            var client = new TmdbClient();
+            var configuration = client.GetConfiguration();
+
+            Assert.IsNotNull(configuration);
+            Assert.IsTrue(configuration.ChangeKeys.Any());
+            Assert.AreEqual("http://image.tmdb.org/t/p/", configuration.Images.BaseUrl);
+            Assert.AreEqual("https://image.tmdb.org/t/p/", configuration.Images.SecureBaseUrl);
+
+            Assert.IsTrue(configuration.Images.BackdropSizes.Any());
+            Assert.IsTrue(configuration.Images.BackdropSizes.Contains("w300"));
+            Assert.IsTrue(configuration.Images.BackdropSizes.Contains("w780"));
+            Assert.IsTrue(configuration.Images.BackdropSizes.Contains("w1280"));
+            Assert.IsTrue(configuration.Images.BackdropSizes.Contains("original"));
+
+            Assert.IsTrue(configuration.Images.LogoSizes.Any());
+            Assert.IsTrue(configuration.Images.LogoSizes.Contains("w45"));
+            Assert.IsTrue(configuration.Images.LogoSizes.Contains("w185"));
+            Assert.IsTrue(configuration.Images.LogoSizes.Contains("w500"));
+            Assert.IsTrue(configuration.Images.LogoSizes.Contains("original"));
+
+            Assert.IsTrue(configuration.Images.PosterSizes.Any());
+            Assert.IsTrue(configuration.Images.PosterSizes.Contains("w92"));
+            Assert.IsTrue(configuration.Images.PosterSizes.Contains("w185"));
+            Assert.IsTrue(configuration.Images.PosterSizes.Contains("w780"));
+            Assert.IsTrue(configuration.Images.PosterSizes.Contains("original"));
+
+            Assert.IsTrue(configuration.Images.ProfileSizes.Any());
+            Assert.IsTrue(configuration.Images.ProfileSizes.Contains("w45"));
+            Assert.IsTrue(configuration.Images.ProfileSizes.Contains("w185"));
+            Assert.IsTrue(configuration.Images.ProfileSizes.Contains("h632"));
+            Assert.IsTrue(configuration.Images.ProfileSizes.Contains("original"));
+
+            Assert.IsTrue(configuration.Images.StillSizes.Any());
+            Assert.IsTrue(configuration.Images.StillSizes.Contains("w92"));
+            Assert.IsTrue(configuration.Images.StillSizes.Contains("w185"));
+            Assert.IsTrue(configuration.Images.StillSizes.Contains("w300"));
+            Assert.IsTrue(configuration.Images.StillSizes.Contains("original"));
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects
         public Credits Credits { get; set; }
         public List<IdentifiedName> Genres { get; set; }
         public string Homepage { get; set; }
-        public long Id { get; set; }
+        public ulong Id { get; set; }
         public string ImdbId { get; set; }
         public string OriginalLanguage { get; set; }
         public string OriginalTitle { get; set; }

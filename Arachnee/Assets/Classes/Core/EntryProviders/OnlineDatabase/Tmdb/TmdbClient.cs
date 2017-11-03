@@ -20,6 +20,9 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb
             ServicePointManager.ServerCertificateValidationCallback = CertificateValidationCallback;
         }
 
+        /// <summary>
+        /// Search multiple models in a single request (currently supports searching for movies, tv shows and people).
+        /// </summary>
         public List<CombinedResult> GetCombinedSearchResults(string searchQuery)
         {
             if (string.IsNullOrEmpty(searchQuery))
@@ -41,55 +44,49 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb
             return firstPage.Results;
         }
 
-        public TmdbMovie GetMovie(string tmdbMovieId)
+        /// <summary>
+        /// Get the primary informations about a movie.
+        /// </summary>
+        public TmdbMovie GetMovie(ulong tmdbMovieId)
         {
-            long id;
-            if (!long.TryParse(tmdbMovieId, out id))
-            {
-                throw new InvalidTmdbRequestException($"\"{tmdbMovieId}\" is not a valid movie id.");
-            }
-
             var request = new RestRequest("movie/{id}", Method.GET)
             {
                 RequestFormat = DataFormat.Json
             };
 
-            request.AddUrlSegment("id", tmdbMovieId);
+            request.AddUrlSegment("id", tmdbMovieId.ToString());
             request.AddQueryParameter("append_to_response", "credits");
             request.AddQueryParameter("api_key", Constant.ApiKey);
 
             var response = ExecuteRequest(request);
 
             var movie = JsonConvert.DeserializeObject<TmdbMovie>(response, TmdbJsonSettings.Instance);
-            if (movie.Id == default(long))
+            if (movie.Id == default(ulong))
             {
                 throw new InvalidTmdbRequestException($"\"{tmdbMovieId}\" didn't return any result.");
             }
 
             return movie;
         }
-        
-        public TmdbPerson GetPerson(string tmdbPersonId)
-        {
-            long id;
-            if (!long.TryParse(tmdbPersonId, out id))
-            {
-                throw new InvalidTmdbRequestException($"\"{tmdbPersonId}\" is not a valid person id.");
-            }
 
+        /// <summary>
+        /// Get the primary person details.
+        /// </summary>
+        public TmdbPerson GetPerson(ulong tmdbPersonId)
+        {
             var request = new RestRequest("person/{id}", Method.GET)
             {
                 RequestFormat = DataFormat.Json
             };
 
-            request.AddUrlSegment("id", tmdbPersonId);
+            request.AddUrlSegment("id", tmdbPersonId.ToString());
             request.AddQueryParameter("append_to_response", "combined_credits");
             request.AddQueryParameter("api_key", Constant.ApiKey);
 
             var response = ExecuteRequest(request);
 
             var person = JsonConvert.DeserializeObject<TmdbPerson>(response, TmdbJsonSettings.Instance);
-            if (person.Id == default(long))
+            if (person.Id == default(ulong))
             {
                 throw new InvalidTmdbRequestException($"\"{tmdbPersonId}\" didn't return any result.");
             }
@@ -97,6 +94,10 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb
             return person;
         }
 
+        /// <summary>
+        /// The list of official jobs that are used on TMDb.
+        /// </summary>
+        /// <returns></returns>
         public List<string> GetAllJobs()
         {
             var request = new RestRequest("job/list", Method.GET)
@@ -110,6 +111,25 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb
             var officialList = JsonConvert.DeserializeObject<OfficialJobList>(responseContent, TmdbJsonSettings.Instance);
 
             return officialList.Jobs.SelectMany(j => j.JobList).ToList();
+        }
+
+        /// <summary>
+        /// Get the system wide configuration information.
+        /// </summary>
+        /// <returns></returns>
+        public Configuration GetConfiguration()
+        {
+            var request = new RestRequest("configuration", Method.GET)
+            {
+                RequestFormat = DataFormat.Json
+            };
+
+            request.AddQueryParameter("api_key", Constant.ApiKey);
+
+            var responseContent = ExecuteRequest(request);
+            var config = JsonConvert.DeserializeObject<Configuration>(responseContent, TmdbJsonSettings.Instance);
+
+            return config;
         }
 
         private string ExecuteRequest(IRestRequest request)
