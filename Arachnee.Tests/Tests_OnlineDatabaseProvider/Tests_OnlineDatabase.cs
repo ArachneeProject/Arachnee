@@ -9,7 +9,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
     public class Tests_OnlineDatabase
     {
         [TestMethod]
-        public void TryGetEntry_ValidMovieId_ReturnsTrueAndValidEntry()
+        public void TryGetEntry_ValidMovieId_ReturnsTrueWithValidMovie()
         {
             var onlineDb = new OnlineDatabase();
 
@@ -25,7 +25,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
         }
 
         [TestMethod]
-        public void TryGetEntry_ValidArtistId_ReturnsTrueAndValidEntry()
+        public void TryGetEntry_ValidArtistId_ReturnsTrueWithValidArtist()
         {
             var onlineDb = new OnlineDatabase();
 
@@ -54,7 +54,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
         }
 
         [TestMethod]
-        public void GetSearchResults_EmptyQuery_EmptyResults()
+        public void GetSearchResults_EmptyQuery_ReturnsEmptyResults()
         {
             var onlineDb = new OnlineDatabase();
             var results = onlineDb.GetSearchResults(string.Empty);
@@ -63,7 +63,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
         }
 
         [TestMethod]
-        public void GetSearchResults_Null_EmptyResults()
+        public void GetSearchResults_Null_ReturnsEmptyResults()
         {
             var onlineDb = new OnlineDatabase();
             var results = onlineDb.GetSearchResults(null);

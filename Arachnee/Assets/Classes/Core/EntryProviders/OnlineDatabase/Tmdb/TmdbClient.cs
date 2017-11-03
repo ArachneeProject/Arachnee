@@ -14,7 +14,8 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb
     public class TmdbClient
     {
         private readonly RestClient _tmdbClient = new RestClient("https://api.themoviedb.org/3/");
-
+        private readonly RestClient _imageClient = new RestClient("https://image.tmdb.org/t/p/");
+        
         public TmdbClient()
         {
             ServicePointManager.ServerCertificateValidationCallback = CertificateValidationCallback;
@@ -132,6 +133,42 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb
             return config;
         }
 
+        public byte[] GetImage(string fileSize, string filePath)
+        {
+            if (string.IsNullOrWhiteSpace(fileSize))
+            {
+                throw new ArgumentNullException(nameof(fileSize), "File size cannot be empty.");
+            }
+            if (string.IsNullOrWhiteSpace(filePath))
+            {
+                throw new ArgumentNullException(nameof(filePath), "File path cannot be empty.");
+            }
+            
+            var request = new RestRequest($"{fileSize}{filePath}", Method.GET)
+            {
+                RequestFormat = DataFormat.Json
+            };
+
+            var response = _imageClient.Execute(request);
+
+            if (!string.IsNullOrEmpty(response.ErrorMessage))
+            {
+                throw new FailedRequestException(response.ErrorMessage);
+            }
+
+            if (response.ErrorException != null)
+            {
+                throw new TmdbRequestFailedException(response.ErrorException.Message);
+            }
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new TmdbRequestFailedException(response.Content);
+            }
+
+            return response.RawBytes;
+        }
+
         private string ExecuteRequest(IRestRequest request)
         {
             var response = _tmdbClient.Execute(request);
@@ -143,7 +180,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb
             {
                 throw new TmdbRequestFailedException(response.ErrorException.Message);
             }
-
+            
             return response.Content;
         }
 

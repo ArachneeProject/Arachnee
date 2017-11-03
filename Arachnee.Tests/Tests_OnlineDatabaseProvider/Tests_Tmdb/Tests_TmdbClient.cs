@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Security.Cryptography;
 using Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb;
 using Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb.Exceptions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,7 +13,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
         #region Movie
 
         [TestMethod]
-        public void GetMovie_ValidId_CorrectMovie()
+        public void GetMovie_ValidId_ReturnsCorrectMovie()
         {
             var client = new TmdbClient();
 
@@ -63,7 +65,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
         #region Person
 
         [TestMethod]
-        public void GetPerson_ValidId_CorrectPerson()
+        public void GetPerson_ValidId_ReturnsCorrectPerson()
         {
             var client = new TmdbClient();
 
@@ -101,7 +103,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
         #region CombinedSearch
 
         [TestMethod]
-        public void GetCombinedSearchResults_ValidQuery_CorrectResults()
+        public void GetCombinedSearchResults_ValidQuery_ReturnsCorrectResults()
         {
             var client = new TmdbClient();
             var results = client.GetCombinedSearchResults("Jackie Chan");
@@ -129,7 +131,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
         }
 
         [TestMethod]
-        public void GetCombinedSearchResults_EmptyQuery_EmptyResult()
+        public void GetCombinedSearchResults_EmptyQuery_ReturnsEmptyResult()
         {
             var client = new TmdbClient();
             var results = client.GetCombinedSearchResults("");
@@ -138,7 +140,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
         }
 
         [TestMethod]
-        public void GetCombinedSearchResults_Null_EmptyResult()
+        public void GetCombinedSearchResults_Null_ReturnsEmptyResult()
         {
             var client = new TmdbClient();
             var results = client.GetCombinedSearchResults(null);
@@ -149,8 +151,8 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
         #endregion CombinedSearch
 
         [TestMethod,
-         Description("Official Tmdb job list can increase over time, but will still contains at least 400 items.")]
-        public void GetAllJobs_ListHasMoreThan400Items()
+         Description("Official Tmdb job list may increase over time, but will still contains at least 400 items.")]
+        public void GetAllJobs_ReturnsJobList()
         {
             var client = new TmdbClient();
             var jobs = client.GetAllJobs().OrderBy(t => t).ToList();
@@ -159,7 +161,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
         }
 
         [TestMethod]
-        public void GetConfiguration_ValidConfiguration()
+        public void GetConfiguration_ReturnsValidConfiguration()
         {
             var client = new TmdbClient();
             var configuration = client.GetConfiguration();
@@ -199,5 +201,77 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
             Assert.IsTrue(configuration.Images.StillSizes.Contains("w300"));
             Assert.IsTrue(configuration.Images.StillSizes.Contains("original"));
         }
+
+        #region Image
+
+        [TestMethod]
+        public void GetImage_NullFileSize_ThrowsArgumentNullException()
+        {
+            var client = new TmdbClient();
+            Assert.ThrowsException<ArgumentNullException>(() => client.GetImage(null, "/wOMD2jDmY6wU2oScXOEgq9hqeNN.png"));
+        }
+
+        [TestMethod]
+        public void GetImage_EmptyFileSize_ThrowsArgumentNullException()
+        {
+            var client = new TmdbClient();
+            Assert.ThrowsException<ArgumentNullException>(() => client.GetImage("", "/wOMD2jDmY6wU2oScXOEgq9hqeNN.png"));
+        }
+
+        [TestMethod]
+        public void GetImage_InvalidFileSize_ThrowsTmdbRequestFailedException()
+        {
+            var client = new TmdbClient();
+            Assert.ThrowsException<TmdbRequestFailedException>(() => client.GetImage("#invalid#", "/wOMD2jDmY6wU2oScXOEgq9hqeNN.png"));
+        }
+
+        [TestMethod]
+        public void GetImage_NullFilePath_ThrowsArgumentNullException()
+        {
+            var client = new TmdbClient();
+            Assert.ThrowsException<ArgumentNullException>(() => client.GetImage("w45", null));
+        }
+
+        [TestMethod]
+        public void GetImage_EmptyFilePath_ThrowsArgumentNullException()
+        {
+            var client = new TmdbClient();
+            Assert.ThrowsException<ArgumentNullException>(() => client.GetImage("w45", ""));
+        }
+
+        [TestMethod]
+        public void GetImage_InvalidFilePath_ThrowsTmdbRequestFailedException()
+        {
+            var client = new TmdbClient();
+            Assert.ThrowsException<TmdbRequestFailedException>(() => client.GetImage("w45", "#invalid#"));
+        }
+        
+        [TestMethod]
+        public void GetImage_ValidParameters_ReturnsValidByteArray()
+        {
+            var client = new TmdbClient();
+            var bytes = client.GetImage("w45", "/wOMD2jDmY6wU2oScXOEgq9hqeNN.png");
+
+            var expectedHash = new byte[] { 106, 217, 16, 85, 94, 179, 111, 3, 83, 35, 87, 253, 222, 75, 108, 49 };
+
+            byte[] hash;
+            using (var md5 = MD5.Create())
+            {
+                hash = md5.ComputeHash(bytes);
+            }
+
+            Assert.AreEqual(1030, bytes.Length);
+            Assert.AreEqual((byte)'P', bytes[1]);
+            Assert.AreEqual((byte)'N', bytes[2]);
+            Assert.AreEqual((byte)'G', bytes[3]);
+            
+            Assert.AreEqual(expectedHash.Length, hash.Length);
+            for (int i = 0; i < expectedHash.Length; i++)
+            {
+                Assert.AreEqual(expectedHash[i], hash[i]);
+            }
+        }
+
+        #endregion Image
     }
 }
