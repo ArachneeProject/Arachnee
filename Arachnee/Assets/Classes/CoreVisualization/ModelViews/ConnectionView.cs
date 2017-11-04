@@ -12,8 +12,6 @@ namespace Assets.Classes.CoreVisualization.ModelViews
 
         public EntryView Right { get; set; }
         
-        public List<ConnectionType> ConnectionTypes { get; set; }
-
         public string Id => GetIdentifier(this.Left.Entry.Id, this.Right.Entry.Id);
 
         public static string GetIdentifier(string fromEntryId, string toEntryId)

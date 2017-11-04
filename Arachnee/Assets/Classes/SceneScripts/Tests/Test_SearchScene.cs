@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Assets.Classes.Core.EntryProviders.OnlineDatabase;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
+using Assets.Classes.CoreVisualization.ModelViewManagement.Builders;
 using Assets.Classes.CoreVisualization.ModelViews;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,8 +20,10 @@ namespace Assets.Classes.SceneScripts.Tests
 
         void Start ()
         {
-            _manager = new ModelViewManager(new OnlineDatabase());
-            _manager.SetPrefab(searchResultViewPrefab);
+            var builder = new ModelViewBuilder();
+            builder.SetPrefab(searchResultViewPrefab);
+
+            _manager = new ModelViewManager(new OnlineDatabase(), builder);
             
             Debug.Log("Try to type \"the terminator\" for example.");
         }

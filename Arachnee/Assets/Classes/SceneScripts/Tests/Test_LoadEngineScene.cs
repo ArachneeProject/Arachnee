@@ -2,6 +2,7 @@
 using Assets.Classes.Core.EntryProviders;
 using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
+using Assets.Classes.CoreVisualization.ModelViewManagement.Builders;
 using Assets.Classes.CoreVisualization.ModelViews;
 using Assets.Classes.CoreVisualization.PhysicsEngine;
 using UnityEngine;
@@ -16,14 +17,16 @@ namespace Assets.Classes.SceneScripts.Tests
 
         void Start ()
         {
-            // sets up provider
+            // sets up manager
             var sampleProvider = new MiniSampleProvider();
-            var manager = new ModelViewManager(sampleProvider);
 
-            manager.SetPrefab<Movie>(EntryViewPrefab);
-            manager.SetPrefab<Artist>(EntryViewPrefab);
-            manager.SetPrefab(ConnectionViewPrefab);
+            var builder = new ModelViewBuilder();
+            builder.SetPrefab<Movie>(EntryViewPrefab);
+            builder.SetPrefab<Artist>(EntryViewPrefab);
+            builder.SetPrefab(ConnectionViewPrefab);
 
+            var manager = new ModelViewManager(sampleProvider, builder);
+            
             // load graph engine
             foreach (var entry in sampleProvider.Entries.Select(e => e.Id))
             {

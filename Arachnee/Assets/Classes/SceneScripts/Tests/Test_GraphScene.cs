@@ -3,6 +3,7 @@ using System.Linq;
 using Assets.Classes.Core.EntryProviders;
 using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
+using Assets.Classes.CoreVisualization.ModelViewManagement.Builders;
 using Assets.Classes.CoreVisualization.ModelViews;
 using UnityEngine;
 
@@ -18,11 +19,13 @@ namespace Assets.Classes.SceneScripts.Tests
         void Start()
         {
             var testProvider = new MiniSampleProvider();
-            var manager = new ModelViewManager(testProvider);
 
-            manager.SetPrefab<Movie>(movieViewPrefab);
-            manager.SetPrefab<Artist>(artistViewPrefab);
-            manager.SetPrefab(connectionViewPrefab);
+            var builder = new ModelViewBuilder();
+            builder.SetPrefab<Movie>(movieViewPrefab);
+            builder.SetPrefab<Artist>(artistViewPrefab);
+            builder.SetPrefab(connectionViewPrefab);
+            
+            var manager = new ModelViewManager(testProvider, builder);
 
             var entryViewSet = new HashSet<EntryView>();
             

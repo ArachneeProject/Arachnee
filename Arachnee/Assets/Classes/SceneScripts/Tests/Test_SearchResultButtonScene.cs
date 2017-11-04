@@ -2,6 +2,7 @@
 using Assets.Classes.Core.EntryProviders.OnlineDatabase;
 using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
+using Assets.Classes.CoreVisualization.ModelViewManagement.Builders;
 using Assets.Classes.CoreVisualization.ModelViews;
 using UnityEngine;
 
@@ -17,10 +18,12 @@ namespace Assets.Classes.SceneScripts.Tests
         
         private void Start()
         {
-            _manager = new ModelViewManager(new OnlineDatabase());
-            _manager.SetPrefab(searchResultButtonPrefab);
-            _manager.SetPrefab<Movie>(entryViewPrefab);
+            var builder = new ModelViewBuilder();
+            builder.SetPrefab(searchResultButtonPrefab);
+            builder.SetPrefab<Movie>(entryViewPrefab);
 
+            _manager = new ModelViewManager(new OnlineDatabase(), builder);
+            
             // set up searchResultButton
             var queue = _manager.GetSearchResultViews("Terminator Judgment Day");
 

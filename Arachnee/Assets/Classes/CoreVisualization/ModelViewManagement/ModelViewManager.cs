@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Classes.Core.EntryProviders;
 using Assets.Classes.Core.Models;
+using Assets.Classes.CoreVisualization.ModelViewManagement.Builders;
 using Assets.Classes.CoreVisualization.ModelViews;
 using Assets.Classes.Logging;
 using JetBrains.Annotations;
@@ -12,32 +13,27 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
     public class ModelViewManager
     {
         private readonly IEntryProvider _provider;
-        private readonly ModelViewBuilder _builder = new ModelViewBuilder();
+        private readonly ModelViewBuilder _builder;
 
         private readonly Dictionary<string, EntryView> _cachedEntryViews = new Dictionary<string, EntryView>();
 
         private readonly Dictionary<string, ConnectionView> _cachedConnectionViews = new Dictionary<string, ConnectionView>();
 
-        public ModelViewManager(IEntryProvider provider)
+        public ModelViewManager(IEntryProvider provider, ModelViewBuilder builder)
         {
+            if (provider == null)
+            {
+                throw new ArgumentNullException(nameof(provider));
+            }
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+            
             _provider = provider;
+            _builder = builder;
         }
-
-        public void SetPrefab<TEntry>(EntryView prefab) where TEntry : Entry
-        {
-            _builder.EntryViewPrefabs[typeof(TEntry)] = prefab;
-        }
-
-        public void SetPrefab(ConnectionView prefab)
-        {
-            _builder.ConnectionViewPrefab = prefab;
-        }
-
-        public void SetPrefab(SearchResultView prefab)
-        {
-            _builder.SearchResultViewPrefab = prefab;
-        }
-
+        
         [CanBeNull]
         public EntryView GetEntryView(string entryId)
         {
@@ -53,7 +49,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
                 return null;
             }
 
-            var entryView = _builder.BuildEntryView(entry);
+            var entryView = _builder.BuildView(entry);
             if (entryView == null)
             {
                 Logger.LogError($"Unable to build {nameof(EntryView)} for id \"{entryId}\".");
@@ -91,7 +87,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
                     continue;
                 }
 
-                var connectionView = _builder.BuildConnectionView(entryView, oppositeEntryView);
+                var connectionView = _builder.BuildView(entryView, oppositeEntryView);
                 if (connectionView == null)
                 {
                     Logger.LogError($"Unable to build {nameof(ConnectionView)} for connection id \"{connection.Identifier}\".");
@@ -113,7 +109,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
             while (resultsQueue.Any())
             {
                 var result = resultsQueue.Dequeue();
-                var resultView = _builder.BuildResultView(result);
+                var resultView = _builder.BuildView(result);
                 resultViewsQueue.Enqueue(resultView);
             }
 

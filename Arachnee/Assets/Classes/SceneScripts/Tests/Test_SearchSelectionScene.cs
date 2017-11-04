@@ -3,6 +3,7 @@ using System.Linq;
 using Assets.Classes.Core.EntryProviders.OnlineDatabase;
 using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
+using Assets.Classes.CoreVisualization.ModelViewManagement.Builders;
 using Assets.Classes.CoreVisualization.ModelViews;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,12 +28,13 @@ namespace Assets.Classes.SceneScripts.Tests
 
         void Start () 
         {
-            _manager = new ModelViewManager(new OnlineDatabase());
+            var builder = new ModelViewBuilder();
+            builder.SetPrefab<Movie>(movieViewPrefab);
+            builder.SetPrefab<Artist>(artistViewPrefab);
+            builder.SetPrefab<Serie>(serieViewPrefab);
+            builder.SetPrefab(searchResultViewPrefab);
 
-            _manager.SetPrefab<Movie>(movieViewPrefab);
-            _manager.SetPrefab<Artist>(artistViewPrefab);
-            _manager.SetPrefab<Serie>(serieViewPrefab);
-            _manager.SetPrefab(searchResultViewPrefab);
+            _manager = new ModelViewManager(new OnlineDatabase(), builder);
             
             Clear();
 
