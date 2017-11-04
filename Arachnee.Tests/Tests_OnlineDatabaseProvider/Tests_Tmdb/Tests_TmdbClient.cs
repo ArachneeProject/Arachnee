@@ -29,6 +29,8 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
             Assert.IsTrue(tmdbMovie.Genres.Count > 0);
             Assert.AreEqual("http://www.mgm.com/#/our-titles/1970/The-Terminator/", tmdbMovie.Homepage);
             Assert.AreEqual(218UL, tmdbMovie.Id);
+            Assert.IsTrue(tmdbMovie.Images.Posters.Any());
+            Assert.IsTrue(tmdbMovie.Images.Backdrops.Any());
             Assert.AreEqual("tt0088247", tmdbMovie.ImdbId);
             Assert.AreEqual("en", tmdbMovie.OriginalLanguage);
             Assert.AreEqual("The Terminator", tmdbMovie.OriginalTitle);
@@ -84,6 +86,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
             Assert.AreEqual(2, tmdbPerson.Gender);
             Assert.AreEqual("http://www.schwarzenegger.com/", tmdbPerson.Homepage);
             Assert.AreEqual(1100UL, tmdbPerson.Id);
+            Assert.IsTrue(tmdbPerson.Images.Profiles.Any());
             Assert.AreEqual("nm0000216", tmdbPerson.ImdbId);
             Assert.AreEqual("Arnold Schwarzenegger", tmdbPerson.Name);
             Assert.AreEqual("Thal, Styria, Austria", tmdbPerson.PlaceOfBirth);
@@ -168,38 +171,38 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
 
             Assert.IsNotNull(configuration);
             Assert.IsTrue(configuration.ChangeKeys.Any());
-            Assert.AreEqual("http://image.tmdb.org/t/p/", configuration.Images.BaseUrl);
-            Assert.AreEqual("https://image.tmdb.org/t/p/", configuration.Images.SecureBaseUrl);
+            Assert.AreEqual("http://image.tmdb.org/t/p/", configuration.ImageConfiguration.BaseUrl);
+            Assert.AreEqual("https://image.tmdb.org/t/p/", configuration.ImageConfiguration.SecureBaseUrl);
 
-            Assert.IsTrue(configuration.Images.BackdropSizes.Any());
-            Assert.IsTrue(configuration.Images.BackdropSizes.Contains("w300"));
-            Assert.IsTrue(configuration.Images.BackdropSizes.Contains("w780"));
-            Assert.IsTrue(configuration.Images.BackdropSizes.Contains("w1280"));
-            Assert.IsTrue(configuration.Images.BackdropSizes.Contains("original"));
+            Assert.IsTrue(configuration.ImageConfiguration.BackdropSizes.Any());
+            Assert.IsTrue(configuration.ImageConfiguration.BackdropSizes.Contains("w300"));
+            Assert.IsTrue(configuration.ImageConfiguration.BackdropSizes.Contains("w780"));
+            Assert.IsTrue(configuration.ImageConfiguration.BackdropSizes.Contains("w1280"));
+            Assert.IsTrue(configuration.ImageConfiguration.BackdropSizes.Contains("original"));
 
-            Assert.IsTrue(configuration.Images.LogoSizes.Any());
-            Assert.IsTrue(configuration.Images.LogoSizes.Contains("w45"));
-            Assert.IsTrue(configuration.Images.LogoSizes.Contains("w185"));
-            Assert.IsTrue(configuration.Images.LogoSizes.Contains("w500"));
-            Assert.IsTrue(configuration.Images.LogoSizes.Contains("original"));
+            Assert.IsTrue(configuration.ImageConfiguration.LogoSizes.Any());
+            Assert.IsTrue(configuration.ImageConfiguration.LogoSizes.Contains("w45"));
+            Assert.IsTrue(configuration.ImageConfiguration.LogoSizes.Contains("w185"));
+            Assert.IsTrue(configuration.ImageConfiguration.LogoSizes.Contains("w500"));
+            Assert.IsTrue(configuration.ImageConfiguration.LogoSizes.Contains("original"));
 
-            Assert.IsTrue(configuration.Images.PosterSizes.Any());
-            Assert.IsTrue(configuration.Images.PosterSizes.Contains("w92"));
-            Assert.IsTrue(configuration.Images.PosterSizes.Contains("w185"));
-            Assert.IsTrue(configuration.Images.PosterSizes.Contains("w780"));
-            Assert.IsTrue(configuration.Images.PosterSizes.Contains("original"));
+            Assert.IsTrue(configuration.ImageConfiguration.PosterSizes.Any());
+            Assert.IsTrue(configuration.ImageConfiguration.PosterSizes.Contains("w92"));
+            Assert.IsTrue(configuration.ImageConfiguration.PosterSizes.Contains("w185"));
+            Assert.IsTrue(configuration.ImageConfiguration.PosterSizes.Contains("w780"));
+            Assert.IsTrue(configuration.ImageConfiguration.PosterSizes.Contains("original"));
 
-            Assert.IsTrue(configuration.Images.ProfileSizes.Any());
-            Assert.IsTrue(configuration.Images.ProfileSizes.Contains("w45"));
-            Assert.IsTrue(configuration.Images.ProfileSizes.Contains("w185"));
-            Assert.IsTrue(configuration.Images.ProfileSizes.Contains("h632"));
-            Assert.IsTrue(configuration.Images.ProfileSizes.Contains("original"));
+            Assert.IsTrue(configuration.ImageConfiguration.ProfileSizes.Any());
+            Assert.IsTrue(configuration.ImageConfiguration.ProfileSizes.Contains("w45"));
+            Assert.IsTrue(configuration.ImageConfiguration.ProfileSizes.Contains("w185"));
+            Assert.IsTrue(configuration.ImageConfiguration.ProfileSizes.Contains("h632"));
+            Assert.IsTrue(configuration.ImageConfiguration.ProfileSizes.Contains("original"));
 
-            Assert.IsTrue(configuration.Images.StillSizes.Any());
-            Assert.IsTrue(configuration.Images.StillSizes.Contains("w92"));
-            Assert.IsTrue(configuration.Images.StillSizes.Contains("w185"));
-            Assert.IsTrue(configuration.Images.StillSizes.Contains("w300"));
-            Assert.IsTrue(configuration.Images.StillSizes.Contains("original"));
+            Assert.IsTrue(configuration.ImageConfiguration.StillSizes.Any());
+            Assert.IsTrue(configuration.ImageConfiguration.StillSizes.Contains("w92"));
+            Assert.IsTrue(configuration.ImageConfiguration.StillSizes.Contains("w185"));
+            Assert.IsTrue(configuration.ImageConfiguration.StillSizes.Contains("w300"));
+            Assert.IsTrue(configuration.ImageConfiguration.StillSizes.Contains("original"));
         }
 
         #region Image

@@ -13,6 +13,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects
         public long Gender { get; set; }
         public string Homepage { get; set; }
         public ulong Id { get; set; }
+        public Images Images { get; set; }
         public string ImdbId { get; set; }
         public string Name { get; set; }
         public string PlaceOfBirth { get; set; }

@@ -12,6 +12,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects
         public List<IdentifiedName> Genres { get; set; }
         public string Homepage { get; set; }
         public ulong Id { get; set; }
+        public Images Images { get; set; }
         public string ImdbId { get; set; }
         public string OriginalLanguage { get; set; }
         public string OriginalTitle { get; set; }
