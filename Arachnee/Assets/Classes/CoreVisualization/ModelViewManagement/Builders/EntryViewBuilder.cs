@@ -8,6 +8,9 @@ using Object = UnityEngine.Object;
 
 namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
 {
+    /// <summary>
+    /// Class in charge of creating an EntryView.
+    /// </summary>
     public class EntryViewBuilder
     {
         public Dictionary<Type, EntryView> EntryViewPrefabs { get; } = new Dictionary<Type, EntryView>();

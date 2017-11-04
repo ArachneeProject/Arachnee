@@ -6,6 +6,9 @@ using Object = UnityEngine.Object;
 
 namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
 {
+    /// <summary>
+    /// Class in charge of creating a SearchResultView.
+    /// </summary>
     public class SearchResultViewBuilder
     {
         public SearchResultView SearchResultViewPrefab { get; set; }

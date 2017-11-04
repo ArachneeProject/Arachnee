@@ -6,6 +6,9 @@ using Logger = Assets.Classes.Logging.Logger;
 
 namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
 {
+    /// <summary>
+    /// Class in charge of creating a ConnectionView.
+    /// </summary>
     public class ConnectionViewBuilder
     {
         public ConnectionView ConnectionViewPrefab { get; set; }

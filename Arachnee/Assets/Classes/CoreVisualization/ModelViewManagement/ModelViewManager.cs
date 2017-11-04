@@ -10,6 +10,9 @@ using JetBrains.Annotations;
 
 namespace Assets.Classes.CoreVisualization.ModelViewManagement
 {
+    /// <summary>
+    /// Class in charge of responding to queries for Views.
+    /// </summary>
     public class ModelViewManager
     {
         private readonly IEntryProvider _provider;
@@ -34,6 +37,9 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
             _builder = builder;
         }
         
+        /// <summary>
+        /// Returns the EntryView corresponding to the given entry id.
+        /// </summary>
         [CanBeNull]
         public EntryView GetEntryView(string entryId)
         {
@@ -60,11 +66,21 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
             return entryView;
         }
 
+        /// <summary>
+        /// Returns a collection of all ConnectionViews linked to the given EntryView.
+        /// </summary>
+        /// <param name="entryView">The EntryView to get the ConnectionViews from.</param>
         public List<ConnectionView> GetConnectionViews(EntryView entryView)
         {
             return GetConnectionViews(entryView, Enum.GetValues(typeof(ConnectionType)).Cast<ConnectionType>().ToList());
         }
 
+        /// <summary>
+        /// Returns a collection of ConnectionViews linked to the given EntryView, 
+        /// restricted to those having at least one of the given connection types.
+        /// </summary>
+        /// <param name="entryView">The EntryView to get the ConnectionViews from.</param>
+        /// <param name="connectionTypes">The list of restricting connection types.</param>
         public List<ConnectionView> GetConnectionViews(EntryView entryView, List<ConnectionType> connectionTypes)
         {
             var validConnections = entryView.Entry.Connections.Where(c => connectionTypes.Contains(c.Type));
@@ -101,6 +117,11 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
             return result;
         }
         
+        /// <summary>
+        /// Returns an ordered collection of SearchResultView corresponding to the given query.
+        /// First element is the best result.
+        /// </summary>
+        /// <param name="searchQuery">The query to search for.</param>
         public Queue<SearchResultView> GetSearchResultViews(string searchQuery)
         {
             var resultsQueue = _provider.GetSearchResults(searchQuery);
