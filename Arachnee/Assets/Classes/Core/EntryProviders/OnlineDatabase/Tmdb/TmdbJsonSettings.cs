@@ -31,14 +31,14 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb
                 
                 foreach (var character in propertyName.Substring(1))
                 {
-                    if (char.IsLower(character))
+                    if (char.IsUpper(character))
                     {
-                        sb.Append(character);
+                        sb.Append('_');
+                        sb.Append(char.ToLower(character, Culture));
                         continue;
                     }
 
-                    sb.Append('_');
-                    sb.Append(char.ToLower(character, Culture));
+                    sb.Append(character);
                 }
 
                 return sb.ToString();
