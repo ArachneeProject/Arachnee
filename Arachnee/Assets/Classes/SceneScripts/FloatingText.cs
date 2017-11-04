@@ -4,16 +4,16 @@ using Logger = Assets.Classes.Logging.Logger;
 namespace Assets.Classes.SceneScripts
 {
     [RequireComponent(typeof(TextMesh))]
-    public class TextView : MonoBehaviour
+    public class FloatingText : MonoBehaviour
     {
         private TextMesh _textMesh;
         
-        void Start()
+        public void Start()
         {
             _textMesh = this.GetComponent<TextMesh>();
             if (_textMesh == null)
             {
-                Logger.LogError($"No {nameof(TextMesh)} component found on {nameof(TextView)} gameobject.");
+                Logger.LogError($"No {nameof(TextMesh)} component found on {nameof(FloatingText)} gameobject.");
                 return;
             }
         }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Assets.Classes.Core.Models;
 using UnityEngine;
 
 namespace Assets.Classes.CoreVisualization.ModelViews

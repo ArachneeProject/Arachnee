@@ -1,6 +1,5 @@
 ﻿using Assets.Classes.Core.Models;
 using UnityEngine;
-using Logger = Assets.Classes.Logging.Logger;
 
 namespace Assets.Classes.CoreVisualization.ModelViews
 {
