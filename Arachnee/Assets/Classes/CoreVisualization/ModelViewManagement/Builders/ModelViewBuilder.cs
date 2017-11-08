@@ -1,6 +1,6 @@
 ﻿using System;
 using Assets.Classes.Core.Models;
-using Assets.Classes.CoreVisualization.ModelViewManagement.Builders.Tailors;
+using Assets.Classes.CoreVisualization.ModelViewManagement.Builders.ComponentInitializers;
 using Assets.Classes.CoreVisualization.ModelViews;
 
 namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
@@ -14,7 +14,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
         private readonly ConnectionViewBuilder _connectionViewBuilder = new ConnectionViewBuilder();
         private readonly SearchResultViewBuilder _searchResultViewBuilder = new SearchResultViewBuilder();
 
-        private ITailor _tailor = new RawTailor();
+        private IComponentInitializer _componentInitializer = new EmptyComponentInitializer();
         
         /// <summary>
         /// Sets the prefab that should be used to build an Entry.
@@ -45,17 +45,17 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
         }
 
         /// <summary>
-        /// Sets the ITailor that should apply some good-looking components on the Views when they are being built.
+        /// Sets the IComponentInitializer used by the builder when Views are being built.
         /// </summary>
-        /// <param name="tailor">The ITailor to set.</param>
-        public void SetTailor(ITailor tailor)
+        /// <param name="componentInitializer">The IComponentInitializer to use.</param>
+        public void SetComponentInitializer(IComponentInitializer componentInitializer)
         {
-            if (tailor == null)
+            if (componentInitializer == null)
             {
-                throw new ArgumentNullException(nameof(tailor));
+                throw new ArgumentNullException(nameof(componentInitializer));
             }
 
-            _tailor = tailor;
+            _componentInitializer = componentInitializer;
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
         public EntryView BuildView(Entry entry)
         {
             var view = _entryViewBuilder.BuildEntryView(entry);
-            _tailor.DressUp(view);
+            _componentInitializer.InitializeComponents(view);
             return view;
         }
 
@@ -81,7 +81,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
         public ConnectionView BuildView(EntryView leftEntryView, EntryView rightEntryView)
         {
             var view = _connectionViewBuilder.BuildConnectionView(leftEntryView, rightEntryView);
-            _tailor.DressUp(view);
+            _componentInitializer.InitializeComponents(view);
             return view;
         }
 
@@ -94,7 +94,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
         public SearchResultView BuildView(SearchResult searchResult)
         {
             var view = _searchResultViewBuilder.BuildResultView(searchResult);
-            _tailor.DressUp(view);
+            _componentInitializer.InitializeComponents(view);
             return view;
         }
     }

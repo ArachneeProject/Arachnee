@@ -3,11 +3,11 @@ using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization.ModelViews;
 using Assets.Classes.SceneScripts;
 
-namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders.Tailors
+namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders.ComponentInitializers
 {
-    public class TextTailor : ITailor
+    public class TextComponentInitializer : IComponentInitializer
     {
-        public void DressUp(EntryView entryView)
+        public void InitializeComponents(EntryView entryView)
         {
             var text = entryView.gameObject.GetComponentInChildren<FloatingText>();
             if (text == null)
@@ -18,6 +18,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders.Tailors
             // ensure the text is initialized
             text.Start();
 
+            // setup entryview
             if (entryView.Entry is Movie)
             {
                 var movie = (Movie) entryView.Entry;
@@ -36,12 +37,12 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders.Tailors
             }
         }
 
-        public void DressUp(ConnectionView connectionView)
+        public void InitializeComponents(ConnectionView connectionView)
         {
             
         }
 
-        public void DressUp(SearchResultView searchResultView)
+        public void InitializeComponents(SearchResultView searchResultView)
         {
             
         }

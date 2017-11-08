@@ -251,7 +251,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &998285907
 Transform:
   m_ObjectHideFlags: 0
@@ -495,6 +495,7 @@ GameObject:
   - component: {fileID: 1705928128}
   - component: {fileID: 1705928127}
   - component: {fileID: 1705928131}
+  - component: {fileID: 1705928132}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -577,6 +578,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   canMove: 1
   keyboardSensitivity: 1
+  canLookAround: 1
+  sensitivityX: 2
+  sensitivityY: -2
+  minimumY: -60
+  maximumY: 60
+--- !u!114 &1705928132
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1705928126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ada5fa836815f54c913b5dcbe54bd9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canMove: 1
+  keyboardSensitivity: 0.8
   canLookAround: 1
   sensitivityX: 2
   sensitivityY: -2

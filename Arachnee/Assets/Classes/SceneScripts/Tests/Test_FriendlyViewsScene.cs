@@ -2,7 +2,7 @@
 using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
 using Assets.Classes.CoreVisualization.ModelViewManagement.Builders;
-using Assets.Classes.CoreVisualization.ModelViewManagement.Builders.Tailors;
+using Assets.Classes.CoreVisualization.ModelViewManagement.Builders.ComponentInitializers;
 using Assets.Classes.CoreVisualization.ModelViews;
 using UnityEngine;
 
@@ -17,7 +17,7 @@ namespace Assets.Classes.SceneScripts.Tests
             var builder = new ModelViewBuilder();
             builder.SetPrefab<Movie>(entryViewPrefab);
             builder.SetPrefab<Artist>(entryViewPrefab);
-            builder.SetTailor(new TextTailor());
+            builder.SetComponentInitializer(new TextComponentInitializer());
 
             var manager = new ModelViewManager(new OnlineDatabase(), builder);
 
