@@ -32,12 +32,27 @@ namespace Assets.Classes.SceneScripts.Tests
             {
                 var entryView = manager.GetEntryView(entry);
                 entryView.transform.position = Random.onUnitSphere*5;
-            
-                graphEngine.Add(entryView);
 
-                foreach (var connectionView in manager.GetConnectionViews(entryView))
+                var entryViewRigidbody = entryView.GetComponent<Rigidbody>();
+                if (entryViewRigidbody == null)
                 {
-                    graphEngine.Add(connectionView);
+                    Debug.LogError($"Rigidbody of {entryView.Entry} was null");
+                    return;
+                }
+                
+                foreach (var connectedEntryView in manager.GetConnectedEntryViews(entryView))
+                {
+                    var connectedRigidbody = connectedEntryView.GetComponent<Rigidbody>();
+                    if (connectedRigidbody == null)
+                    {
+                        Debug.LogError("Rigidbody was null");
+                        continue;
+                    }
+
+                    for (int i = 0; i < Random.value * 200; i++)
+                    {
+                        graphEngine.AddEdge(entryViewRigidbody, connectedRigidbody);
+                    }
                 }
             }
         }

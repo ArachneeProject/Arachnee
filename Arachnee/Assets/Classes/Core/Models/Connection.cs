@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Assets.Classes.Core.Models
 {
@@ -9,5 +11,13 @@ namespace Assets.Classes.Core.Models
         public ConnectionType Type { get; set; }
 
         public string Label { get; set; }
+
+        /// <summary>
+        /// Utility method to get all available ConnectionType values.
+        /// </summary>
+        public static List<ConnectionType> AllTypes()
+        {
+            return Enum.GetValues(typeof(ConnectionType)).Cast<ConnectionType>().ToList();
+        }
     }
 }

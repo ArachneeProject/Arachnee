@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Assets.Classes.CoreVisualization.ModelViews;
 using Assets.Classes.Utils;
 using UnityEngine;
 
@@ -14,96 +11,52 @@ namespace Assets.Classes.CoreVisualization.PhysicsEngine
         public float hookeAttraction = 1;
         public Vector3 centerOfGraph = Vector3.zero;
 
-        private readonly HashSet<ConnectionView> _incompleteEdges = new HashSet<ConnectionView>();
-
-        public override void Add(EntryView entryView)
-        {
-            this.Vertices.Add(entryView);
-
-            var completeEdges = _incompleteEdges.Where(e => 
-                this.Vertices.Contains(e.Left) && this.Vertices.Contains(e.Right)).ToList();
-            foreach (var completeEdge in completeEdges)
-            {
-                this.Edges.Add(completeEdge);
-                _incompleteEdges.Remove(completeEdge);
-            }
-        }
-
-        public override void Add(ConnectionView connectionView)
-        {
-            if (this.Vertices.Contains(connectionView.Left) && this.Vertices.Contains(connectionView.Right))
-            {
-                this.Edges.Add(connectionView);
-            }
-            else
-            {
-                _incompleteEdges.Add(connectionView);
-            }
-        }
-
-        public override void Remove(EntryView entryView)
-        {
-            this.Vertices.Remove(entryView);
-
-            var incompleteEdges = this.Edges.Where(e => 
-                !this.Vertices.Contains(e.Left) || !this.Vertices.Contains(e.Right)).ToList();
-            foreach (var incompleteEdge in incompleteEdges)
-            {
-                this.Edges.Remove(incompleteEdge);
-                _incompleteEdges.Add(incompleteEdge);
-            }
-        }
-
-        public override void Remove(ConnectionView connectionView)
-        {
-            _incompleteEdges.Remove(connectionView);
-            this.Edges.Remove(connectionView);
-        }
-
+        // TODO: improve computational complexity
         void FixedUpdate()
         {
-            /* // TODO: fix
-            // TODO: can be improved from n² to n(n-1)/2 computations
-            foreach (var vertex in this.Vertices.Where(vertex => vertex.Rigidbody != null))
+            foreach (var rigidBody in this.Rigidbodies)
             {
-                // repulsion
-                foreach (var otherVertex in this.Vertices)
+                foreach (var otherRigidbody in this.Rigidbodies)
                 {
-                    if (otherVertex == vertex)
+                    if (otherRigidbody == rigidBody)
                     {
                         continue;
                     }
 
-                    float squaredDistance = MiniMath.GetSquaredDistance(vertex.transform.position, otherVertex.transform.position);
-                    if (squaredDistance > maxSquaredDistanceOfCoulombRepulsion
-                    || Math.Abs(squaredDistance) < 0.001)
+                    // repulsion
+                    float squaredDistance = MiniMath.GetSquaredDistance(rigidBody.transform.position, otherRigidbody.transform.position);
+                    if (squaredDistance > maxSquaredDistanceOfCoulombRepulsion)
                     {
+                        // other rigidbody is too far away
                         continue;
                     }
-                    
+
+                    if (squaredDistance < 0.001)
+                    {
+                        // other rigidbody is too close and will produce an extrem repulsive force
+                        continue;
+                    }
+
                     Vector3 repulsion = this.coulombRepulsion*
-                                        (vertex.transform.position - otherVertex.transform.position)*
+                                        (rigidBody.transform.position - otherRigidbody.transform.position)*
                                         (1F/squaredDistance);
-                    vertex.Rigidbody.AddForce(repulsion);
+                    rigidBody.AddForce(repulsion);
                 }
 
                 // attraction to center
-                vertex.Rigidbody.AddForce(centerOfGraph - vertex.transform.position);
+                rigidBody.AddForce(centerOfGraph - rigidBody.transform.position);
             }
 
             // attraction
-            foreach (var edge in this.Edges)
+            foreach (var rigidBody in this.AdjacentRigidbodies.Keys)
             {
-                if (edge.Left.Rigidbody == null || edge.Right.Rigidbody == null)
+                foreach (var connectedRigidbody in this.AdjacentRigidbodies[rigidBody])
                 {
-                    continue;
+                    Vector3 attraction = this.hookeAttraction * (rigidBody.transform.position - connectedRigidbody.transform.position);
+                    rigidBody.AddForce(-attraction);
+                    connectedRigidbody.AddForce(attraction);
                 }
-
-                Vector3 attraction = this.hookeAttraction*(edge.Left.transform.position - edge.Right.transform.position);
-                edge.Left.Rigidbody.AddForce(-attraction);
-                edge.Right.Rigidbody.AddForce(attraction);
             }
-            */
         }
     }
 }

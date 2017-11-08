@@ -72,7 +72,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
         /// <param name="entryView">The EntryView to get the ConnectionViews from.</param>
         public List<ConnectionView> GetConnectionViews(EntryView entryView)
         {
-            return GetConnectionViews(entryView, Enum.GetValues(typeof(ConnectionType)).Cast<ConnectionType>().ToList());
+            return GetConnectionViews(entryView, Connection.AllTypes());
         }
 
         /// <summary>
@@ -117,6 +117,27 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
             return result;
         }
         
+        /// <summary>
+        /// Returns a collection of EntryViews linked to the given EntryView.
+        /// </summary>
+        /// <param name="entryView">The EntryView to get the connected EntryViews from.</param>
+        public List<EntryView> GetConnectedEntryViews(EntryView entryView)
+        {
+            return GetConnectedEntryViews(entryView, Connection.AllTypes());
+        }
+
+        /// /// <summary>
+        /// Returns a collection of EntryViews linked to the given EntryView, 
+        /// restricted to those linked by at least one of the given connection types.
+        /// </summary>
+        /// <param name="entryView">The EntryView to get the linked EntryViews from.</param>
+        /// <param name="connectionTypes">The list of restricting connection types.</param>
+        public List<EntryView> GetConnectedEntryViews(EntryView entryView, List<ConnectionType> connectionTypes)
+        {
+            var connectionViews = GetConnectionViews(entryView, connectionTypes);
+            return connectionViews.Select(c => c.Left == entryView ? c.Right : c.Left).ToList();
+        }
+
         /// <summary>
         /// Returns an ordered collection of SearchResultView corresponding to the given query.
         /// First element is the best result.
