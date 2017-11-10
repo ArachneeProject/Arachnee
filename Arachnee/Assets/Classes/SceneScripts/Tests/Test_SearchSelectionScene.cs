@@ -21,7 +21,7 @@ namespace Assets.Classes.SceneScripts.Tests
         public Text clickedEntryViewLabel;
         public Button validateButton;
         
-        private ModelViewManager _manager;
+        private ModelViewProvider _provider;
 
         private SearchResultView _selectedResultView;
         private readonly List<SearchResultView> _searchResults = new List<SearchResultView>();
@@ -34,7 +34,7 @@ namespace Assets.Classes.SceneScripts.Tests
             builder.SetPrefab<Serie>(serieViewPrefab);
             builder.SetPrefab(searchResultViewPrefab);
 
-            _manager = new ModelViewManager(new OnlineDatabase(), builder);
+            _provider = new ModelViewProvider(new OnlineDatabase(), builder);
             
             Clear();
 
@@ -49,7 +49,7 @@ namespace Assets.Classes.SceneScripts.Tests
             Clear();
 
             // run search
-            var results = _manager.GetSearchResultViews(input.text);
+            var results = _provider.GetSearchResultViews(input.text);
             Debug.Log(results.Count + " results for " + input.text);
             
             // set up search results
@@ -89,7 +89,7 @@ namespace Assets.Classes.SceneScripts.Tests
     
         public void Validate()
         {
-            var entry = _manager.GetEntryView(_selectedResultView.Result.EntryId);
+            var entry = _provider.GetEntryView(_selectedResultView.Result.EntryId);
             if (entry != null)
             {
                 entry.transform.position = Random.onUnitSphere * 2;

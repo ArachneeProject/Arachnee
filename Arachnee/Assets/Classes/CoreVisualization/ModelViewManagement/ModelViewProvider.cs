@@ -13,7 +13,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
     /// <summary>
     /// Class in charge of responding to queries for Views.
     /// </summary>
-    public class ModelViewManager
+    public class ModelViewProvider
     {
         private readonly IEntryProvider _provider;
         private readonly ModelViewBuilder _builder;
@@ -22,7 +22,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
 
         private readonly Dictionary<string, ConnectionView> _cachedConnectionViews = new Dictionary<string, ConnectionView>();
 
-        public ModelViewManager(IEntryProvider provider, ModelViewBuilder builder)
+        public ModelViewProvider(IEntryProvider provider, ModelViewBuilder builder)
         {
             if (provider == null)
             {

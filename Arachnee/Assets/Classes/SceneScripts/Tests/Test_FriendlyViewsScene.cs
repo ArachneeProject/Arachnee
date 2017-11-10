@@ -19,10 +19,10 @@ namespace Assets.Classes.SceneScripts.Tests
             builder.SetPrefab<Artist>(entryViewPrefab);
             builder.SetComponentInitializer(new TextComponentInitializer());
 
-            var manager = new ModelViewManager(new OnlineDatabase(), builder);
+            var provider = new ModelViewProvider(new OnlineDatabase(), builder);
 
-            var movie = manager.GetEntryView("Movie-218");
-            var artist = manager.GetEntryView("Artist-1100");
+            var movie = provider.GetEntryView("Movie-218");
+            var artist = provider.GetEntryView("Artist-1100");
 
             movie.transform.position = Random.onUnitSphere * 4;
             artist.transform.position = Random.onUnitSphere * 4;

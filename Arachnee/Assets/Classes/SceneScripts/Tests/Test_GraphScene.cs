@@ -25,7 +25,7 @@ namespace Assets.Classes.SceneScripts.Tests
             builder.SetPrefab<Artist>(artistViewPrefab);
             builder.SetPrefab(connectionViewPrefab);
             
-            var manager = new ModelViewManager(testProvider, builder);
+            var provider = new ModelViewProvider(testProvider, builder);
 
             var entryViewSet = new HashSet<EntryView>();
             
@@ -33,7 +33,7 @@ namespace Assets.Classes.SceneScripts.Tests
             {
                 foreach (var entryId in testProvider.Entries.Select(e => e.Id))
                 {
-                    var entryView = manager.GetEntryView(entryId);
+                    var entryView = provider.GetEntryView(entryId);
                     entryView.transform.position = Random.onUnitSphere * 3;
 
                     entryViewSet.Add(entryView);
@@ -46,7 +46,7 @@ namespace Assets.Classes.SceneScripts.Tests
             {
                 foreach (var entryView in entryViewSet)
                 {
-                    var connectionViews = manager.GetConnectionViews(entryView);
+                    var connectionViews = provider.GetConnectionViews(entryView);
 
                     foreach (var connectionView in connectionViews)
                     {

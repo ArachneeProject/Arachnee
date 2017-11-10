@@ -14,7 +14,7 @@ namespace Assets.Classes.SceneScripts.Tests
         
         public SearchResultView searchResultViewPrefab;
 
-        private ModelViewManager _manager;
+        private ModelViewProvider _provider;
 
         private float _searchCounter = -5; // used to shift each search
 
@@ -23,7 +23,7 @@ namespace Assets.Classes.SceneScripts.Tests
             var builder = new ModelViewBuilder();
             builder.SetPrefab(searchResultViewPrefab);
 
-            _manager = new ModelViewManager(new OnlineDatabase(), builder);
+            _provider = new ModelViewProvider(new OnlineDatabase(), builder);
             
             Debug.Log("Try to type \"the terminator\" for example.");
         }
@@ -31,7 +31,7 @@ namespace Assets.Classes.SceneScripts.Tests
         public void Go()
         {
             Debug.Log("Searching for " + inputField.text);
-            var queue = _manager.GetSearchResultViews(inputField.text);
+            var queue = _provider.GetSearchResultViews(inputField.text);
             if (!queue.Any())
             {
                 Debug.Log("No result.");

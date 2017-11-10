@@ -14,7 +14,7 @@ namespace Assets.Classes.SceneScripts.Tests
         public SearchResultButton searchResultButtonPrefab;
 
         private SearchResultButton _button;
-        private ModelViewManager _manager;
+        private ModelViewProvider _provider;
         
         private void Start()
         {
@@ -22,10 +22,10 @@ namespace Assets.Classes.SceneScripts.Tests
             builder.SetPrefab(searchResultButtonPrefab);
             builder.SetPrefab<Movie>(entryViewPrefab);
 
-            _manager = new ModelViewManager(new OnlineDatabase(), builder);
+            _provider = new ModelViewProvider(new OnlineDatabase(), builder);
             
             // set up searchResultButton
-            var queue = _manager.GetSearchResultViews("Terminator Judgment Day");
+            var queue = _provider.GetSearchResultViews("Terminator Judgment Day");
 
             _button = queue.Dequeue() as SearchResultButton;
             if (_button == null)
@@ -47,7 +47,7 @@ namespace Assets.Classes.SceneScripts.Tests
 
         private void LookAtEntryView(SearchResultView searchresultview)
         {
-            var view = _manager.GetEntryView(searchresultview.Result.EntryId);
+            var view = _provider.GetEntryView(searchresultview.Result.EntryId);
             if (view == null)
             {
                 return;

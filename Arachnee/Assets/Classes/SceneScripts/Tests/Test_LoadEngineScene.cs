@@ -17,7 +17,7 @@ namespace Assets.Classes.SceneScripts.Tests
 
         void Start ()
         {
-            // sets up manager
+            // sets up provider
             var sampleProvider = new MiniSampleProvider();
 
             var builder = new ModelViewBuilder();
@@ -25,12 +25,12 @@ namespace Assets.Classes.SceneScripts.Tests
             builder.SetPrefab<Artist>(EntryViewPrefab);
             builder.SetPrefab(ConnectionViewPrefab);
 
-            var manager = new ModelViewManager(sampleProvider, builder);
+            var provider = new ModelViewProvider(sampleProvider, builder);
             
             // load graph engine
             foreach (var entry in sampleProvider.Entries.Select(e => e.Id))
             {
-                var entryView = manager.GetEntryView(entry);
+                var entryView = provider.GetEntryView(entry);
                 entryView.transform.position = Random.onUnitSphere*5;
 
                 var entryViewRigidbody = entryView.GetComponent<Rigidbody>();
@@ -40,7 +40,7 @@ namespace Assets.Classes.SceneScripts.Tests
                     return;
                 }
                 
-                foreach (var connectedEntryView in manager.GetConnectedEntryViews(entryView))
+                foreach (var connectedEntryView in provider.GetConnectedEntryViews(entryView))
                 {
                     var connectedRigidbody = connectedEntryView.GetComponent<Rigidbody>();
                     if (connectedRigidbody == null)
