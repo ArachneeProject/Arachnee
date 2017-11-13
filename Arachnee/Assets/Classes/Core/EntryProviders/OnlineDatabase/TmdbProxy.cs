@@ -11,23 +11,6 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
 {
     public class TmdbProxy
     {
-        public enum ImageType
-        {
-            Backdrop,
-            Logo,
-            Poster,
-            Profile,
-            Still
-        }
-
-        public enum ImageSize
-        {
-            Small,
-            Medium,
-            Large,
-            Original
-        }
-
         private const char IdSeparator = '-';
 
         private readonly TmdbClient _client = new TmdbClient();
@@ -39,102 +22,80 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
         };
 
         /// <summary>
-        /// Returns the image corresponding to the given parameters.
+        /// Returns the main image corresponding to the given <see cref="Entry"/>.
         /// </summary>
-        /// <param name="imageType">Type of the image.</param>
-        /// <param name="imageSize">Size of the image.</param>
-        /// <param name="imagePath">Path of the image file. Should look like this: "/somerandomcharactersandnumbers.png".</param>
-        /// <returns></returns>
-        public byte[] GetImage(ImageType imageType, ImageSize imageSize, string imagePath)
+        public byte[] GetMainImage(Entry entry)
         {
-            if (string.IsNullOrEmpty(imagePath))
+            if (entry == null)
             {
-                throw new ArgumentNullException(nameof(imagePath));
+                throw new ArgumentNullException(nameof(entry));
             }
 
-            string fileSize;
-
-            switch (imageSize)
+            if (entry == DefaultEntry.Instance)
             {
-                case ImageSize.Small:
-                    switch (imageType)
-                    {
-                        case ImageType.Backdrop:
-                            fileSize = "w300";
-                            break;
+                throw new ArgumentException("The given entry was the default entry.");
+            }
 
-                        case ImageType.Logo:
-                        case ImageType.Profile:
-                            fileSize = "w45";
-                            break;
+            var movie = entry as Movie;
+            if (movie != null)
+            {
+                return GetImage(ImageType.Poster, ImageSize.Large, movie.PosterPath);
+            }
 
-                        case ImageType.Poster:
-                        case ImageType.Still:
-                            fileSize = "w92";
-                            break;
-                            
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(imageType), $"Image type \"{imageType}\" is not handled.");
-                    }
-                    break; // small
+            var artist = entry as Artist;
+            if (artist != null)
+            {
+                return GetImage(ImageType.Profile, ImageSize.Large, artist.ProfilePath);
+            }
 
-                case ImageSize.Medium:
-                    switch (imageType)
-                    {
-                        case ImageType.Backdrop:
-                            fileSize = "w780";
-                            break;
+            throw new ArgumentOutOfRangeException($"{entry.GetType().Name} is not handled.");
+        }
 
-                        case ImageType.Logo:
-                        case ImageType.Profile:
-                        case ImageType.Poster:
-                        case ImageType.Still:
-                            fileSize = "w185";
-                            break;
+        /// <summary>
+        /// Returns the main image corresponding to the given <see cref="SearchResult"/>.
+        /// </summary>
+        public byte[] GetMainImage(SearchResult searchResult)
+        {
+            if (searchResult == null)
+            {
+                throw new ArgumentNullException(nameof(searchResult));
+            }
 
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(imageType), $"Image type \"{imageType}\" is not handled.");
-                    }
-                    break; // medium
+            if (string.IsNullOrEmpty(searchResult.EntryId))
+            {
+                throw new ArgumentException($"\"Property {nameof(searchResult.EntryId)} of {nameof(SearchResult)} is empty.");
+            }
 
-                case ImageSize.Large:
-                    switch (imageType)
-                    {
-                        case ImageType.Backdrop:
-                            fileSize = "w1280";
-                            break;
+            if (string.IsNullOrEmpty(searchResult.ImagePath))
+            {
+                throw new ArgumentException($"\"Property {nameof(searchResult.ImagePath)} of {nameof(SearchResult)} is empty.");
+            }
 
-                        case ImageType.Logo:
-                            fileSize = "w500";
-                            break;
+            var split = searchResult.EntryId.Split(IdSeparator);
 
-                        case ImageType.Profile:
-                            fileSize = "h632";
-                            break;
+            if (split.Length != 2)
+            {
+                throw new ArgumentException($"\"{searchResult.EntryId}\" is not a valid id.");
+            }
 
-                        case ImageType.Poster:
-                            fileSize = "w780";
-                            break;
-
-                        case ImageType.Still:
-                            fileSize = "w300";
-                            break;
-
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(imageType), $"Image type \"{imageType}\" is not handled.");
-                    }
-                    break; // large
-
-                case ImageSize.Original:
-                    fileSize = "original";
-                    break; // original
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(imageSize), $"Image size \"{imageSize}\" is not handled.");
+            var entryType = split[0];
+            
+            if (string.IsNullOrEmpty(entryType))
+            {
+                throw new ArgumentException($"\"{searchResult.EntryId}\" is not a valid id.");
             }
             
-            var image = _client.GetImage(fileSize, imagePath);
-            return image;
+            switch (entryType) // TODO: Handle Serie
+            {
+                case nameof(Movie):
+                    return GetImage(ImageType.Poster, ImageSize.Small, searchResult.ImagePath);
+
+                case nameof(Artist):
+                    return GetImage(ImageType.Profile, ImageSize.Small, searchResult.ImagePath);
+
+                default:
+                    throw new ArgumentException($"\"{searchResult.EntryId}\" cannot be processed because \"{entryType}\" is not a handled entry type.");
+            }
         }
 
         /// <summary>
@@ -232,6 +193,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
                     var tmdbPerson = _client.GetPerson(id);
                     entry = ConvertToArtist(tmdbPerson);
                     break;
+
                 default:
                     throw new ArgumentException(
                         $"\"{entryId}\" cannot be processed because \"{entryType}\" is not a handled entry type.",
@@ -336,6 +298,115 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
             }
 
             return movie;
+        }
+        
+        private byte[] GetImage(ImageType imageType, ImageSize imageSize, string imagePath)
+        {
+            if (string.IsNullOrEmpty(imagePath))
+            {
+                throw new ArgumentNullException(nameof(imagePath));
+            }
+
+            string fileSize;
+
+            switch (imageSize)
+            {
+                case ImageSize.Small:
+                    switch (imageType)
+                    {
+                        case ImageType.Backdrop:
+                            fileSize = "w300";
+                            break;
+
+                        case ImageType.Logo:
+                        case ImageType.Profile:
+                            fileSize = "w45";
+                            break;
+
+                        case ImageType.Poster:
+                        case ImageType.Still:
+                            fileSize = "w92";
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(imageType), $"Image type \"{imageType}\" is not handled.");
+                    }
+                    break; // small
+
+                case ImageSize.Medium:
+                    switch (imageType)
+                    {
+                        case ImageType.Backdrop:
+                            fileSize = "w780";
+                            break;
+
+                        case ImageType.Logo:
+                        case ImageType.Profile:
+                        case ImageType.Poster:
+                        case ImageType.Still:
+                            fileSize = "w185";
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(imageType), $"Image type \"{imageType}\" is not handled.");
+                    }
+                    break; // medium
+
+                case ImageSize.Large:
+                    switch (imageType)
+                    {
+                        case ImageType.Backdrop:
+                            fileSize = "w1280";
+                            break;
+
+                        case ImageType.Logo:
+                            fileSize = "w500";
+                            break;
+
+                        case ImageType.Profile:
+                            fileSize = "h632";
+                            break;
+
+                        case ImageType.Poster:
+                            fileSize = "w780";
+                            break;
+
+                        case ImageType.Still:
+                            fileSize = "w300";
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(imageType), $"Image type \"{imageType}\" is not handled.");
+                    }
+                    break; // large
+
+                case ImageSize.Original:
+                    fileSize = "original";
+                    break; // original
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(imageSize), $"Image size \"{imageSize}\" is not handled.");
+            }
+
+            var image = _client.GetImage(fileSize, imagePath);
+            return image;
+        }
+
+        private enum ImageType
+        {
+            Backdrop,
+            Logo,
+            Poster,
+            Profile,
+            Still
+        }
+
+        private enum ImageSize
+        {
+            Small,
+            Medium,
+            Large,
+            Original
         }
     }
 }
