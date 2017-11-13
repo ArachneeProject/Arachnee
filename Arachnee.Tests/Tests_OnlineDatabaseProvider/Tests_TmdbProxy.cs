@@ -41,7 +41,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
                             "Meanwhile, the human-resistance movement dispatches a lone warrior to safeguard Sarah. " +
                             "Can he stop the virtually indestructible killing machine?", movie.Overview);
             Assert.IsTrue(movie.Popularity > 0);
-            Assert.AreEqual("/q8ffBuxQlYOHrvPniLgCbmKK4Lv.jpg", movie.PosterPath);
+            Assert.AreEqual("/q8ffBuxQlYOHrvPniLgCbmKK4Lv.jpg", movie.MainImagePath);
             Assert.AreEqual("1984-10-26", movie.ReleaseDate);
             Assert.AreEqual(78371200, movie.Revenue);
             Assert.AreEqual(108, movie.Runtime);
@@ -92,7 +92,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
             Assert.IsTrue(artist.NickNames.Count > 3);
             Assert.AreEqual("Thal, Styria, Austria", artist.PlaceOfBirth);
             Assert.IsTrue(artist.Popularity > 0);
-            Assert.AreEqual("/sOkCXc9xuSr6v7mdAq9LwEBje68.jpg", artist.ProfilePath);
+            Assert.AreEqual("/sOkCXc9xuSr6v7mdAq9LwEBje68.jpg", artist.MainImagePath);
         }
 
         [TestMethod]

@@ -1,6 +1,5 @@
 ﻿using System;
 using Assets.Classes.Core.Models;
-using Assets.Classes.CoreVisualization.ModelViewManagement.Builders.ComponentInitializers;
 using Assets.Classes.CoreVisualization.ModelViews;
 
 namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
@@ -13,8 +12,6 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
         private readonly EntryViewBuilder _entryViewBuilder = new EntryViewBuilder();
         private readonly ConnectionViewBuilder _connectionViewBuilder = new ConnectionViewBuilder();
         private readonly SearchResultViewBuilder _searchResultViewBuilder = new SearchResultViewBuilder();
-
-        private IComponentInitializer _componentInitializer = new EmptyComponentInitializer();
         
         /// <summary>
         /// Sets the prefab that should be used to build an Entry.
@@ -43,21 +40,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
         {
             _searchResultViewBuilder.SearchResultViewPrefab = prefab;
         }
-
-        /// <summary>
-        /// Sets the IComponentInitializer used by the builder when Views are being built.
-        /// </summary>
-        /// <param name="componentInitializer">The IComponentInitializer to use.</param>
-        public void SetComponentInitializer(IComponentInitializer componentInitializer)
-        {
-            if (componentInitializer == null)
-            {
-                throw new ArgumentNullException(nameof(componentInitializer));
-            }
-
-            _componentInitializer = componentInitializer;
-        }
-
+        
         /// <summary>
         /// Build the EntryView corresponding to the given Entry. 
         /// Uses the prefab set by the SetPrefab method.
@@ -67,7 +50,6 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
         public EntryView BuildView(Entry entry)
         {
             var view = _entryViewBuilder.BuildEntryView(entry);
-            _componentInitializer.InitializeComponents(view);
             return view;
         }
 
@@ -81,7 +63,6 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
         public ConnectionView BuildView(EntryView leftEntryView, EntryView rightEntryView)
         {
             var view = _connectionViewBuilder.BuildConnectionView(leftEntryView, rightEntryView);
-            _componentInitializer.InitializeComponents(view);
             return view;
         }
 
@@ -94,7 +75,6 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
         public SearchResultView BuildView(SearchResult searchResult)
         {
             var view = _searchResultViewBuilder.BuildResultView(searchResult);
-            _componentInitializer.InitializeComponents(view);
             return view;
         }
     }

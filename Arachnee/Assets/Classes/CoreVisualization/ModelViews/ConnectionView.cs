@@ -17,5 +17,15 @@ namespace Assets.Classes.CoreVisualization.ModelViews
                 ? $"{fromEntryId}::::{toEntryId}"
                 : $"{toEntryId}::::{fromEntryId}";
         }
+
+        protected virtual void Start()
+        {
+            
+        }
+
+        protected virtual void Update()
+        {
+            
+        }
     }
 }

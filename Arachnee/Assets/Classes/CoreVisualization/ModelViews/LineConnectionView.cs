@@ -8,8 +8,10 @@ namespace Assets.Classes.CoreVisualization.ModelViews
     {
         private LineRenderer _lineRenderer;
         
-        void Start()
+        protected override void Start()
         {
+            base.Start();
+
             _lineRenderer = GetComponent<LineRenderer>();
             if (_lineRenderer == null)
             {
@@ -18,8 +20,10 @@ namespace Assets.Classes.CoreVisualization.ModelViews
             }
         }
         
-        void Update()
+        protected override void Update()
         {
+            base.Update();
+
             _lineRenderer.SetPosition(0, Left.transform.position);
             _lineRenderer.SetPosition(1, Right.transform.position);
         }

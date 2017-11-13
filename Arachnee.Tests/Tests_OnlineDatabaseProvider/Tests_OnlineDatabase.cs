@@ -21,7 +21,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
             Assert.IsNotNull(movie);
             Assert.AreEqual("Movie-218", movie.Id);
             Assert.AreEqual("The Terminator", movie.Title);
-            Assert.AreEqual("/q8ffBuxQlYOHrvPniLgCbmKK4Lv.jpg", movie.PosterPath);
+            Assert.AreEqual("/q8ffBuxQlYOHrvPniLgCbmKK4Lv.jpg", movie.MainImagePath);
         }
 
         [TestMethod]
@@ -37,7 +37,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
             Assert.IsNotNull(artist);
             Assert.AreEqual("Artist-1100", artist.Id);
             Assert.AreEqual("Arnold Schwarzenegger", artist.Name);
-            Assert.AreEqual("/sOkCXc9xuSr6v7mdAq9LwEBje68.jpg", artist.ProfilePath);
+            Assert.AreEqual("/sOkCXc9xuSr6v7mdAq9LwEBje68.jpg", artist.MainImagePath);
         }
 
         [TestMethod]

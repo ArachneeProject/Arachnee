@@ -10,9 +10,10 @@ namespace Assets.Classes.CoreVisualization.ModelViews
     {
         private Button _button;
         
-        [UsedImplicitly]
-        void Start()
+        protected override void Start()
         {
+            base.Start();
+
             _button = this.GetComponent<Button>();
             if (_button == null)
             {

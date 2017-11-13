@@ -4,7 +4,6 @@ using System.Linq;
 using Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb;
 using Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects;
 using Assets.Classes.Core.Models;
-using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
@@ -39,13 +38,13 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
             var movie = entry as Movie;
             if (movie != null)
             {
-                return GetImage(ImageType.Poster, ImageSize.Large, movie.PosterPath);
+                return GetImage(ImageType.Poster, ImageSize.Large, movie.MainImagePath);
             }
 
             var artist = entry as Artist;
             if (artist != null)
             {
-                return GetImage(ImageType.Profile, ImageSize.Large, artist.ProfilePath);
+                return GetImage(ImageType.Profile, ImageSize.Large, artist.MainImagePath);
             }
 
             throw new ArgumentOutOfRangeException($"{entry.GetType().Name} is not handled.");
@@ -211,6 +210,9 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
             artist.Id = nameof(Artist) + IdSeparator + artist.Id;
             artist.NickNames = tmdbPerson.AlsoKnownAs;
 
+            // set images
+            artist.MainImagePath = tmdbPerson.ProfilePath;
+
             // create the connections
             artist.Connections = new List<Connection>();
 
@@ -260,6 +262,9 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
             var movie = JsonConvert.DeserializeObject<Movie>(JsonConvert.SerializeObject(tmdbMovie));
             movie.Id = nameof(Movie) + IdSeparator + movie.Id;
             movie.Tags = tmdbMovie.Genres.Select(g => g.Name).ToList();
+
+            // set images
+            movie.MainImagePath = tmdbMovie.PosterPath;
 
             // create the connections
             movie.Connections = new List<Connection>();

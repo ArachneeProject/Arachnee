@@ -23,8 +23,6 @@ namespace Assets.Classes.Core.Models
         public string PlaceOfBirth { get; set; }
 
         public float Popularity { get; set; }
-
-        public string ProfilePath { get; set; }
         
         public override string ToString()
         {

@@ -21,9 +21,7 @@ namespace Assets.Classes.Core.Models
         public string Overview { get; set; }
 
         public float Popularity { get; set; }
-
-        public string PosterPath { get; set; }
-
+        
         public string ReleaseDate { get; set; }
 
         public int Revenue { get; set; }

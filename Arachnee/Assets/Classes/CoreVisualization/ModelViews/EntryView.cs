@@ -15,5 +15,10 @@ namespace Assets.Classes.CoreVisualization.ModelViews
         {
             OnClicked?.Invoke(this);
         }
+
+        protected virtual void Start()
+        {
+            
+        }
     }
 }
