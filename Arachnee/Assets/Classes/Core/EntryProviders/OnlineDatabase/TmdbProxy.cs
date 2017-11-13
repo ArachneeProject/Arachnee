@@ -4,12 +4,30 @@ using System.Linq;
 using Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb;
 using Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects;
 using Assets.Classes.Core.Models;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
 {
     public class TmdbProxy
     {
+        public enum ImageType
+        {
+            Backdrop,
+            Logo,
+            Poster,
+            Profile,
+            Still
+        }
+
+        public enum ImageSize
+        {
+            Small,
+            Medium,
+            Large,
+            Original
+        }
+
         private const char IdSeparator = '-';
 
         private readonly TmdbClient _client = new TmdbClient();
@@ -19,6 +37,105 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
             {"Director", ConnectionType.Director},
             {"Boom Operator", ConnectionType.BoomOperator},
         };
+
+        /// <summary>
+        /// Returns the image corresponding to the given parameters.
+        /// </summary>
+        /// <param name="imageType">Type of the image.</param>
+        /// <param name="imageSize">Size of the image.</param>
+        /// <param name="imagePath">Path of the image file. Should look like this: "/somerandomcharactersandnumbers.png".</param>
+        /// <returns></returns>
+        public byte[] GetImage(ImageType imageType, ImageSize imageSize, string imagePath)
+        {
+            if (string.IsNullOrEmpty(imagePath))
+            {
+                throw new ArgumentNullException(nameof(imagePath));
+            }
+
+            string fileSize;
+
+            switch (imageSize)
+            {
+                case ImageSize.Small:
+                    switch (imageType)
+                    {
+                        case ImageType.Backdrop:
+                            fileSize = "w300";
+                            break;
+
+                        case ImageType.Logo:
+                        case ImageType.Profile:
+                            fileSize = "w45";
+                            break;
+
+                        case ImageType.Poster:
+                        case ImageType.Still:
+                            fileSize = "w92";
+                            break;
+                            
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(imageType), $"Image type \"{imageType}\" is not handled.");
+                    }
+                    break; // small
+
+                case ImageSize.Medium:
+                    switch (imageType)
+                    {
+                        case ImageType.Backdrop:
+                            fileSize = "w780";
+                            break;
+
+                        case ImageType.Logo:
+                        case ImageType.Profile:
+                        case ImageType.Poster:
+                        case ImageType.Still:
+                            fileSize = "w185";
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(imageType), $"Image type \"{imageType}\" is not handled.");
+                    }
+                    break; // medium
+
+                case ImageSize.Large:
+                    switch (imageType)
+                    {
+                        case ImageType.Backdrop:
+                            fileSize = "w1280";
+                            break;
+
+                        case ImageType.Logo:
+                            fileSize = "w500";
+                            break;
+
+                        case ImageType.Profile:
+                            fileSize = "h632";
+                            break;
+
+                        case ImageType.Poster:
+                            fileSize = "w780";
+                            break;
+
+                        case ImageType.Still:
+                            fileSize = "w300";
+                            break;
+
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(imageType), $"Image type \"{imageType}\" is not handled.");
+                    }
+                    break; // large
+
+                case ImageSize.Original:
+                    fileSize = "original";
+                    break; // original
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(imageSize), $"Image size \"{imageSize}\" is not handled.");
+            }
+            
+            var image = _client.GetImage(fileSize, imagePath);
+            return image;
+        }
 
         /// <summary>
         /// Returns a list of <see cref="SearchResult"/> corresponding to the given query.
@@ -32,7 +149,8 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
             }
 
             var tmdbResults = _client.GetCombinedSearchResults(query);
-            var resultsWithImage = tmdbResults.Where(r => !(string.IsNullOrEmpty(r.PosterPath) && string.IsNullOrEmpty(r.ProfilePath)));
+            var resultsWithImage = tmdbResults.Where(r =>
+                !(string.IsNullOrEmpty(r.PosterPath) && string.IsNullOrEmpty(r.ProfilePath)));
 
             foreach (var result in resultsWithImage)
             {
@@ -46,7 +164,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
                             Name = result.Title
                         });
                         break;
-                        
+
                     case "person":
                         results.Add(new SearchResult
                         {
@@ -115,7 +233,9 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
                     entry = ConvertToArtist(tmdbPerson);
                     break;
                 default:
-                    throw new ArgumentException($"\"{entryId}\" cannot be processed because \"{entryType}\" is not a handled entry type.", nameof(entryId));
+                    throw new ArgumentException(
+                        $"\"{entryId}\" cannot be processed because \"{entryType}\" is not a handled entry type.",
+                        nameof(entryId));
             }
 
             return entry;
@@ -125,7 +245,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
         {
             // create the Artist from the tmdbPerson
             var artist = JsonConvert.DeserializeObject<Artist>(
-                            JsonConvert.SerializeObject(tmdbPerson, TmdbJsonSettings.Instance), TmdbJsonSettings.Instance);
+                JsonConvert.SerializeObject(tmdbPerson, TmdbJsonSettings.Instance), TmdbJsonSettings.Instance);
             artist.Id = nameof(Artist) + IdSeparator + artist.Id;
             artist.NickNames = tmdbPerson.AlsoKnownAs;
 
@@ -145,7 +265,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
                     Label = cast.Character
                 });
             }
-            
+
             foreach (var cast in tmdbPerson.CombinedCredits.Crew.Where(c => !string.IsNullOrEmpty(c.PosterPath)))
             {
                 ConnectionType type;
@@ -181,7 +301,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
 
             // create the connections
             movie.Connections = new List<Connection>();
-            
+
             foreach (var cast in tmdbMovie.Credits.Cast.Where(c => !string.IsNullOrEmpty(c.ProfilePath)))
             {
                 movie.Connections.Add(new Connection
@@ -214,7 +334,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
                     });
                 }
             }
-            
+
             return movie;
         }
     }

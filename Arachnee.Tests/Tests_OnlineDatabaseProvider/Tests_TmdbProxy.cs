@@ -1,8 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using Assets.Classes.Core.EntryProviders.OnlineDatabase;
-using Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb;
 using Assets.Classes.Core.Models;
 using Assets.Classes.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -208,5 +207,51 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
             Assert.AreEqual(0, results.Count);
         }
 
+        [TestMethod]
+        public void GetImage_InvalidImageType_ThrowsArgumentOutOfRangeException()
+        {
+            var proxy = new TmdbProxy();
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => proxy.GetImage((TmdbProxy.ImageType)int.MaxValue, TmdbProxy.ImageSize.Small, "/wOMD2jDmY6wU2oScXOEgq9hqeNN.png"));
+        }
+
+        [TestMethod]
+        public void GetImage_InvalidImageSize_ThrowsArgumentOutOfRangeException()
+        {
+            var proxy = new TmdbProxy();
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => proxy.GetImage(TmdbProxy.ImageType.Logo, (TmdbProxy.ImageSize)int.MaxValue, "/wOMD2jDmY6wU2oScXOEgq9hqeNN.png"));
+        }
+
+        [TestMethod]
+        public void GetImage_NullPath_ThrowsArgumentNullException()
+        {
+            var proxy = new TmdbProxy();
+            Assert.ThrowsException<ArgumentNullException>(() => proxy.GetImage(TmdbProxy.ImageType.Logo, TmdbProxy.ImageSize.Small, null));
+        }
+
+        [TestMethod]
+        public void GetImage_ValidPoster_ReturnsValidImage()
+        {
+            var proxy = new TmdbProxy();
+            var bytes = proxy.GetImage(TmdbProxy.ImageType.Logo, TmdbProxy.ImageSize.Small, "/wOMD2jDmY6wU2oScXOEgq9hqeNN.png");
+
+            var expectedHash = new byte[] { 106, 217, 16, 85, 94, 179, 111, 3, 83, 35, 87, 253, 222, 75, 108, 49 };
+
+            byte[] hash;
+            using (var md5 = MD5.Create())
+            {
+                hash = md5.ComputeHash(bytes);
+            }
+
+            Assert.AreEqual(1030, bytes.Length);
+            Assert.AreEqual((byte)'P', bytes[1]);
+            Assert.AreEqual((byte)'N', bytes[2]);
+            Assert.AreEqual((byte)'G', bytes[3]);
+
+            Assert.AreEqual(expectedHash.Length, hash.Length);
+            for (int i = 0; i < expectedHash.Length; i++)
+            {
+                Assert.AreEqual(expectedHash[i], hash[i]);
+            }
+        }
     }
 }
