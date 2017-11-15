@@ -206,7 +206,7 @@ GameObject:
   - component: {fileID: 837400965}
   - component: {fileID: 837400966}
   m_Layer: 0
-  m_Name: Test_FriendlyViews
+  m_Name: Test_TextEntryView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -236,7 +236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8176d94c173716943be8625efa924aa9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entryViewPrefab: {fileID: 1130325159}
+  textEntryViewPrefab: {fileID: 1130325159}
 --- !u!1 &998285906
 GameObject:
   m_ObjectHideFlags: 0
@@ -374,7 +374,7 @@ GameObject:
   - component: {fileID: 1130325158}
   - component: {fileID: 1130325159}
   m_Layer: 0
-  m_Name: EntryView
+  m_Name: TextEntryView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -415,7 +415,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1130325156}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 78a963ba2b1f55f4c93a5ac9393c1a70, type: 3}
+  m_Script: {fileID: 11500000, guid: 3c4a91d4db41e504a908da6b2d5350e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1702303895

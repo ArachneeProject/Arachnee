@@ -7,15 +7,15 @@ using UnityEngine;
 
 namespace Assets.Classes.SceneScripts.Tests
 {
-    public class Test_TextViewScene : MonoBehaviour
+    public class Test_TextEntryViewScene : MonoBehaviour
     {
-        public TextEntryView entryViewPrefab;
+        public TextEntryView textEntryViewPrefab;
 
         void Start()
         {
             var builder = new ModelViewBuilder();
-            builder.SetPrefab<Movie>(entryViewPrefab);
-            builder.SetPrefab<Artist>(entryViewPrefab);
+            builder.SetPrefab<Movie>(textEntryViewPrefab);
+            builder.SetPrefab<Artist>(textEntryViewPrefab);
             
             var provider = new ModelViewProvider(new OnlineDatabase(), builder);
 
