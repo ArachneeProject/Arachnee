@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
-using Assets.Classes.Logging;
 using Assets.Classes.SceneScripts;
+using UnityEngine;
+using Logger = Assets.Classes.Logging.Logger;
 
 namespace Assets.Classes.CoreVisualization.ModelViews
 {
@@ -17,14 +19,25 @@ namespace Assets.Classes.CoreVisualization.ModelViews
                 Logger.LogError($"No {nameof(TextureRenderer)} component found in children of {nameof(ImageTextEntryView)} gameobject.");
                 return;
             }
-
-            // ensure the renderer is initialized
+            
             textureRenderer.Start();
+            
+            var asyncCall = new AsyncCall<byte[]>();
 
-            // setup entryview
-            var imageProvider = new ImageProvider();
-            var texture = imageProvider.GetTexture2D(this.Entry);
-            textureRenderer.SetTexture(texture);
+            this.StartCoroutine(asyncCall.Execute(() =>
+            {
+                var imageProvider = new ImageProvider();
+                var bytes = imageProvider.GetTextureBytes(this.Entry);
+                return bytes;
+            }, 
+            bytes =>
+            {
+                var texture = new Texture2D(2, 2);
+                texture.LoadImage(bytes);
+                textureRenderer.SetTexture(texture);
+            }));
         }
+
+
     }
 }

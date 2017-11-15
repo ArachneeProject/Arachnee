@@ -9,14 +9,10 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
     {
         private readonly TmdbProxy _proxy = new TmdbProxy();
 
-        public Texture2D GetTexture2D(Entry entry)
+        public byte[] GetTextureBytes(Entry entry)
         {
             byte[] bytes = _proxy.GetMainImage(entry);
-            
-            var texture = new Texture2D(2,2);
-            texture.LoadImage(bytes);
-
-            return texture;
+            return bytes;
         }
     }
 }
