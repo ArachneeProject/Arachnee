@@ -40,7 +40,7 @@ namespace Assets.Classes.SceneScripts.Tests
                     return;
                 }
                 
-                foreach (var connectedEntryView in provider.GetConnectedEntryViews(entryView))
+                foreach (var connectedEntryView in provider.GetAdjacentEntryViews(entryView, Connection.AllTypes()))
                 {
                     var connectedRigidbody = connectedEntryView.GetComponent<Rigidbody>();
                     if (connectedRigidbody == null)

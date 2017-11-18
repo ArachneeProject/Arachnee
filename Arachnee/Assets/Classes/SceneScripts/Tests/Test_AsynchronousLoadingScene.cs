@@ -30,27 +30,28 @@ namespace Assets.Classes.SceneScripts.Tests
             builder.SetPrefab<Serie>(imageTextEntryViewPrefab);
             builder.SetPrefab(lineConnectionViewPrefab);
             
-            var prov = new ModelViewProvider(new OnlineDatabase(), builder);
+            var provider = new ModelViewProvider(new OnlineDatabase(), builder);
 
             yield return new WaitForEndOfFrame();
 
             // get seed entry
-            var asyncCall = prov.GetEntryViewAsync("Movie-218");
-            yield return asyncCall.Execute();
+            var awaitableEntryView = provider.GetEntryViewAsync("Movie-218");
+            yield return awaitableEntryView.Await();
 
-            asyncCall.Result.gameObject.transform.position = Vector3.zero;
+            var entryView = awaitableEntryView.Result;
+            entryView.gameObject.transform.position = Vector3.zero;
             
-            /*
             // get adjacent entries
-            var connectedEntryViews = prov.GetConnectedEntryViews(entryView.Result);
-            
+            var awaitableList = provider.GetAdjacentEntryViewsAsync(entryView, Connection.AllTypes());
+            yield return awaitableList.Await();
+            var connectedEntryViews = awaitableList.Result;
+
             foreach (var connectedEntryView in connectedEntryViews)
             {
                 yield return new WaitForEndOfFrame();
                 connectedEntryView.transform.position = Random.onUnitSphere * 8;
             }
-            */
-
+            
             loadingObject.SetActive(false);
         }
     }

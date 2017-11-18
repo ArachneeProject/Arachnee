@@ -46,7 +46,7 @@ namespace Assets.Classes.SceneScripts.Tests
             {
                 foreach (var entryView in entryViewSet)
                 {
-                    var connectionViews = provider.GetConnectionViews(entryView);
+                    var connectionViews = provider.GetConnectionViews(entryView, Connection.AllTypes());
 
                     foreach (var connectionView in connectionViews)
                     {
