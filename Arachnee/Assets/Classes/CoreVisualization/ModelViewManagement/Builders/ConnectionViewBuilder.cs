@@ -1,8 +1,8 @@
-﻿using System.Linq;
+﻿using System;
 using Assets.Classes.CoreVisualization.ModelViews;
 using JetBrains.Annotations;
-using UnityEngine;
 using Logger = Assets.Classes.Logging.Logger;
+using Object = UnityEngine.Object;
 
 namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
 {
@@ -12,6 +12,11 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
     public class ConnectionViewBuilder
     {
         public ConnectionView ConnectionViewPrefab { get; set; }
+
+        /// <summary>
+        /// Fired when an <see cref="ConnectionView"/> is built.
+        /// </summary>
+        public EventHandler<ConnectionView> OnBuilt;
 
         [CanBeNull]
         public ConnectionView BuildConnectionView(EntryView leftEntryView, EntryView rightEntryView)
@@ -27,6 +32,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
             connectionView.Left = leftEntryView;
             connectionView.Right = rightEntryView;
             connectionView.gameObject.name = connectionView.Id;
+            OnBuilt?.Invoke(this, connectionView);
 
             return connectionView;
         }

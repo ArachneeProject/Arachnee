@@ -6,7 +6,7 @@ namespace Assets.Classes.CoreVisualization.ModelViews
 {
     public class TextEntryView : EntryView
     {
-        protected override void Start()
+        public override void Start()
         {
             base.Start();
 

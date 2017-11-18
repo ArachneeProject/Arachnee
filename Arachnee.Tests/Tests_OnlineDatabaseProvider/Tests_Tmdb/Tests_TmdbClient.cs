@@ -129,7 +129,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
             Assert.AreEqual(240UL, tvResult.Id);
 
             Assert.AreEqual("/9i6bhYbxe2g02e3GhljtktuyDMj.jpg", movieResult.PosterPath);
-            Assert.AreEqual("/pmKJ4sGvPQ3imzXaFnjW4Vk5Gyc.jpg", personResult.ProfilePath);
+            Assert.AreEqual("/sVuTm1w5G6ofrx4lRjy64D7MRiS.jpg", personResult.ProfilePath);
             Assert.AreEqual("/6bsg03VVkB41Vzs6w1NvpFvq2yH.jpg", tvResult.PosterPath);
         }
 

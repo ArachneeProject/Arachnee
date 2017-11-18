@@ -13,6 +13,17 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
         private readonly ConnectionViewBuilder _connectionViewBuilder = new ConnectionViewBuilder();
         private readonly SearchResultViewBuilder _searchResultViewBuilder = new SearchResultViewBuilder();
         
+        public EventHandler<EntryView> OnBuiltEntryView;
+        public EventHandler<ConnectionView> OnBuiltConnectionView;
+        public EventHandler<SearchResultView> OnBuiltSearchResult;
+
+        public ModelViewBuilder()
+        {
+            _entryViewBuilder.OnBuilt += (sender, arg) => OnBuiltEntryView?.Invoke(this, arg);
+            _connectionViewBuilder.OnBuilt += (sender, arg) => OnBuiltConnectionView?.Invoke(this, arg);
+            _searchResultViewBuilder.OnBuilt += (sender, arg) => OnBuiltSearchResult?.Invoke(this, arg);
+        }
+        
         /// <summary>
         /// Sets the prefab that should be used to build an Entry.
         /// </summary>

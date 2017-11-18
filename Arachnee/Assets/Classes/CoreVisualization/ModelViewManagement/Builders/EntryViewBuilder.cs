@@ -14,7 +14,12 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
     public class EntryViewBuilder
     {
         public Dictionary<Type, EntryView> EntryViewPrefabs { get; } = new Dictionary<Type, EntryView>();
-        
+
+        /// <summary>
+        /// Fired when an <see cref="EntryView"/> is built.
+        /// </summary>
+        public EventHandler<EntryView> OnBuilt;
+
         [CanBeNull]
         public EntryView BuildEntryView(Entry entry)
         {
@@ -40,6 +45,8 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
             var entryView = Object.Instantiate(entryViewPrefab);
             entryView.Entry = entry;
             entryView.gameObject.name = entry.ToString();
+            entryView.Start();
+            OnBuilt?.Invoke(this, entryView);
 
             return entryView;
         }

@@ -170,7 +170,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
             var tmdbProxy = new TmdbProxy();
             var results = tmdbProxy.GetSearchResults("Jackie Chan");
 
-            Assert.AreEqual(19, results.Count);
+            Assert.IsTrue(results.Count > 10);
 
             var movieResult = results.FirstOrDefault(r => r.Name == "First Strike");
             var personResult = results.FirstOrDefault(r => r.Name == "Jackie Chan");
@@ -185,7 +185,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
             Assert.AreEqual("Serie-240", tvResult.EntryId);
             
             Assert.AreEqual("/9i6bhYbxe2g02e3GhljtktuyDMj.jpg", movieResult.ImagePath);
-            Assert.AreEqual("/pmKJ4sGvPQ3imzXaFnjW4Vk5Gyc.jpg", personResult.ImagePath);
+            Assert.AreEqual("/sVuTm1w5G6ofrx4lRjy64D7MRiS.jpg", personResult.ImagePath);
             Assert.AreEqual("/6bsg03VVkB41Vzs6w1NvpFvq2yH.jpg", tvResult.ImagePath);
         }
         
