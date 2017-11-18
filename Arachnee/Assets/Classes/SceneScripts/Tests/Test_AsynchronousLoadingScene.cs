@@ -21,6 +21,7 @@ namespace Assets.Classes.SceneScripts.Tests
         
         private IEnumerator SceneLoading()
         {
+            // set up
             loadingObject.SetActive(true);
 
             var builder = new ModelViewBuilder();
@@ -32,17 +33,23 @@ namespace Assets.Classes.SceneScripts.Tests
             var prov = new ModelViewProvider(new OnlineDatabase(), builder);
 
             yield return new WaitForEndOfFrame();
-            var entryView = prov.GetEntryView("Movie-218");
-            entryView.gameObject.transform.position = Vector3.zero;
 
-            yield return new WaitForEndOfFrame();
-            var connectedEntryViews = prov.GetConnectedEntryViews(entryView);
+            // get seed entry
+            var asyncCall = prov.GetEntryViewAsync("Movie-218");
+            yield return asyncCall.Execute();
+
+            asyncCall.Result.gameObject.transform.position = Vector3.zero;
+            
+            /*
+            // get adjacent entries
+            var connectedEntryViews = prov.GetConnectedEntryViews(entryView.Result);
             
             foreach (var connectedEntryView in connectedEntryViews)
             {
                 yield return new WaitForEndOfFrame();
                 connectedEntryView.transform.position = Random.onUnitSphere * 8;
             }
+            */
 
             loadingObject.SetActive(false);
         }

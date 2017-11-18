@@ -5,8 +5,8 @@ using Assets.Classes.Core.EntryProviders;
 using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization.ModelViewManagement.Builders;
 using Assets.Classes.CoreVisualization.ModelViews;
-using Assets.Classes.Logging;
 using JetBrains.Annotations;
+using Logger = Assets.Classes.Logging.Logger;
 
 namespace Assets.Classes.CoreVisualization.ModelViewManagement
 {
@@ -36,7 +36,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
             _provider = provider;
             _builder = builder;
         }
-        
+
         /// <summary>
         /// Returns the EntryView corresponding to the given entry id.
         /// </summary>
@@ -55,10 +55,46 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
                 return null;
             }
 
+            return BuildEntryView(entry);
+        }
+
+        /// <summary>
+        /// Same as <see cref="GetEntryView"/> but returning an <see cref="AsyncCall{TData,TUnityObject}"/> that you can yield in order to get the EntryView asynchronously.
+        /// </summary>
+        public AsyncCall<Entry, EntryView> GetEntryViewAsync(string entryId)
+        {
+            if (_cachedEntryViews.ContainsKey(entryId))
+            {
+                return new AsyncCall<Entry, EntryView>(() => null, x => _cachedEntryViews[entryId]);
+            }
+
+            var asyncCall = new AsyncCall<Entry, EntryView>(() =>
+                {
+                    Entry entry;
+                    return _provider.TryGetEntry(entryId, out entry)
+                        ? entry
+                        : null;
+                },
+                entry =>
+                {
+                    if (entry == null || entry == DefaultEntry.Instance)
+                    {
+                        Logger.LogError($"Unable to get {nameof(Entry)} with id \"{entryId}\".");
+                        return null;
+                    }
+
+                    return BuildEntryView(entry);
+                });
+
+            return asyncCall;
+        }
+
+        private EntryView BuildEntryView(Entry entry)
+        {
             var entryView = _builder.BuildView(entry);
             if (entryView == null)
             {
-                Logger.LogError($"Unable to build {nameof(EntryView)} for id \"{entryId}\".");
+                Logger.LogError($"Unable to build {nameof(EntryView)} for id \"{entry.Id}\".");
                 return null;
             }
 

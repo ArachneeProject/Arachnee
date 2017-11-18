@@ -9,35 +9,41 @@ namespace Assets.Classes.CoreVisualization.ModelViews
 {
     public class ImageTextEntryView : TextEntryView
     {
+        private TextureRenderer _textureRenderer;
+
         protected override void Start()
         {
             base.Start();
 
-            var textureRenderer = this.gameObject.GetComponentInChildren<TextureRenderer>();
-            if (textureRenderer == null)
+            _textureRenderer = this.gameObject.GetComponentInChildren<TextureRenderer>();
+            if (_textureRenderer == null)
             {
                 Logger.LogError($"No {nameof(TextureRenderer)} component found in children of {nameof(ImageTextEntryView)} gameobject.");
                 return;
             }
-            
-            textureRenderer.Start();
-            
-            var asyncCall = new AsyncCall<byte[]>();
 
-            this.StartCoroutine(asyncCall.Execute(() =>
+            _textureRenderer.Start();
+
+            StartCoroutine(SetTextureAsync());
+        }
+
+        IEnumerator SetTextureAsync()
+        {
+            var asyncCall = new AsyncCall<byte[], Texture2D>(() =>
             {
                 var imageProvider = new ImageProvider();
                 var bytes = imageProvider.GetTextureBytes(this.Entry);
                 return bytes;
-            }, 
+            },
             bytes =>
             {
                 var texture = new Texture2D(2, 2);
                 texture.LoadImage(bytes);
-                textureRenderer.SetTexture(texture);
-            }));
+                return texture;
+            });
+
+            yield return asyncCall.Execute();
+            _textureRenderer.SetTexture(asyncCall.Result);
         }
-
-
     }
 }
