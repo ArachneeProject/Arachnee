@@ -20,7 +20,8 @@ namespace Assets.Classes.Core.Graph
         {
             return other != null &&
                    this.Source.Equals(other.Source) &&
-                   this.Target.Equals(other.Target);
+                   this.Target.Equals(other.Target) &&
+                   this.Type.Equals(other.Type);
         }
 
         public override bool Equals(object obj)
@@ -30,7 +31,7 @@ namespace Assets.Classes.Core.Graph
 
         public override int GetHashCode()
         {
-            int hash = 0;
+            int hash = 2017;
             unchecked
             {
                 hash = hash * 17 ^ this.Source.GetHashCode();
