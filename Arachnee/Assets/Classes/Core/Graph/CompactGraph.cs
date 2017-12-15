@@ -138,7 +138,7 @@ namespace Assets.Classes.Core.Graph
 
         public override bool AddEdge(CompactEdge e)
         {
-            if (this.Edges.Contains(e))
+            if (this.ContainsEdge(e))
             {
                 return false;
             }
@@ -148,7 +148,7 @@ namespace Assets.Classes.Core.Graph
 
         public override bool AddVerticesAndEdge(CompactEdge e)
         {
-            if (this.Edges.Contains(e))
+            if (this.ContainsEdge(e))
             {
                 Logger.LogInfo($"{e.Source}::{e.Type}::{e.Target} is already present.");
                 return false;
