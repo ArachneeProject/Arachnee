@@ -92,7 +92,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
             Assert.IsTrue(artist.NickNames.Count > 3);
             Assert.AreEqual("Thal, Styria, Austria", artist.PlaceOfBirth);
             Assert.IsTrue(artist.Popularity > 0);
-            Assert.AreEqual("/sOkCXc9xuSr6v7mdAq9LwEBje68.jpg", artist.MainImagePath);
+            Assert.IsFalse(string.IsNullOrEmpty(artist.MainImagePath));
         }
 
         [TestMethod]
@@ -184,9 +184,9 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
             Assert.AreEqual("Artist-18897", personResult.EntryId);
             Assert.AreEqual("Serie-240", tvResult.EntryId);
             
-            Assert.AreEqual("/9i6bhYbxe2g02e3GhljtktuyDMj.jpg", movieResult.ImagePath);
-            Assert.AreEqual("/sVuTm1w5G6ofrx4lRjy64D7MRiS.jpg", personResult.ImagePath);
-            Assert.AreEqual("/6bsg03VVkB41Vzs6w1NvpFvq2yH.jpg", tvResult.ImagePath);
+            Assert.IsFalse(string.IsNullOrEmpty(movieResult.ImagePath));
+            Assert.IsFalse(string.IsNullOrEmpty(personResult.ImagePath));
+            Assert.IsFalse(string.IsNullOrEmpty(tvResult.ImagePath));
         }
         
         [TestMethod]

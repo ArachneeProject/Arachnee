@@ -37,7 +37,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
             Assert.IsNotNull(artist);
             Assert.AreEqual("Artist-1100", artist.Id);
             Assert.AreEqual("Arnold Schwarzenegger", artist.Name);
-            Assert.AreEqual("/sOkCXc9xuSr6v7mdAq9LwEBje68.jpg", artist.MainImagePath);
+            Assert.IsFalse(string.IsNullOrEmpty(artist.MainImagePath));
         }
 
         [TestMethod]

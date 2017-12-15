@@ -59,7 +59,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
         public void GetMovie_InvalidId_ThrowsInvalidTmdbRequestException()
         {
             var client = new TmdbClient();
-            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetMovie(0));
+            Assert.ThrowsException<TmdbRequestFailedException>(() => client.GetMovie(0));
         }
         
         #endregion Movie
@@ -91,14 +91,14 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
             Assert.AreEqual("Arnold Schwarzenegger", tmdbPerson.Name);
             Assert.AreEqual("Thal, Styria, Austria", tmdbPerson.PlaceOfBirth);
             Assert.IsTrue(tmdbPerson.Popularity > 0);
-            Assert.AreEqual("/sOkCXc9xuSr6v7mdAq9LwEBje68.jpg", tmdbPerson.ProfilePath);
+            Assert.IsFalse(string.IsNullOrEmpty(tmdbPerson.ProfilePath));
         }
         
         [TestMethod]
         public void GetPerson_InvalidId_ThrowsInvalidTmdbRequestException()
         {
             var client = new TmdbClient();
-            Assert.ThrowsException<InvalidTmdbRequestException>(() => client.GetPerson(0));
+            Assert.ThrowsException<TmdbRequestFailedException>(() => client.GetPerson(0));
         }
 
         #endregion Person
@@ -128,9 +128,9 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
             Assert.AreEqual(18897UL, personResult.Id);
             Assert.AreEqual(240UL, tvResult.Id);
 
-            Assert.AreEqual("/9i6bhYbxe2g02e3GhljtktuyDMj.jpg", movieResult.PosterPath);
-            Assert.AreEqual("/sVuTm1w5G6ofrx4lRjy64D7MRiS.jpg", personResult.ProfilePath);
-            Assert.AreEqual("/6bsg03VVkB41Vzs6w1NvpFvq2yH.jpg", tvResult.PosterPath);
+            Assert.IsFalse(string.IsNullOrEmpty(movieResult.PosterPath));
+            Assert.IsFalse(string.IsNullOrEmpty(personResult.ProfilePath));
+            Assert.IsFalse(string.IsNullOrEmpty(tvResult.PosterPath));
         }
 
         [TestMethod]
@@ -254,25 +254,17 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider.Tests_Tmdb
         {
             var client = new TmdbClient();
             var bytes = client.GetImage("w45", "/wOMD2jDmY6wU2oScXOEgq9hqeNN.png");
-
-            var expectedHash = new byte[] { 106, 217, 16, 85, 94, 179, 111, 3, 83, 35, 87, 253, 222, 75, 108, 49 };
-
+            
             byte[] hash;
             using (var md5 = MD5.Create())
             {
                 hash = md5.ComputeHash(bytes);
             }
 
-            Assert.AreEqual(1030, bytes.Length);
+            Assert.IsTrue(bytes.Length > 10);
             Assert.AreEqual((byte)'P', bytes[1]);
             Assert.AreEqual((byte)'N', bytes[2]);
             Assert.AreEqual((byte)'G', bytes[3]);
-            
-            Assert.AreEqual(expectedHash.Length, hash.Length);
-            for (int i = 0; i < expectedHash.Length; i++)
-            {
-                Assert.AreEqual(expectedHash[i], hash[i]);
-            }
         }
 
         #endregion Image
