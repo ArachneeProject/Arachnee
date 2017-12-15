@@ -258,6 +258,12 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
 
         private Movie ConvertToMovie(TmdbMovie tmdbMovie)
         {
+			// clean up fields
+            if (!tmdbMovie.Runtime.HasValue)
+            {
+                tmdbMovie.Runtime = 0;
+            }
+			
             // create the Movie from the tmdbMovie
             var movie = JsonConvert.DeserializeObject<Movie>(JsonConvert.SerializeObject(tmdbMovie));
             movie.Id = nameof(Movie) + IdSeparator + movie.Id;

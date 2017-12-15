@@ -11,7 +11,7 @@ namespace Arachnee.Tests.Test_CompactGraph
     {
         private readonly string[] _validSerializedGraph =
         {
-            "MDA:0_A44C,AA98,AA99,A71A,AA9A,AA9B,AA9C,AA9D,A805,AA9F,A8B7E,A19029,A1507A4,AA97,A19333,AD61E,A21F,A163A51;1_AA96;3_AA97,A365,AAA1,AAA3,AA96,A365,A150797,AA96,A163A51,A3DA7,AF18E;"
+            "a14B1B2:0_m5B343,sEF2F;1_mDA;"
         };
         
         [TestInitialize]
@@ -82,16 +82,12 @@ namespace Arachnee.Tests.Test_CompactGraph
             File.WriteAllLines(filePath, _validSerializedGraph);
 
             compactGraph.InitializeFrom(filePath);
+            
+            Assert.AreEqual(4, compactGraph.VertexCount);
+            Assert.AreEqual(6, compactGraph.EdgeCount);
 
-            // Serialized graph actually has 30 edges
-            // However James Cameron (AA96) is Director, Writer and Script Supervisor, making him appearing twice as Crew.
-            // Same for Gale Anne Hurd
-            // Final graph only has 28 egdes
-            Assert.AreEqual(26, compactGraph.VertexCount);
-            Assert.AreEqual(28, compactGraph.EdgeCount);
-
-            Assert.IsTrue(compactGraph.ContainsEdge("MDA", "AA96"));
-            Assert.IsTrue(compactGraph.ContainsEdge("MDA", "A44C"));
+            Assert.IsTrue(compactGraph.ContainsEdge("a14B1B2", "m5B343"));
+            Assert.IsTrue(compactGraph.ContainsEdge("sEF2F", "a14B1B2"));
 
             File.Delete(filePath);
         }

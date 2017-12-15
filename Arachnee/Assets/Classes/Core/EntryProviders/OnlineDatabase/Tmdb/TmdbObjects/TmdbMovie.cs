@@ -23,7 +23,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects
         public List<ProductionCountry> ProductionCountries { get; set; }
         public string ReleaseDate { get; set; }
         public long Revenue { get; set; }
-        public long Runtime { get; set; }
+        public long? Runtime { get; set; }
         public List<SpokenLanguage> SpokenLanguages { get; set; }
         public string Status { get; set; }
         public string Tagline { get; set; }

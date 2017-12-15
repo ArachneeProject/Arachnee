@@ -25,16 +25,17 @@ namespace Assets.Classes.Core.Graph
             {
                 while (!reader.EndOfStream)
                 {
-                    // example of valid line
-                    // MA0:3_A74C;1_A74C,A74B;
-
                     var line = reader.ReadLine();
                     if (string.IsNullOrWhiteSpace(line))
                     {
+                        // empty line
                         continue;
                     }
 
-                    // process "MA0:3_A74C;1_A74C,A74B;"
+                    // example of valid line
+                    // a14B1B2:0_m5B343,sEF2F;1_mDA;
+
+                    // process "a14B1B2:0_m5B343,sEF2F;1_mDA;"
                     var split1 = line.Split(':');
                     if (split1.Length != 2 || split1.Any(string.IsNullOrEmpty))
                     {
@@ -42,10 +43,10 @@ namespace Assets.Classes.Core.Graph
                         continue;
                     }
 
-                    // process "MA0"
+                    // process "a14B1B2"
                     string vertexId = split1[0];
-                    
-                    // process "3_A74C;1_A74C,A74B;"
+
+                    // process "0_m5B343,sEF2F;1_mDA;"
                     var split2 = split1[1].Split(';').ToList();
                     split2.RemoveAll(string.IsNullOrEmpty);
                     if (split2.Count == 0)
@@ -58,7 +59,7 @@ namespace Assets.Classes.Core.Graph
 
                     foreach (var serializedEdges in split2)
                     {
-                        // process "1_A74C,A74B"
+                        // process "0_m5B343,sEF2F"
                         var split3 = serializedEdges.Split('_');
                         if (split3.Length != 2 || split3.Any(string.IsNullOrWhiteSpace))
                         {
@@ -66,7 +67,7 @@ namespace Assets.Classes.Core.Graph
                             continue;
                         }
 
-                        // process "1"
+                        // process "0"
                         int intType;
                         if (!int.TryParse(split3[0], out intType))
                         {
@@ -81,7 +82,7 @@ namespace Assets.Classes.Core.Graph
                             continue;
                         }
 
-                        // process "A74C,A74B"
+                        // process "m5B343,sEF2F"
                         var split4 = split3[1].Split(',').ToList();
                         split4.RemoveAll(string.IsNullOrWhiteSpace);
                         if (split4.Count == 0)
@@ -94,8 +95,9 @@ namespace Assets.Classes.Core.Graph
                         var edgeWithSameType = new List<CompactEdge>();
                         foreach (var connectedVertexId in split4)
                         {
-                            // process "A74C"
+                            // process "m5B343"
                             edgeWithSameType.Add(new CompactEdge(vertexId, connectedVertexId, type));
+                            edgeWithSameType.Add(new CompactEdge(connectedVertexId, vertexId, type));
                         }
 
                         if (edgeWithSameType.Count == 0)
