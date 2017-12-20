@@ -25,7 +25,7 @@ namespace Arachnee.Tests.Test_CompactGraph
         {
             var compactGraph = new CompactGraph();
 
-            var edge = new CompactEdge("Arnold Schwarzenegger", "The Terminator", ConnectionType.Actor);
+            var edge = new CompactEdge("Arnold Schwarzenegger", "The Terminator");
 
             var added = compactGraph.AddVerticesAndEdge(edge);
 
@@ -37,7 +37,7 @@ namespace Arachnee.Tests.Test_CompactGraph
         {
             var compactGraph = new CompactGraph();
 
-            var edge = new CompactEdge("Arnold Schwarzenegger", "The Terminator", ConnectionType.Actor);
+            var edge = new CompactEdge("Arnold Schwarzenegger", "The Terminator");
 
             compactGraph.AddVerticesAndEdge(edge);
             var added = compactGraph.AddVerticesAndEdge(edge);
@@ -50,31 +50,17 @@ namespace Arachnee.Tests.Test_CompactGraph
         {
             var compactGraph = new CompactGraph();
 
-            var edge1 = new CompactEdge("Arnold Schwarzenegger", "The Terminator", ConnectionType.Actor);
-            var edge2 = new CompactEdge("Arnold Schwarzenegger", "The Terminator", ConnectionType.Actor);
+            var edge1 = new CompactEdge("Arnold Schwarzenegger", "The Terminator");
+            var edge2 = new CompactEdge("Arnold Schwarzenegger", "The Terminator");
 
             compactGraph.AddVerticesAndEdge(edge1);
             var added = compactGraph.AddVerticesAndEdge(edge2);
 
             Assert.IsFalse(added);
         }
-
+        
         [TestMethod]
-        public void AddVerticesAndEdge_TwoEdgesWithDifferentType_ReturnsTrue()
-        {
-            var compactGraph = new CompactGraph();
-
-            var edge1 = new CompactEdge("Luc Besson", "Le Grand Bleu", ConnectionType.Director);
-            var edge2 = new CompactEdge("Luc Besson", "Le Grand Bleu", ConnectionType.Actor);
-
-            compactGraph.AddVerticesAndEdge(edge1);
-            var added = compactGraph.AddVerticesAndEdge(edge2);
-
-            Assert.IsTrue(added);
-        }
-
-        [TestMethod]
-        public void Initialize_ValidSerializedGraph_ValidCompactedGraph()
+        public void InitializeFrom_ValidSerializedGraph_ValidCompactGraph()
         {
             var compactGraph = new CompactGraph();
 
@@ -92,20 +78,58 @@ namespace Arachnee.Tests.Test_CompactGraph
             File.Delete(filePath);
         }
 
-        /*
         [TestMethod]
-        public void ShortestPath()
+        public void GetShortestPath_ShortestPathExist_CorrectPath()
         {
-            var deserializer = new GraphDeserializer();
-            var graph = deserializer.LoadFrom(@"(((( dump file path ))))");
+            var compactGraph = new CompactGraph();
 
-            var res = graph.GetShortestPath("Artist-1100", "Artist-2710");
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "temp.txt");
+            File.WriteAllLines(filePath, _validSerializedGraph);
 
-            Assert.AreEqual(3, res.Count);
-            Assert.AreEqual("Artist-1100", res[0]);
+            compactGraph.InitializeFrom(filePath, Connection.AllTypes());
+
+            var res = compactGraph.GetShortestPath("Artist-1356210", "Movie-218");
+
+            Assert.AreEqual(2, res.Count);
+            Assert.AreEqual("Artist-1356210", res[0]);
             Assert.AreEqual("Movie-218", res[1]);
-            Assert.AreEqual("Artist-2710", res[2]);
+
+            File.Delete(filePath);
         }
-        */
+
+        [TestMethod]
+        public void GetShortestPath_ShortestPathDoesntExist_EmptyPath()
+        {
+            var compactGraph = new CompactGraph();
+
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "temp.txt");
+            File.WriteAllLines(filePath, _validSerializedGraph);
+
+            compactGraph.InitializeFrom(filePath, Connection.AllTypes());
+            compactGraph.AddVertex("Movie-0");
+
+            var res = compactGraph.GetShortestPath("Movie-218", "Movie-0");
+
+            Assert.AreEqual(0, res.Count);
+
+            File.Delete(filePath);
+        }
+
+        [TestMethod]
+        public void GetShortestPath_VerticesDontExist_EmptyPath()
+        {
+            var compactGraph = new CompactGraph();
+
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "temp.txt");
+            File.WriteAllLines(filePath, _validSerializedGraph);
+
+            compactGraph.InitializeFrom(filePath, Connection.AllTypes());
+
+            var res = compactGraph.GetShortestPath("Artist-0", "Movie-0");
+
+            Assert.AreEqual(0, res.Count);
+
+            File.Delete(filePath);
+        }
     }
 }

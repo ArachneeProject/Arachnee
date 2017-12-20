@@ -101,8 +101,8 @@ namespace Assets.Classes.Core.Graph
                         foreach (var connectedVertexId in split4)
                         {
                             // process "m5B343"
-                            edgeWithSameType.Add(new CompactEdge(vertexId, connectedVertexId, type));
-                            edgeWithSameType.Add(new CompactEdge(connectedVertexId, vertexId, type));
+                            edgeWithSameType.Add(new CompactEdge(vertexId, connectedVertexId));
+                            edgeWithSameType.Add(new CompactEdge(connectedVertexId, vertexId));
                         }
 
                         if (edgeWithSameType.Count == 0)
@@ -119,25 +119,30 @@ namespace Assets.Classes.Core.Graph
                     {
                         continue;
                     }
-
-                    Logger.LogInfo("adding " + string.Join("\n", edges.Select(e => e.Source + " :: " + e.Type + " :: " + e.Target)));
+                    
                     this.AddVerticesAndEdgeRange(edges);
                 }
 
-                Logger.LogInfo($"Loaded graph with {this.VertexCount} and {this.EdgeCount} edges.");
+                Logger.LogInfo($"Loaded graph with {this.VertexCount} vertices and {this.EdgeCount} edges.");
             }
         }
 
         public List<string> GetShortestPath(string sourceId, string targetId)
         {
-            IEnumerable<CompactEdge> path;
+            var sourceVertex = GetVertexId(sourceId);
+            var targetVertex = GetVertexId(targetId);
 
-            var computeShortestPathFunc = this.ShortestPathsDijkstra(e => 1, GetVertexId(sourceId));
-            computeShortestPathFunc(GetVertexId(targetId), out path);
+            if (!this.ContainsVertex(sourceVertex) || !this.ContainsVertex(targetVertex))
+            {
+                return new List<string>();
+            }
+
+            IEnumerable<CompactEdge> path;
+            var computeShortestPathFunc = this.ShortestPathsDijkstra(e => 1, sourceVertex);
+            computeShortestPathFunc(targetVertex, out path);
 
             var result = path.Select(edge => GetEntryId(edge.Source)).ToList();
             result.Add(targetId);
-
             return result;
         }
 
@@ -155,7 +160,6 @@ namespace Assets.Classes.Core.Graph
         {
             if (this.ContainsEdge(e))
             {
-                Logger.LogInfo($"{e.Source}::{e.Type}::{e.Target} is already present.");
                 return false;
             }
 
@@ -215,10 +219,10 @@ namespace Assets.Classes.Core.Graph
 
             switch (compressedEntryType)
             {
-                case 'M':
+                case 'm':
                     return nameof(Movie) + '-' + uint.Parse(compressedEntryId, NumberStyles.HexNumber);
 
-                case 'A':
+                case 'a':
                     return nameof(Artist) + '-' + uint.Parse(compressedEntryId, NumberStyles.HexNumber);
                 default:
                     throw new ArgumentException($"Chunk \"{compressedEntryType}\" of \"{vertexId}\" is not handled.");

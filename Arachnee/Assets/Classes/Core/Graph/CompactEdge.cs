@@ -1,45 +1,11 @@
-﻿using Assets.Classes.Core.Models;
-using QuickGraph;
+﻿using QuickGraph;
 
 namespace Assets.Classes.Core.Graph
 {
-    public class CompactEdge : IEdge<string>
+    public class CompactEdge : EquatableEdge<string>
     {
-        public string Source { get; }
-        public string Target { get; }
-        public ConnectionType Type { get; }
-
-        public CompactEdge(string source, string target, ConnectionType type)
+        public CompactEdge(string source, string target) : base(source, target)
         {
-            Source = source;
-            Target = target;
-            Type = type;
-        }
-
-        public bool Equals(CompactEdge other)
-        {
-            return other != null &&
-                   this.Source.Equals(other.Source) &&
-                   this.Target.Equals(other.Target) &&
-                   this.Type.Equals(other.Type);
-        }
-
-        public override bool Equals(object obj)
-        {
-            return this.Equals(obj as CompactEdge);
-        }
-
-        public override int GetHashCode()
-        {
-            int hash = 2017;
-            unchecked
-            {
-                hash = hash * 17 ^ this.Source.GetHashCode();
-                hash = hash * 17 ^ this.Target.GetHashCode();
-                hash = hash * 17 ^ this.Type.GetHashCode();
-            }
-
-            return hash;
         }
     }
 }
