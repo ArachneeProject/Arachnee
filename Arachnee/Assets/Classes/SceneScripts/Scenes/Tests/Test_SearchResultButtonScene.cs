@@ -6,7 +6,7 @@ using Assets.Classes.CoreVisualization.ModelViewManagement.Builders;
 using Assets.Classes.CoreVisualization.ModelViews;
 using UnityEngine;
 
-namespace Assets.Classes.SceneScripts.Tests
+namespace Assets.Classes.SceneScripts.Scenes.Tests
 {
     public class Test_SearchResultButtonScene : MonoBehaviour
     {

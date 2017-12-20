@@ -7,7 +7,7 @@ using Assets.Classes.CoreVisualization.ModelViews;
 using Assets.Classes.CoreVisualization.PhysicsEngine;
 using UnityEngine;
 
-namespace Assets.Classes.SceneScripts.Tests
+namespace Assets.Classes.SceneScripts.Scenes.Tests
 {
     public class Test_EntryViewsGraphWithEngineScene : MonoBehaviour
     {

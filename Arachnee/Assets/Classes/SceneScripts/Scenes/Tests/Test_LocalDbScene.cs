@@ -3,7 +3,7 @@ using Assets.Classes.Core.EntryProviders.OnlineDatabase;
 using Assets.Classes.Core.Models;
 using UnityEngine;
 
-namespace Assets.Classes.SceneScripts.Tests
+namespace Assets.Classes.SceneScripts.Scenes.Tests
 {
     public class Test_LocalDbScene : MonoBehaviour
     {

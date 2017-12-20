@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Assets.Classes.SceneScripts
+namespace Assets.Classes.SceneScripts.Controllers
 {
     public class MouseAndKeyboardController : MonoBehaviour 
     {
