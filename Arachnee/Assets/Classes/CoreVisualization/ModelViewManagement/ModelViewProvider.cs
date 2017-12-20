@@ -7,7 +7,9 @@ using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization.ModelViewManagement.Builders;
 using Assets.Classes.CoreVisualization.ModelViews;
 using JetBrains.Annotations;
+using UnityEngine;
 using Logger = Assets.Classes.Logging.Logger;
+using Object = UnityEngine.Object;
 
 namespace Assets.Classes.CoreVisualization.ModelViewManagement
 {
@@ -126,7 +128,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
             while (resultsQueue.Any())
             {
                 var result = resultsQueue.Dequeue();
-                var resultView = _builder.BuildView(result);
+                var resultView = BuildOrReuseSearchResultView(result);
                 resultViewsQueue.Enqueue(resultView);
             }
 
@@ -269,16 +271,11 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
                 searchResults =>
                 {
                     var searchResultViews = new Queue<SearchResultView>();
-                    foreach (var searchResult in searchResults)
+                    while (searchResults.Any())
                     {
-                        if (_cachedSearchResultViews.ContainsKey(searchResult.EntryId))
-                        {
-                            searchResultViews.Enqueue(_cachedSearchResultViews[searchResult.EntryId]);
-                        }
-                        else
-                        {
-                            searchResultViews.Enqueue(BuildSearchResultView(searchResult));
-                        }
+                        var searchResult = searchResults.Dequeue();
+                        var searchResultView = BuildOrReuseSearchResultView(searchResult);
+                        searchResultViews.Enqueue(searchResultView);
                     }
 
                     return searchResultViews;
@@ -290,16 +287,26 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
 
         #endregion UnityAsync
 
-        private SearchResultView BuildSearchResultView(SearchResult searchResult)
+        private SearchResultView BuildOrReuseSearchResultView(SearchResult searchResult)
         {
-            var searchResultView = _builder.BuildView(searchResult);
-            if (searchResultView == null)
+            SearchResultView searchResultView;
+            if (_cachedSearchResultViews.ContainsKey(searchResult.EntryId))
             {
-                Logger.LogError($"Unable to build {nameof(SearchResultView)} for \"{searchResult}\".");
-                return null;
+                searchResultView = _cachedSearchResultViews[searchResult.EntryId];
+            }
+            else
+            {
+                searchResultView = _builder.BuildView(searchResult);
+                if (searchResultView == null)
+                {
+                    Logger.LogError($"Unable to build {nameof(SearchResultView)} for \"{searchResult}\".");
+                    return null;
+                }
+
+                _cachedSearchResultViews.Add(searchResult.EntryId, searchResultView);
             }
 
-            _cachedSearchResultViews.Add(searchResult.EntryId, searchResultView);
+            searchResultView.gameObject.SetActive(true);
             return searchResultView;
         }
 
@@ -314,6 +321,18 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
 
             _cachedEntryViews.Add(entry.Id, entryView);
             return entryView;
+        }
+
+        public void Unload(SearchResultView searchResultView)
+        {
+            if (_cachedSearchResultViews.ContainsKey(searchResultView.Result.EntryId))
+            {
+                searchResultView.gameObject.SetActive(false);
+            }
+            else
+            {
+                Object.DestroyImmediate(searchResultView.gameObject);
+            }
         }
     }
 }

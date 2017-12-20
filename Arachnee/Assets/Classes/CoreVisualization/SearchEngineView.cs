@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
+using Assets.Classes.CoreVisualization.ModelViews;
 using UnityEngine;
 using UnityEngine.UI;
 using Logger = Assets.Classes.Logging.Logger;
@@ -13,6 +15,9 @@ namespace Assets.Classes.CoreVisualization
         private readonly InputField _inputField;
         private readonly ModelViewProvider _provider;
         private readonly GameObject _loadingFeedback;
+
+        private SearchResultView _selectedResult;
+        private readonly List<SearchResultView> _lastSearch = new List<SearchResultView>();
 
         public SearchEngineView(InputField inputField, ModelViewProvider provider, GameObject loadingFeedback)
         {
@@ -31,6 +36,8 @@ namespace Assets.Classes.CoreVisualization
 
         private IEnumerator RunSearchRoutine(string searchQuery)
         {
+            ClearSearch();
+
             Logger.LogInfo($"Searching for \"{searchQuery}\"...");
             _loadingFeedback.SetActive(true);
 
@@ -45,8 +52,21 @@ namespace Assets.Classes.CoreVisualization
                 yield break;
             }
 
+            _lastSearch.AddRange(queue);
+
             Logger.LogInfo($"{queue.Count} results for \"{searchQuery}\".");
             _loadingFeedback.SetActive(false);
+        }
+
+        private void ClearSearch()
+        {
+            _selectedResult = null;
+            foreach (var searchResultView in _lastSearch)
+            {
+                _provider.Unload(searchResultView);
+            }
+
+            _lastSearch.Clear();
         }
 
         public void Dispose()
