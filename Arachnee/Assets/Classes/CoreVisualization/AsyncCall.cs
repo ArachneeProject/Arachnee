@@ -12,7 +12,7 @@ namespace Assets.Classes.CoreVisualization
     /// </summary>
     /// <typeparam name="TData">Type of the data to retrieve.</typeparam>
     /// <typeparam name="TUnityObject">Type of Unity object.</typeparam>
-    public class AsyncCall<TData, TUnityObject> where TUnityObject : Object
+    public class AsyncCall<TData, TUnityObject> where TUnityObject : class
     {
         private readonly object _lock = new object();
 

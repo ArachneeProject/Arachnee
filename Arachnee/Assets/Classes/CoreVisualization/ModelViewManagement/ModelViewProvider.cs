@@ -20,9 +20,9 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
         private readonly ModelViewBuilder _builder;
 
         private readonly Dictionary<string, EntryView> _cachedEntryViews = new Dictionary<string, EntryView>();
-
         private readonly Dictionary<string, ConnectionView> _cachedConnectionViews = new Dictionary<string, ConnectionView>();
-        
+        private readonly Dictionary<string, SearchResultView> _cachedSearchResultViews = new Dictionary<string, SearchResultView>();
+
         public ModelViewProvider(IEntryProvider provider, ModelViewBuilder builder)
         {
             if (provider == null)
@@ -247,7 +247,61 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
             _routineResult = awaitableCall.Result.Select(c => c.Left == entryView ? c.Right : c.Left).ToList();
         }
 
+        /// <summary>
+        /// Same as <see cref="GetSearchResultViews", but awaitable./>
+        /// </summary>
+        public AwaitableCall<Queue<SearchResultView>> GetSearchResultViewsAsync(string searchQuery)
+        {
+            return new AwaitableCall<Queue<SearchResultView>>(() => GetSearchResultViewsAsyncRoutine(searchQuery), () => (Queue<SearchResultView>) _routineResult);
+        }
+
+        private IEnumerator GetSearchResultViewsAsyncRoutine(string searchQuery)
+        {
+            var asyncCall = new AsyncCall<Queue<SearchResult>, Queue<SearchResultView>>(() =>
+                {
+                    if (string.IsNullOrWhiteSpace(searchQuery))
+                    {
+                        return new Queue<SearchResult>();
+                    }
+
+                    return _provider.GetSearchResults(searchQuery);
+                },
+                searchResults =>
+                {
+                    var searchResultViews = new Queue<SearchResultView>();
+                    foreach (var searchResult in searchResults)
+                    {
+                        if (_cachedSearchResultViews.ContainsKey(searchResult.EntryId))
+                        {
+                            searchResultViews.Enqueue(_cachedSearchResultViews[searchResult.EntryId]);
+                        }
+                        else
+                        {
+                            searchResultViews.Enqueue(BuildSearchResultView(searchResult));
+                        }
+                    }
+
+                    return searchResultViews;
+                });
+
+            yield return asyncCall.Execute();
+            _routineResult = asyncCall.Result;
+        }
+
         #endregion UnityAsync
+
+        private SearchResultView BuildSearchResultView(SearchResult searchResult)
+        {
+            var searchResultView = _builder.BuildView(searchResult);
+            if (searchResultView == null)
+            {
+                Logger.LogError($"Unable to build {nameof(SearchResultView)} for \"{searchResult}\".");
+                return null;
+            }
+
+            _cachedSearchResultViews.Add(searchResult.EntryId, searchResultView);
+            return searchResultView;
+        }
 
         private EntryView BuildEntryView(Entry entry)
         {
