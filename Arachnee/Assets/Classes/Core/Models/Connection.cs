@@ -15,9 +15,10 @@ namespace Assets.Classes.Core.Models
         /// <summary>
         /// Utility method to get all available ConnectionType values.
         /// </summary>
-        public static List<ConnectionType> AllTypes()
+        public static ICollection<ConnectionType> AllTypes()
         {
-            return Enum.GetValues(typeof(ConnectionType)).Cast<ConnectionType>().ToList();
+            var types = Enum.GetValues(typeof(ConnectionType)).Cast<ConnectionType>();
+            return new HashSet<ConnectionType>(types);
         }
     }
 }

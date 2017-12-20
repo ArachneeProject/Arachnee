@@ -65,7 +65,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
         /// </summary>
         /// <param name="entryView">The EntryView to get the ConnectionViews from.</param>
         /// <param name="connectionTypes">The list of restricting connection types.</param>
-        public List<ConnectionView> GetConnectionViews(EntryView entryView, List<ConnectionType> connectionTypes)
+        public List<ConnectionView> GetConnectionViews(EntryView entryView, ICollection<ConnectionType> connectionTypes)
         {
             var validConnections = entryView.Entry.Connections.Where(c => connectionTypes.Contains(c.Type));
             var connectionsToGet = validConnections.Select(c => new { c.ConnectedId, Identifier = ConnectionView.GetIdentifier(entryView.Entry.Id, c.ConnectedId) });
@@ -107,7 +107,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
         /// </summary>
         /// <param name="entryView">The EntryView to get the linked EntryViews from.</param>
         /// <param name="connectionTypes">The list of restricting connection types.</param>
-        public List<EntryView> GetAdjacentEntryViews(EntryView entryView, List<ConnectionType> connectionTypes)
+        public List<EntryView> GetAdjacentEntryViews(EntryView entryView, ICollection<ConnectionType> connectionTypes)
         {
             var connectionViews = GetConnectionViews(entryView, connectionTypes);
             return connectionViews.Select(c => c.Left == entryView ? c.Right : c.Left).ToList();
@@ -182,12 +182,12 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
         /// <summary>
         /// Same as <see cref="GetConnectionViews"/>, but awaitable.
         /// </summary>
-        public AwaitableCall<List<ConnectionView>> GetConnectionViewsAsync(EntryView entryView, List<ConnectionType> connectionTypes)
+        public AwaitableCall<List<ConnectionView>> GetConnectionViewsAsync(EntryView entryView, ICollection<ConnectionType> connectionTypes)
         {
             return new AwaitableCall<List<ConnectionView>>(() => GetConnectionViewsAsyncRoutine(entryView, connectionTypes), () => (List<ConnectionView>) _routineResult);
         }
 
-        private IEnumerator GetConnectionViewsAsyncRoutine(EntryView entryView, List<ConnectionType> connectionTypes)
+        private IEnumerator GetConnectionViewsAsyncRoutine(EntryView entryView, ICollection<ConnectionType> connectionTypes)
         {
             var result = new List<ConnectionView>();
 
@@ -235,12 +235,12 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
         /// <summary>
         /// Same as <see cref="GetAdjacentEntryViews"/>, but awaitable.
         /// </summary>
-        public AwaitableCall<List<EntryView>> GetAdjacentEntryViewsAsync(EntryView entryView, List<ConnectionType> connectionTypes)
+        public AwaitableCall<List<EntryView>> GetAdjacentEntryViewsAsync(EntryView entryView, ICollection<ConnectionType> connectionTypes)
         {
             return new AwaitableCall<List<EntryView>>(() => GetAdjacentEntryViewsAsyncRoutine(entryView, connectionTypes), () => (List<EntryView>) _routineResult);
         }
 
-        private IEnumerator GetAdjacentEntryViewsAsyncRoutine(EntryView entryView, List<ConnectionType> connectionTypes)
+        private IEnumerator GetAdjacentEntryViewsAsyncRoutine(EntryView entryView, ICollection<ConnectionType> connectionTypes)
         {
             var awaitableCall = GetConnectionViewsAsync(entryView, connectionTypes);
             yield return awaitableCall.Await();

@@ -81,7 +81,7 @@ namespace Arachnee.Tests.Test_CompactGraph
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "temp.txt");
             File.WriteAllLines(filePath, _validSerializedGraph);
 
-            compactGraph.InitializeFrom(filePath);
+            compactGraph.InitializeFrom(filePath, Connection.AllTypes());
             
             Assert.AreEqual(4, compactGraph.VertexCount);
             Assert.AreEqual(6, compactGraph.EdgeCount);

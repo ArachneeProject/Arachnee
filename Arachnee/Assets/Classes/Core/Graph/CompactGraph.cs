@@ -12,7 +12,7 @@ namespace Assets.Classes.Core.Graph
 {
     public class CompactGraph : BidirectionalGraph<string, CompactEdge>
     {
-        public void InitializeFrom(string serializedGraphFilePath)
+        public void InitializeFrom(string serializedGraphFilePath, ICollection<ConnectionType> acceptedConnectionTypes)
         {
             if (!File.Exists(serializedGraphFilePath))
             {
@@ -82,6 +82,11 @@ namespace Assets.Classes.Core.Graph
                             continue;
                         }
 
+                        if (!acceptedConnectionTypes.Contains(type))
+                        {
+                            continue;
+                        }
+
                         // process "m5B343,sEF2F"
                         var split4 = split3[1].Split(',').ToList();
                         split4.RemoveAll(string.IsNullOrWhiteSpace);
@@ -127,10 +132,10 @@ namespace Assets.Classes.Core.Graph
         {
             IEnumerable<CompactEdge> path;
 
-            var computeShortestPathFunc = this.ShortestPathsDijkstra(e => 1, Compress(sourceId));
-            computeShortestPathFunc(Compress(targetId), out path);
+            var computeShortestPathFunc = this.ShortestPathsDijkstra(e => 1, GetVertexId(sourceId));
+            computeShortestPathFunc(GetVertexId(targetId), out path);
 
-            var result = path.Select(edge => Decompress(edge.Source)).ToList();
+            var result = path.Select(edge => GetEntryId(edge.Source)).ToList();
             result.Add(targetId);
 
             return result;
@@ -157,46 +162,56 @@ namespace Assets.Classes.Core.Graph
             return base.AddVerticesAndEdge(e);
         }
         
-        private string Compress(string entryId)
+        private string GetVertexId(string entryId)
         {
             if (string.IsNullOrEmpty(entryId))
+            {
                 throw new ArgumentException("EntryId was null.");
+            }
 
             var split = entryId.Split('-');
 
             if (split.Length != 2)
+            {
                 throw new ArgumentException($"\"{entryId}\" is not a valid id.");
+            }
 
             var entryType = split[0];
             var tmdbId = split[1];
 
             if (string.IsNullOrEmpty(entryType) || string.IsNullOrEmpty(tmdbId))
+            {
                 throw new ArgumentException($"\"{entryId}\" is not a valid id.");
+            }
 
             uint id;
             if (!uint.TryParse(tmdbId, out id))
+            {
                 throw new ArgumentException($"\"{entryId}\" is not a valid id.");
+            }
 
             switch (entryType)
             {
                 case nameof(Movie):
-                    return "M" + id.ToString("X");
+                    return "m" + id.ToString("X");
 
                 case nameof(Artist):
-                    return "A" + id.ToString("X");
+                    return "a" + id.ToString("X");
 
                 default:
                     throw new ArgumentException($"Chunk \"{entryType}\" of \"{entryId}\" is not handled.");
             }
         }
 
-        private string Decompress(string compressedId)
+        private string GetEntryId(string vertexId)
         {
-            if (string.IsNullOrEmpty(compressedId) || compressedId.Length < 2)
-                throw new ArgumentException("The given compressedId was null.", nameof(compressedId));
+            if (string.IsNullOrEmpty(vertexId) || vertexId.Length < 2)
+            {
+                throw new ArgumentException("The given vertexId was null.", nameof(vertexId));
+            }
 
-            var compressedEntryType = compressedId[0];
-            var compressedEntryId = compressedId.Substring(1);
+            var compressedEntryType = vertexId[0];
+            var compressedEntryId = vertexId.Substring(1);
 
             switch (compressedEntryType)
             {
@@ -206,8 +221,7 @@ namespace Assets.Classes.Core.Graph
                 case 'A':
                     return nameof(Artist) + '-' + uint.Parse(compressedEntryId, NumberStyles.HexNumber);
                 default:
-                    throw new ArgumentException(
-                        $"Chunk \"{compressedEntryType}\" of \"{compressedId}\" is not handled.");
+                    throw new ArgumentException($"Chunk \"{compressedEntryType}\" of \"{vertexId}\" is not handled.");
             }
         }
     }
