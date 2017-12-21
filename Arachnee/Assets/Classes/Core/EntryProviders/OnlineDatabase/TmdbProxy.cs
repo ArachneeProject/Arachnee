@@ -121,7 +121,8 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
                         {
                             EntryId = nameof(Movie) + IdSeparator + result.Id,
                             ImagePath = result.PosterPath,
-                            Name = result.Title
+                            Name = result.Title,
+                            Date = result.ReleaseDate
                         });
                         break;
 
@@ -139,7 +140,8 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
                         {
                             EntryId = nameof(Serie) + IdSeparator + result.Id,
                             ImagePath = result.PosterPath,
-                            Name = result.Name
+                            Name = result.Name,
+                            Date = result.FirstAirDate
                         });
                         break;
                 }

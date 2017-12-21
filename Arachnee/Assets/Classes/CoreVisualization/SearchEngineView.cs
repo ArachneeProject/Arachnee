@@ -61,6 +61,8 @@ namespace Assets.Classes.CoreVisualization
             {
                 var searchResultView = queue.Dequeue();
                 searchResultView.OnClicked += OnSelectedResultView;
+
+                searchResultView.transform.position = _inputField.transform.position + Vector3.down * ++i * 60;
             }
 
             _loadingFeedback.SetActive(false);
@@ -69,6 +71,7 @@ namespace Assets.Classes.CoreVisualization
         private void OnSelectedResultView(SearchResultView searchresultview)
         {
             var selectedEntry = searchresultview.Result.EntryId;
+            Logger.LogInfo($"Selected \"{searchresultview.Result.Name}\".");
             ClearSearch();
             OnSelectedEntry?.Invoke(this, selectedEntry);
         }

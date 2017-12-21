@@ -36,7 +36,6 @@ namespace Assets.Classes.SceneScripts.Scenes
         private void ActivateEntryView(object sender, string entryId)
         {
             
-            
         }
 
         void OnDestroy()
