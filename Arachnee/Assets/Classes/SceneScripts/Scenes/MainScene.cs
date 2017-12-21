@@ -18,6 +18,7 @@ namespace Assets.Classes.SceneScripts.Scenes
         private ModelViewProvider _provider;
 
         private SearchEngineView _searchEngineView;
+        private Explorer _explorer;
 
         void Start()
         {
@@ -25,11 +26,22 @@ namespace Assets.Classes.SceneScripts.Scenes
             _builder.SetPrefab(searchResultViewPrefab);
 
             _provider = new ModelViewProvider(new OnlineDatabase(), _builder);
+
             _searchEngineView = new SearchEngineView(mainInputField, _provider, loadingFeedback);
+            _searchEngineView.OnSelectedEntry += ActivateEntryView;
+
+            _explorer = new Explorer(_provider);
+        }
+
+        private void ActivateEntryView(object sender, string entryId)
+        {
+            
+            
         }
 
         void OnDestroy()
         {
+            _searchEngineView.OnSelectedEntry -= ActivateEntryView;
             _searchEngineView.Dispose();
         }
     }
