@@ -57,7 +57,7 @@ namespace Assets.Classes.SceneScripts.Scenes.Tests
             */
         }
 
-        private void AddConnectionToEngine(object sender, ConnectionView connectionView)
+        private void AddConnectionToEngine(ConnectionView connectionView)
         {
             if (connectionView == null)
             {
@@ -79,7 +79,7 @@ namespace Assets.Classes.SceneScripts.Scenes.Tests
             forceDirectedGraphEngine.AddEdge(left.Rigidbody, right.Rigidbody);
         }
 
-        private void AddEntryViewToEngine(object sender, EntryView entryView)
+        private void AddEntryViewToEngine(EntryView entryView)
         {
             var rigidbodyEntryView = entryView as RigidbodyImageTextEntryView;
             if (rigidbodyEntryView?.Rigidbody == null)

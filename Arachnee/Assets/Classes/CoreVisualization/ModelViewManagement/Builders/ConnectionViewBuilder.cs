@@ -16,7 +16,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
         /// <summary>
         /// Fired when an <see cref="ConnectionView"/> is built.
         /// </summary>
-        public EventHandler<ConnectionView> OnBuilt;
+        public Action<ConnectionView> OnBuilt;
 
         [CanBeNull]
         public ConnectionView BuildConnectionView(EntryView leftEntryView, EntryView rightEntryView)
@@ -32,7 +32,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
             connectionView.Left = leftEntryView;
             connectionView.Right = rightEntryView;
             connectionView.gameObject.name = connectionView.Id;
-            OnBuilt?.Invoke(this, connectionView);
+            OnBuilt?.Invoke(connectionView);
 
             return connectionView;
         }

@@ -16,7 +16,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
         /// <summary>
         /// Fired when an <see cref="SearchResult"/> is built.
         /// </summary>
-        public EventHandler<SearchResultView> OnBuilt;
+        public event Action<SearchResultView> OnBuilt;
 
         [CanBeNull]
         public SearchResultView BuildResultView(SearchResult searchResult)
@@ -29,7 +29,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
             var searchResultView = Object.Instantiate(this.SearchResultViewPrefab);
             searchResultView.Result = searchResult;
             searchResultView.gameObject.name = $"{nameof(SearchResult)}: {searchResult.Name} ({searchResult.EntryId})"; ;
-            OnBuilt?.Invoke(this, searchResultView);
+            OnBuilt?.Invoke(searchResultView);
 
             return searchResultView;
         }

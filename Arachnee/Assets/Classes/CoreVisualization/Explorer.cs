@@ -14,41 +14,58 @@ namespace Assets.Classes.CoreVisualization
         private readonly ControllerBase _controller;
         private readonly GraphEngine _graphEngine;
 
-        public Explorer(ModelViewProvider provider, SearchEngine searchEngine, ControllerBase controller, GraphEngine graphEngine)
+        public Explorer(ModelViewProvider provider, SearchEngine searchEngine, ControllerBase controller,
+            GraphEngine graphEngine)
         {
             _provider = provider;
             _searchEngine = searchEngine;
             _controller = controller;
             _graphEngine = graphEngine;
 
-            _searchEngine.OnSelectedEntry += OnSelectedSearch;
+            _searchEngine.OnSearchResultSelected += OnSearchResultSelected;
+            _provider.OnEntryViewSelected += OnEntrySelected;
         }
 
-        private void OnSelectedSearch(object sender, string e)
+        private void OnEntrySelected(EntryView entryView)
         {
-            _controller.StartCoroutine(FocusOnEntry(e));
+            _controller.StartCoroutine(FocusOnEntryRoutine(entryView));
         }
 
-        private IEnumerator FocusOnEntry(string entryId)
+        private void OnSearchResultSelected(string entryId)
+        {
+            _controller.StartCoroutine(LoadAndFocusOnEntryRoutine(entryId));
+        }
+
+        private IEnumerator LoadAndFocusOnEntryRoutine(string entryId)
         {
             var awaitableEntryView = _provider.GetEntryViewAsync(entryId);
             yield return awaitableEntryView.Await();
-            var entryView = awaitableEntryView.Result as RigidbodyImageTextEntryView;
+            var entryView = awaitableEntryView.Result;
             if (entryView == null)
             {
                 yield break;
             }
-            
+
+            yield return FocusOnEntryRoutine(entryView);
+        }
+
+        private IEnumerator FocusOnEntryRoutine(EntryView e)
+        {
+            var entryView = e as RigidbodyImageTextEntryView;
+            if (entryView == null)
+            {
+                yield break;
+            }
+
             _graphEngine.AddRigidbody(entryView.Rigidbody);
 
             Quaternion fromRotation = _controller.transform.rotation;
-            Quaternion toRotation = Quaternion.LookRotation(entryView.transform.position - _controller.transform.position);
-
+            
             float time = 0;
             while (time < 1)
             {
                 time += Time.deltaTime;
-
+                Quaternion toRotation = Quaternion.LookRotation(entryView.transform.position - _controller.transform.position);
                 _controller.transform.rotation = Quaternion.Lerp(fromRotation, toRotation, time);
                 yield return new WaitForEndOfFrame();
             }

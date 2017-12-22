@@ -1,15 +1,14 @@
-﻿using Assets.Classes.Core.Models;
+﻿using System;
+using Assets.Classes.Core.Models;
 using UnityEngine;
 
 namespace Assets.Classes.CoreVisualization.ModelViews
 {
     public class EntryView : MonoBehaviour
     {
-        public delegate void EntryViewClickedDelegate(EntryView v);
-
         public Entry Entry { get; set; }
         
-        public event EntryViewClickedDelegate OnClicked;
+        public event Action<EntryView> OnClicked;
         
         protected void OnMouseUpAsButton()
         {

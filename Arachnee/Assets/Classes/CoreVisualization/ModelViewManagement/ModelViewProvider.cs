@@ -20,10 +20,12 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
     {
         private readonly IEntryProvider _provider;
         private readonly ModelViewBuilder _builder;
-
+        
         private readonly Dictionary<string, EntryView> _cachedEntryViews = new Dictionary<string, EntryView>();
         private readonly Dictionary<string, ConnectionView> _cachedConnectionViews = new Dictionary<string, ConnectionView>();
         private readonly Dictionary<string, SearchResultView> _cachedSearchResultViews = new Dictionary<string, SearchResultView>();
+
+        public event Action<EntryView> OnEntryViewSelected;
 
         public ModelViewProvider(IEntryProvider provider, ModelViewBuilder builder)
         {
@@ -38,6 +40,17 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
             
             _provider = provider;
             _builder = builder;
+            _builder.OnBuiltEntryView += AddHandler;
+        }
+
+        private void AddHandler(EntryView e)
+        {
+            e.OnClicked += FireCLickedEvent;
+        }
+
+        private void FireCLickedEvent(EntryView clicked)
+        {
+            this.OnEntryViewSelected?.Invoke(clicked);
         }
 
         /// <summary>
@@ -321,6 +334,12 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
 
             _cachedEntryViews.Add(entry.Id, entryView);
             return entryView;
+        }
+
+        public void Unload(EntryView entryView)
+        {
+            //entryView.OnClicked -= FireCLickedEvent;
+            entryView.gameObject.SetActive(false);
         }
 
         public void Unload(SearchResultView searchResultView)

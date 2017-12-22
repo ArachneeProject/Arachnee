@@ -20,7 +20,7 @@ namespace Assets.Classes.CoreVisualization
 
         private readonly List<SearchResultView> _lastSearch = new List<SearchResultView>();
         
-        public event EventHandler<string> OnSelectedEntry;
+        public event Action<string> OnSearchResultSelected;
 
         public SearchEngine(InputField inputField, ModelViewProvider provider, GameObject loadingFeedback, LayoutBase layout)
         {
@@ -78,7 +78,7 @@ namespace Assets.Classes.CoreVisualization
             var selectedEntry = searchresultview.Result.EntryId;
             Logger.LogInfo($"Selected \"{searchresultview.Result.Name}\".");
             ClearSearch();
-            OnSelectedEntry?.Invoke(this, selectedEntry);
+            OnSearchResultSelected?.Invoke(selectedEntry);
         }
 
         public void ClearSearch()

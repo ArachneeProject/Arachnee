@@ -19,7 +19,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
         /// <summary>
         /// Fired when an <see cref="EntryView"/> is built.
         /// </summary>
-        public EventHandler<EntryView> OnBuilt;
+        public Action<EntryView> OnBuilt;
 
         [CanBeNull]
         public EntryView BuildEntryView(Entry entry)
@@ -48,7 +48,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
             entryView.Entry = entry;
             entryView.gameObject.name = entry.ToString();
             entryView.Start();
-            OnBuilt?.Invoke(this, entryView);
+            OnBuilt?.Invoke(entryView);
 
             return entryView;
         }
