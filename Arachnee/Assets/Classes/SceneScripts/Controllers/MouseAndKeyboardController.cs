@@ -2,7 +2,7 @@
 
 namespace Assets.Classes.SceneScripts.Controllers
 {
-    public class MouseAndKeyboardController : MonoBehaviour 
+    public class MouseAndKeyboardController : ControllerBase 
     {
         // keyboard
         public bool canMove = true;
