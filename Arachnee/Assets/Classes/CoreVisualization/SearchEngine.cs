@@ -31,6 +31,7 @@ namespace Assets.Classes.CoreVisualization
             
             inputField.onEndEdit.AddListener(RunSearch);
             _loadingFeedback.SetActive(false);
+            _layout.Start();
             _layout.gameObject.SetActive(false);
         }
 

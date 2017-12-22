@@ -9,7 +9,7 @@ namespace Assets.Classes.CoreVisualization.Layouts
     {
         private VerticalLayoutGroup _verticalLayoutGroup;
 
-        void Start()
+        public override void Start()
         {
             _verticalLayoutGroup = this.GetComponentInChildren<VerticalLayoutGroup>();
             if (_verticalLayoutGroup == null)

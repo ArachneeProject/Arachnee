@@ -399,6 +399,50 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 325270354}
+--- !u!1 &325465622
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 325465624}
+  - component: {fileID: 325465623}
+  m_Layer: 0
+  m_Name: ForceDirectedGraphEngine
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &325465623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 325465622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87bc8e1ed9b2cec478a01a2fb148aa98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxSquaredDistanceOfCoulombRepulsion: 10000
+  coulombRepulsion: 150
+  hookeAttraction: 1
+  centerOfGraph: {x: 0, y: 0, z: 1}
+--- !u!4 &325465624
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 325465622}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &730915915
 GameObject:
   m_ObjectHideFlags: 0
@@ -1282,6 +1326,7 @@ MonoBehaviour:
   mainInputField: {fileID: 1132862467}
   loadingFeedback: {fileID: 730915915}
   verticalLayout: {fileID: 1424864907}
+  graphEngine: {fileID: 325465623}
 --- !u!4 &1673469053
 Transform:
   m_ObjectHideFlags: 0

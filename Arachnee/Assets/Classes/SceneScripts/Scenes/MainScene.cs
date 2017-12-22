@@ -5,6 +5,7 @@ using Assets.Classes.CoreVisualization.Layouts;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
 using Assets.Classes.CoreVisualization.ModelViewManagement.Builders;
 using Assets.Classes.CoreVisualization.ModelViews;
+using Assets.Classes.CoreVisualization.PhysicsEngine;
 using Assets.Classes.SceneScripts.Controllers;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,12 +26,14 @@ namespace Assets.Classes.SceneScripts.Scenes
         public GameObject loadingFeedback;
         public VerticalLayout verticalLayout;
 
+        public GraphEngine graphEngine;
+
         private ModelViewBuilder _builder;
         private ModelViewProvider _provider;
 
         private SearchEngine _searchEngine;
         private Explorer _explorer;
-
+        
         void Start()
         {
             _builder = new ModelViewBuilder();
@@ -42,7 +45,7 @@ namespace Assets.Classes.SceneScripts.Scenes
             _provider = new ModelViewProvider(new OnlineDatabase(), _builder);
 
             _searchEngine = new SearchEngine(mainInputField, _provider, loadingFeedback, verticalLayout);
-            _explorer = new Explorer(_provider, _searchEngine, controller);
+            _explorer = new Explorer(_provider, _searchEngine, controller, graphEngine);
         }
     }
 }

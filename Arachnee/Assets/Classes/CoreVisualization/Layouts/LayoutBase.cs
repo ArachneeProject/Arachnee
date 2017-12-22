@@ -8,5 +8,7 @@ namespace Assets.Classes.CoreVisualization.Layouts
         /// Apply layout on the given transform.
         /// </summary>
         public abstract void Add(Transform transformToAdd);
+
+        public abstract void Start();
     }
 }

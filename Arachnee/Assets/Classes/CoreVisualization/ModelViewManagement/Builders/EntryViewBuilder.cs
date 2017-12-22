@@ -5,6 +5,7 @@ using Assets.Classes.CoreVisualization.ModelViews;
 using Assets.Classes.Logging;
 using JetBrains.Annotations;
 using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
 {
@@ -43,6 +44,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
 
             // instantiate EntryView GameObject
             var entryView = Object.Instantiate(entryViewPrefab);
+            entryView.transform.position = Random.onUnitSphere;
             entryView.Entry = entry;
             entryView.gameObject.name = entry.ToString();
             entryView.Start();

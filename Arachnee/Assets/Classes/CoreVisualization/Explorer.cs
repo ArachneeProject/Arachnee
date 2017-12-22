@@ -1,4 +1,7 @@
-﻿using Assets.Classes.CoreVisualization.ModelViewManagement;
+﻿using System.Collections;
+using Assets.Classes.CoreVisualization.ModelViewManagement;
+using Assets.Classes.CoreVisualization.ModelViews;
+using Assets.Classes.CoreVisualization.PhysicsEngine;
 using Assets.Classes.SceneScripts.Controllers;
 using UnityEngine;
 
@@ -9,31 +12,46 @@ namespace Assets.Classes.CoreVisualization
         private readonly ModelViewProvider _provider;
         private readonly SearchEngine _searchEngine;
         private readonly ControllerBase _controller;
-        
-        public Explorer(ModelViewProvider provider, SearchEngine searchEngine, ControllerBase controller)
+        private readonly GraphEngine _graphEngine;
+
+        public Explorer(ModelViewProvider provider, SearchEngine searchEngine, ControllerBase controller, GraphEngine graphEngine)
         {
             _provider = provider;
             _searchEngine = searchEngine;
             _controller = controller;
+            _graphEngine = graphEngine;
 
-            searchEngine.OnSelectedEntry += OnSelectedSearch;
+            _searchEngine.OnSelectedEntry += OnSelectedSearch;
         }
 
         private void OnSelectedSearch(object sender, string e)
         {
-            FocusOnEntry(e);
+            _controller.StartCoroutine(FocusOnEntry(e));
         }
 
-        private void FocusOnEntry(string entryId)
+        private IEnumerator FocusOnEntry(string entryId)
         {
-            var entryView = _provider.GetEntryView(entryId);
+            var awaitableEntryView = _provider.GetEntryViewAsync(entryId);
+            yield return awaitableEntryView.Await();
+            var entryView = awaitableEntryView.Result as RigidbodyImageTextEntryView;
             if (entryView == null)
             {
-                return;
+                yield break;
             }
+            
+            _graphEngine.AddRigidbody(entryView.Rigidbody);
 
-            entryView.transform.position = Random.onUnitSphere * 5;
-            _controller.transform.LookAt(entryView.transform.position);
+            Quaternion fromRotation = _controller.transform.rotation;
+            Quaternion toRotation = Quaternion.LookRotation(entryView.transform.position - _controller.transform.position);
+
+            float time = 0;
+            while (time < 1)
+            {
+                time += Time.deltaTime;
+
+                _controller.transform.rotation = Quaternion.Lerp(fromRotation, toRotation, time);
+                yield return new WaitForEndOfFrame();
+            }
         }
     }
 }
