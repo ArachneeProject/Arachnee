@@ -14,10 +14,7 @@ namespace Assets.Classes.SceneScripts.Controllers
         public float sensitivityX = 2F;
         public float sensitivityY = -2F;
         
-        public float minimumY = -60F;
-        public float maximumY = 60F;
-
-        float previousYAngle = 0F;
+        public float verticalDeadAngle = 30;
         
         void Update()
         {
@@ -31,10 +28,17 @@ namespace Assets.Classes.SceneScripts.Controllers
             // mouse
             if (canLookAround && Input.GetMouseButton(0))
             {
-                float rotationX = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * sensitivityX;
-                previousYAngle += Input.GetAxis("Mouse Y") * sensitivityY;
-                previousYAngle = Mathf.Clamp(previousYAngle, minimumY, maximumY);
-                transform.localEulerAngles = new Vector3(previousYAngle, rotationX, 0);
+                float rotationX = Input.GetAxis("Mouse X") * sensitivityX;
+                var rotationY = Input.GetAxis("Mouse Y") * sensitivityY;
+                
+                transform.Rotate(Vector3.up, rotationX, Space.World);
+                transform.Rotate(Vector3.right, rotationY, Space.Self);
+                
+                if (transform.localEulerAngles.x > 90 - verticalDeadAngle
+                    && transform.localEulerAngles.x < 270 + verticalDeadAngle)
+                {
+                    transform.Rotate(Vector3.right, -rotationY, Space.Self);
+                }
             }
         }
     }
