@@ -1,5 +1,6 @@
 ﻿using Assets.Classes.Core.EntryProviders.OnlineDatabase;
 using Assets.Classes.CoreVisualization;
+using Assets.Classes.CoreVisualization.Layouts;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
 using Assets.Classes.CoreVisualization.ModelViewManagement.Builders;
 using Assets.Classes.CoreVisualization.ModelViews;
@@ -13,6 +14,7 @@ namespace Assets.Classes.SceneScripts.Scenes
         public SearchResultView searchResultViewPrefab;
         public InputField mainInputField;
         public GameObject loadingFeedback;
+        public VerticalLayout verticalLayout;
 
         private ModelViewBuilder _builder;
         private ModelViewProvider _provider;
@@ -27,7 +29,7 @@ namespace Assets.Classes.SceneScripts.Scenes
 
             _provider = new ModelViewProvider(new OnlineDatabase(), _builder);
 
-            _searchEngineView = new SearchEngineView(mainInputField, _provider, loadingFeedback);
+            _searchEngineView = new SearchEngineView(mainInputField, _provider, loadingFeedback, verticalLayout);
             _searchEngineView.OnSelectedEntry += ActivateEntryView;
 
             _explorer = new Explorer(_provider);

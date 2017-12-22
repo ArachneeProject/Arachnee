@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Classes.CoreVisualization.Layouts;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
 using Assets.Classes.CoreVisualization.ModelViews;
 using UnityEngine;
@@ -15,19 +16,22 @@ namespace Assets.Classes.CoreVisualization
         private readonly InputField _inputField;
         private readonly ModelViewProvider _provider;
         private readonly GameObject _loadingFeedback;
-        
-        private readonly List<SearchResultView> _lastSearch = new List<SearchResultView>();
+        private readonly LayoutBase _layout;
 
+        private readonly List<SearchResultView> _lastSearch = new List<SearchResultView>();
+        
         public event EventHandler<string> OnSelectedEntry;
 
-        public SearchEngineView(InputField inputField, ModelViewProvider provider, GameObject loadingFeedback)
+        public SearchEngineView(InputField inputField, ModelViewProvider provider, GameObject loadingFeedback, LayoutBase layout)
         {
             _inputField = inputField;
             _provider = provider;
             _loadingFeedback = loadingFeedback;
-
+            _layout = layout;
+            
             inputField.onEndEdit.AddListener(RunSearch);
             _loadingFeedback.SetActive(false);
+            _layout.gameObject.SetActive(false);
         }
 
         private void RunSearch(string searchQuery)
@@ -55,16 +59,16 @@ namespace Assets.Classes.CoreVisualization
             
             _lastSearch.AddRange(queue);
             Logger.LogInfo($"{queue.Count} results for \"{searchQuery}\".");
-
-            int i = 0;
+            
             while (queue.Any())
             {
                 var searchResultView = queue.Dequeue();
                 searchResultView.OnClicked += OnSelectedResultView;
 
-                searchResultView.transform.position = _inputField.transform.position + Vector3.down * ++i * 60;
+                _layout.Add(searchResultView.transform);
             }
 
+            _layout.gameObject.SetActive(true);
             _loadingFeedback.SetActive(false);
         }
 
@@ -76,7 +80,7 @@ namespace Assets.Classes.CoreVisualization
             OnSelectedEntry?.Invoke(this, selectedEntry);
         }
 
-        private void ClearSearch()
+        public void ClearSearch()
         {
             foreach (var searchResultView in _lastSearch)
             {
@@ -84,12 +88,17 @@ namespace Assets.Classes.CoreVisualization
                 _provider.Unload(searchResultView);
             }
 
+            _layout.gameObject.SetActive(false);
             _lastSearch.Clear();
         }
 
         public void Dispose()
         {
-            ClearSearch();
+            if (_inputField == null)
+            {
+                return;
+            }
+
             _inputField.onEndEdit.RemoveListener(RunSearch);
         }
     }

@@ -31,14 +31,7 @@ namespace Assets.Classes.CoreVisualization.ModelViews
                     return;
                 }
             }
-
-            var canvas = GameObject.FindObjectOfType<Canvas>();
-            if (canvas == null)
-            {
-                Logger.LogError($"Canvas was not found for {nameof(SearchResultView)}.");
-                return;
-            }
-
+            
             if (string.IsNullOrWhiteSpace(this.Result.Date))
             {
                 _text.text = Result.Name;
@@ -47,9 +40,7 @@ namespace Assets.Classes.CoreVisualization.ModelViews
             {
                 _text.text = $"{this.Result.Name} ({this.Result.Date.Substring(0, Math.Min(this.Result.Date.Length, 4))})";
             }
-
-            this.transform.SetParent(canvas.transform);
-
+            
             _button.onClick.AddListener(OnMouseUpAsButton);
         }
         
