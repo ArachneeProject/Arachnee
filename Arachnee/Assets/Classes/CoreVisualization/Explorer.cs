@@ -7,13 +7,13 @@ namespace Assets.Classes.CoreVisualization
     public class Explorer
     {
         private readonly ModelViewProvider _provider;
-        private readonly SearchEngineView _searchEngineView;
+        private readonly SearchEngine _searchEngine;
         private readonly ControllerBase _controller;
         
-        public Explorer(ModelViewProvider provider, SearchEngineView searchEngine, ControllerBase controller)
+        public Explorer(ModelViewProvider provider, SearchEngine searchEngine, ControllerBase controller)
         {
             _provider = provider;
-            _searchEngineView = searchEngine;
+            _searchEngine = searchEngine;
             _controller = controller;
 
             searchEngine.OnSelectedEntry += OnSelectedSearch;

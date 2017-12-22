@@ -28,7 +28,7 @@ namespace Assets.Classes.SceneScripts.Scenes
         private ModelViewBuilder _builder;
         private ModelViewProvider _provider;
 
-        private SearchEngineView _searchEngineView;
+        private SearchEngine _searchEngine;
         private Explorer _explorer;
 
         void Start()
@@ -41,8 +41,8 @@ namespace Assets.Classes.SceneScripts.Scenes
 
             _provider = new ModelViewProvider(new OnlineDatabase(), _builder);
 
-            _searchEngineView = new SearchEngineView(mainInputField, _provider, loadingFeedback, verticalLayout);
-            _explorer = new Explorer(_provider, _searchEngineView, controller);
+            _searchEngine = new SearchEngine(mainInputField, _provider, loadingFeedback, verticalLayout);
+            _explorer = new Explorer(_provider, _searchEngine, controller);
         }
     }
 }

@@ -11,7 +11,7 @@ using Logger = Assets.Classes.Logging.Logger;
 
 namespace Assets.Classes.CoreVisualization
 {
-    public class SearchEngineView : IDisposable
+    public class SearchEngine : IDisposable
     {
         private readonly InputField _inputField;
         private readonly ModelViewProvider _provider;
@@ -22,7 +22,7 @@ namespace Assets.Classes.CoreVisualization
         
         public event EventHandler<string> OnSelectedEntry;
 
-        public SearchEngineView(InputField inputField, ModelViewProvider provider, GameObject loadingFeedback, LayoutBase layout)
+        public SearchEngine(InputField inputField, ModelViewProvider provider, GameObject loadingFeedback, LayoutBase layout)
         {
             _inputField = inputField;
             _provider = provider;
