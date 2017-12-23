@@ -13,15 +13,15 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement.Builders
         private readonly ConnectionViewBuilder _connectionViewBuilder = new ConnectionViewBuilder();
         private readonly SearchResultViewBuilder _searchResultViewBuilder = new SearchResultViewBuilder();
         
-        public event Action<EntryView> OnBuiltEntryView;
-        public event Action<ConnectionView> OnBuiltConnectionView;
-        public event Action<SearchResultView> OnBuiltSearchResult;
+        public event Action<EntryView> OnEntryViewBuilt;
+        public event Action<ConnectionView> OnConnectionViewBuilt;
+        public event Action<SearchResultView> OnSearchResultBuilt;
 
         public ModelViewBuilder()
         {
-            _entryViewBuilder.OnBuilt += (arg) => OnBuiltEntryView?.Invoke(arg);
-            _connectionViewBuilder.OnBuilt += (arg) => OnBuiltConnectionView?.Invoke(arg);
-            _searchResultViewBuilder.OnBuilt += (arg) => OnBuiltSearchResult?.Invoke(arg);
+            _entryViewBuilder.OnBuilt += (arg) => OnEntryViewBuilt?.Invoke(arg);
+            _connectionViewBuilder.OnBuilt += (arg) => OnConnectionViewBuilt?.Invoke(arg);
+            _searchResultViewBuilder.OnBuilt += (arg) => OnSearchResultBuilt?.Invoke(arg);
         }
         
         /// <summary>

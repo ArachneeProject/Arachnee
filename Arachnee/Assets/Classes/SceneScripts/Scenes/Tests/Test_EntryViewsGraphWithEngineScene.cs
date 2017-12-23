@@ -29,8 +29,8 @@ namespace Assets.Classes.SceneScripts.Scenes.Tests
             builder.SetPrefab<Serie>(rigidbodyImageTextEntryViewPrefab);
             builder.SetPrefab(lineConnectionViewPrefab);
 
-            builder.OnBuiltEntryView += AddEntryViewToEngine;
-            builder.OnBuiltConnectionView += AddConnectionToEngine;
+            builder.OnEntryViewBuilt += AddEntryViewToEngine;
+            builder.OnConnectionViewBuilt += AddConnectionToEngine;
 
             var provider = new ModelViewProvider(new OnlineDatabase(), builder);
 

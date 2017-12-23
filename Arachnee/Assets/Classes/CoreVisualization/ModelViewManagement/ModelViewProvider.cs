@@ -19,11 +19,12 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
     public class ModelViewProvider
     {
         private readonly IEntryProvider _provider;
-        private readonly ModelViewBuilder _builder;
         
         private readonly Dictionary<string, EntryView> _cachedEntryViews = new Dictionary<string, EntryView>();
         private readonly Dictionary<string, ConnectionView> _cachedConnectionViews = new Dictionary<string, ConnectionView>();
         private readonly Dictionary<string, SearchResultView> _cachedSearchResultViews = new Dictionary<string, SearchResultView>();
+
+        public ModelViewBuilder Builder { get; }
 
         public event Action<EntryView> OnEntryViewSelected;
 
@@ -39,8 +40,8 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
             }
             
             _provider = provider;
-            _builder = builder;
-            _builder.OnBuiltEntryView += AddHandler;
+            Builder = builder;
+            Builder.OnEntryViewBuilt += AddHandler;
         }
 
         private void AddHandler(EntryView e)
@@ -102,7 +103,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
                     continue;
                 }
 
-                var connectionView = _builder.BuildView(entryView, oppositeEntryView);
+                var connectionView = Builder.BuildView(entryView, oppositeEntryView);
                 if (connectionView == null)
                 {
                     Logger.LogError($"Unable to build {nameof(ConnectionView)} for connection id \"{connection.Identifier}\".");
@@ -232,7 +233,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
                     continue;
                 }
 
-                var connectionView = _builder.BuildView(entryView, oppositeEntryView);
+                var connectionView = Builder.BuildView(entryView, oppositeEntryView);
                 if (connectionView == null)
                 {
                     Logger.LogError(
@@ -309,7 +310,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
             }
             else
             {
-                searchResultView = _builder.BuildView(searchResult);
+                searchResultView = Builder.BuildView(searchResult);
                 if (searchResultView == null)
                 {
                     Logger.LogError($"Unable to build {nameof(SearchResultView)} for \"{searchResult}\".");
@@ -325,7 +326,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
 
         private EntryView BuildEntryView(Entry entry)
         {
-            var entryView = _builder.BuildView(entry);
+            var entryView = Builder.BuildView(entry);
             if (entryView == null)
             {
                 Logger.LogError($"Unable to build {nameof(EntryView)} for id \"{entry.Id}\".");

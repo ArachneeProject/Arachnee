@@ -1,9 +1,11 @@
 ﻿using System.Collections;
+using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
 using Assets.Classes.CoreVisualization.ModelViews;
 using Assets.Classes.CoreVisualization.PhysicsEngine;
 using Assets.Classes.SceneScripts.Controllers;
 using UnityEngine;
+using Logger = Assets.Classes.Logging.Logger;
 
 namespace Assets.Classes.CoreVisualization
 {
@@ -24,6 +26,20 @@ namespace Assets.Classes.CoreVisualization
 
             _searchEngine.OnSearchResultSelected += OnSearchResultSelected;
             _provider.OnEntryViewSelected += OnEntrySelected;
+            _provider.Builder.OnConnectionViewBuilt += OnConnectionBuilt;
+        }
+
+        private void OnConnectionBuilt(ConnectionView connectionView)
+        {
+            var left = connectionView.Left as RigidbodyImageTextEntryView;
+            var right = connectionView.Right as RigidbodyImageTextEntryView;
+            if (left == null || right == null)
+            {
+                Logger.LogWarning("Part of connection was null.");
+                return;
+            }
+
+            _graphEngine.AddEdge(left.Rigidbody, right.Rigidbody);
         }
 
         private void OnEntrySelected(EntryView entryView)
@@ -47,6 +63,8 @@ namespace Assets.Classes.CoreVisualization
             }
 
             yield return FocusOnEntryRoutine(entryView);
+
+            yield return _provider.GetAdjacentEntryViewsAsync(entryView, Connection.AllTypes()).Await();
         }
 
         private IEnumerator FocusOnEntryRoutine(EntryView e)
