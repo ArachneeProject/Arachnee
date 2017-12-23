@@ -15,7 +15,7 @@ namespace Assets.Classes.SceneScripts.Controllers
         public float sensitivityX = 2F;
         public float sensitivityY = -2F;
         
-        public float verticalDeadAngle = 30;
+        public float verticalDeadAngle = 10;
 
         private float _maxDownAngle;
         private float _maxUpAngle;
