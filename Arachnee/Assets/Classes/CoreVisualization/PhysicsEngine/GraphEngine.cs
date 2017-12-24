@@ -6,12 +6,10 @@ namespace Assets.Classes.CoreVisualization.PhysicsEngine
 {
     public abstract class GraphEngine : MonoBehaviour
     {
-        protected readonly HashSet<Rigidbody> Rigidbodies = new HashSet<Rigidbody>();
         protected readonly Dictionary<Rigidbody, HashSet<Rigidbody>> AdjacentRigidbodies = new Dictionary<Rigidbody, HashSet<Rigidbody>>();
 
         public virtual void AddRigidbody(Rigidbody rigidbodyToAdd)
         {
-            Rigidbodies.Add(rigidbodyToAdd);
             if (!AdjacentRigidbodies.ContainsKey(rigidbodyToAdd))
             {
                 AdjacentRigidbodies[rigidbodyToAdd] = new HashSet<Rigidbody>();
@@ -38,8 +36,10 @@ namespace Assets.Classes.CoreVisualization.PhysicsEngine
 
         public virtual void RemoveRigidbody(Rigidbody rigidbodyToRemove)
         {
-            // remove vertex from vertices list
-            Rigidbodies.Remove(rigidbodyToRemove);
+            if (!AdjacentRigidbodies.ContainsKey(rigidbodyToRemove))
+            {
+                return;
+            }
 
             // remove all edges using this vertex
             foreach (var adjacentRigidbody in AdjacentRigidbodies[rigidbodyToRemove])
