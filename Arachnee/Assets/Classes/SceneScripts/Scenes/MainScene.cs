@@ -15,7 +15,7 @@ namespace Assets.Classes.SceneScripts.Scenes
     public class MainScene : MonoBehaviour
     {
         public ControllerBase controller;
-
+        
         public EntryView moviePrefab;
         public EntryView artistPrefab;
         public ConnectionView connectionPrefab;
@@ -25,9 +25,10 @@ namespace Assets.Classes.SceneScripts.Scenes
         public InputField mainInputField;
         public GameObject loadingFeedback;
         public VerticalLayout verticalLayout;
+        public SidePanel sidePanel;
 
         public GraphEngine graphEngine;
-
+        
         private ModelViewBuilder _builder;
         private ModelViewProvider _provider;
 
@@ -45,7 +46,7 @@ namespace Assets.Classes.SceneScripts.Scenes
             _provider = new ModelViewProvider(new OnlineDatabase(), _builder);
 
             _searchEngine = new SearchEngine(mainInputField, _provider, loadingFeedback, verticalLayout);
-            _explorer = new Explorer(_provider, _searchEngine, controller, graphEngine);
+            _explorer = new Explorer(_provider, _searchEngine, controller, graphEngine, sidePanel);
         }
     }
 }

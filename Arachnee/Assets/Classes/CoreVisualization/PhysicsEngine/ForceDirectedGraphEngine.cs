@@ -13,7 +13,7 @@ namespace Assets.Classes.CoreVisualization.PhysicsEngine
         public float hookeAttraction = 1;
         public Vector3 centerOfGraph = Vector3.zero;
 
-        private List<Rigidbody> _rigidbodies;
+        private List<Rigidbody> _rigidbodies = new List<Rigidbody>();
 
         public override void AddRigidbody(Rigidbody rigidbodyToAdd)
         {

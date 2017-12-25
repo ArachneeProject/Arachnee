@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
 using Assets.Classes.CoreVisualization.ModelViews;
 using Assets.Classes.CoreVisualization.PhysicsEngine;
@@ -15,18 +14,21 @@ namespace Assets.Classes.CoreVisualization
         private readonly SearchEngine _searchEngine;
         private readonly ControllerBase _controller;
         private readonly GraphEngine _graphEngine;
+        private readonly SidePanel _sidePanel;
 
         public Explorer(ModelViewProvider provider, SearchEngine searchEngine, ControllerBase controller,
-            GraphEngine graphEngine)
+            GraphEngine graphEngine, SidePanel sidePanel)
         {
             _provider = provider;
             _searchEngine = searchEngine;
             _controller = controller;
             _graphEngine = graphEngine;
+            _sidePanel = sidePanel;
 
             _searchEngine.OnSearchResultSelected += OnSearchResultSelected;
             _provider.OnEntryViewSelected += OnEntrySelected;
             _provider.Builder.OnConnectionViewBuilt += OnConnectionBuilt;
+            _sidePanel.Start();
         }
 
         private void OnConnectionBuilt(ConnectionView connectionView)
@@ -63,8 +65,9 @@ namespace Assets.Classes.CoreVisualization
             }
 
             yield return FocusOnEntryRoutine(entryView);
+            _sidePanel.OpenPanel(entryView.Entry);
 
-            yield return _provider.GetAdjacentEntryViewsAsync(entryView, Connection.AllTypes()).Await();
+            //yield return _provider.GetAdjacentEntryViewsAsync(entryView, Connection.AllTypes()).Await();
         }
 
         private IEnumerator FocusOnEntryRoutine(EntryView e)
