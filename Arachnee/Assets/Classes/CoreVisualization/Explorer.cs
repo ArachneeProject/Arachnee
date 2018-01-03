@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Assets.Classes.Core.Graph;
@@ -52,7 +53,10 @@ namespace Assets.Classes.CoreVisualization
                 return;
             }
 
-            _graph = CompactGraph.InitializeFrom(graphPath, Connection.AllTypes());
+            if (_graph == null)
+            {
+                _graph = CompactGraph.InitializeFrom(graphPath, Connection.AllTypes());
+            }
         }
 
         void OnDestroy()
@@ -115,7 +119,31 @@ namespace Assets.Classes.CoreVisualization
 
         private IEnumerator ConnectToNearest(EntryView entryViewToConnect)
         {
-            var allSteps = _graph.GetShortestPaths(entryViewToConnect.Entry.Id, _provider.ActiveEntryViews.Select(e => e.Entry.Id).ToList());
+            var connectedIds = entryViewToConnect.Entry.Connections.Select(c => c.ConnectedId).ToList();
+            var otherActiveIds = new List<string>();
+            bool alreadyLinked = false;
+
+            // tries to connect the EntryView to its adjacent EntryViews if they are already here
+            foreach (var activeEntryView in _provider.ActiveEntryViews.ToList())
+            {
+                if (connectedIds.Contains(activeEntryView.Entry.Id))
+                {
+                    yield return  _provider.GetConnectionViewsAsync(entryViewToConnect, Connection.AllTypes(), activeEntryView).Await();
+                    alreadyLinked = true;
+                }
+                else
+                {
+                    otherActiveIds.Add(activeEntryView.Entry.Id);
+                }
+            }
+
+            if (alreadyLinked)
+            {
+                yield break;
+            }
+
+            // tries to connect the EntryView to the nearest available EntryView
+            var allSteps = _graph.GetShortestPaths(entryViewToConnect.Entry.Id, otherActiveIds);
             if (allSteps.Count == 0)
             {
                 yield break;
