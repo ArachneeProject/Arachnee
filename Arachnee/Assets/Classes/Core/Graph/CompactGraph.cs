@@ -130,21 +130,44 @@ namespace Assets.Classes.Core.Graph
 
         public List<string> GetShortestPath(string sourceId, string targetId)
         {
-            var sourceVertex = GetVertexId(sourceId);
-            var targetVertex = GetVertexId(targetId);
-
-            if (!this.ContainsVertex(sourceVertex) || !this.ContainsVertex(targetVertex))
+            var res = GetShortestPaths(sourceId, new List<string> {targetId});
+            return res.Any() 
+                ? res.First() 
+                : new List<string>();
+        }
+        
+        public List<List<string>> GetShortestPaths(string sourceId, ICollection<string> targetIds)
+        {
+            var sourceVertex = GetVertexFrom(sourceId);
+            
+            var results = new List<List<string>>();
+            if (!this.ContainsVertex(sourceVertex))
             {
-                return new List<string>();
+                return results;
             }
 
-            IEnumerable<CompactEdge> path;
             var computeShortestPathFunc = this.ShortestPathsAStar(e => 1, v => 1, sourceVertex);
-            computeShortestPathFunc(targetVertex, out path);
 
-            var result = path.Select(edge => GetEntryId(edge.Source)).ToList();
-            result.Add(targetId);
-            return result;
+            foreach (var targetId in targetIds)
+            {
+                var targetVertex = GetVertexFrom(targetId);
+
+                if (!this.ContainsVertex(targetVertex)
+                    || targetVertex == sourceVertex)
+                {
+                    continue;
+                }
+
+                IEnumerable<CompactEdge> path;
+                computeShortestPathFunc(targetVertex, out path);
+
+                var result = path.Select(edge => GetEntryId(edge.Source)).ToList();
+                result.Add(targetId);
+
+                results.Add(result);
+            }
+            
+            return results;
         }
 
         public override bool AddEdge(CompactEdge e)
@@ -167,7 +190,7 @@ namespace Assets.Classes.Core.Graph
             return base.AddVerticesAndEdge(e);
         }
         
-        private string GetVertexId(string entryId)
+        private string GetVertexFrom(string entryId)
         {
             if (string.IsNullOrEmpty(entryId))
             {

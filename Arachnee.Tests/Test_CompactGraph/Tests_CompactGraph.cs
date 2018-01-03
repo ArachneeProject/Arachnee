@@ -62,12 +62,10 @@ namespace Arachnee.Tests.Test_CompactGraph
         [TestMethod]
         public void InitializeFrom_ValidSerializedGraph_ValidCompactGraph()
         {
-            var compactGraph = new CompactGraph();
-
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "temp.txt");
             File.WriteAllLines(filePath, _validSerializedGraph);
 
-            compactGraph.InitializeFrom(filePath, Connection.AllTypes());
+            var compactGraph = CompactGraph.InitializeFrom(filePath, Connection.AllTypes());
             
             Assert.AreEqual(4, compactGraph.VertexCount);
             Assert.AreEqual(6, compactGraph.EdgeCount);
@@ -81,12 +79,10 @@ namespace Arachnee.Tests.Test_CompactGraph
         [TestMethod]
         public void GetShortestPath_ShortestPathExist_CorrectPath()
         {
-            var compactGraph = new CompactGraph();
-
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "temp.txt");
             File.WriteAllLines(filePath, _validSerializedGraph);
 
-            compactGraph.InitializeFrom(filePath, Connection.AllTypes());
+            var compactGraph = CompactGraph.InitializeFrom(filePath, Connection.AllTypes());
 
             var res = compactGraph.GetShortestPath("Artist-1356210", "Movie-218");
 
@@ -98,14 +94,27 @@ namespace Arachnee.Tests.Test_CompactGraph
         }
 
         [TestMethod]
-        public void GetShortestPath_ShortestPathDoesntExist_EmptyPath()
+        public void GetShortestPath_ShortestPathBetweenOneSingleVertex_EmptyPath()
         {
-            var compactGraph = new CompactGraph();
-
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "temp.txt");
             File.WriteAllLines(filePath, _validSerializedGraph);
 
-            compactGraph.InitializeFrom(filePath, Connection.AllTypes());
+            var compactGraph = CompactGraph.InitializeFrom(filePath, Connection.AllTypes());
+
+            var res = compactGraph.GetShortestPath("Artist-1356210", "Artist-1356210");
+
+            Assert.AreEqual(0, res.Count);
+            
+            File.Delete(filePath);
+        }
+
+        [TestMethod]
+        public void GetShortestPath_ShortestPathDoesntExist_EmptyPath()
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "temp.txt");
+            File.WriteAllLines(filePath, _validSerializedGraph);
+
+            var compactGraph = CompactGraph.InitializeFrom(filePath, Connection.AllTypes());
             compactGraph.AddVertex("Movie-0");
 
             var res = compactGraph.GetShortestPath("Movie-218", "Movie-0");
@@ -118,12 +127,10 @@ namespace Arachnee.Tests.Test_CompactGraph
         [TestMethod]
         public void GetShortestPath_VerticesDontExist_EmptyPath()
         {
-            var compactGraph = new CompactGraph();
-
             var filePath = Path.Combine(Directory.GetCurrentDirectory(), "temp.txt");
             File.WriteAllLines(filePath, _validSerializedGraph);
 
-            compactGraph.InitializeFrom(filePath, Connection.AllTypes());
+            var compactGraph = CompactGraph.InitializeFrom(filePath, Connection.AllTypes());
 
             var res = compactGraph.GetShortestPath("Artist-0", "Movie-0");
 

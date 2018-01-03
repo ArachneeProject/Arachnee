@@ -23,6 +23,8 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
         private readonly Dictionary<string, ConnectionView> _cachedConnectionViews = new Dictionary<string, ConnectionView>();
         private readonly Dictionary<string, SearchResultView> _cachedSearchResultViews = new Dictionary<string, SearchResultView>();
 
+        public IEnumerable<EntryView> ActiveEntryViews => _cachedEntryViews.Values.Where(e => e.isActiveAndEnabled);
+
         public ModelViewBuilder Builder { get; }
 
         public event Action<EntryView> OnEntryViewSelected;

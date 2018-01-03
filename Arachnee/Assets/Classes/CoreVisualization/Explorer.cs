@@ -1,5 +1,7 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Assets.Classes.Core.Graph;
 using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
@@ -17,9 +19,7 @@ namespace Assets.Classes.CoreVisualization
         public ControllerBase controller;
         public GraphEngine graphEngine;
         public SidePanel sidePanel;
-
-        private EntryView _lastSelected;
-
+        
         private ModelViewProvider _provider;
 
         private CompactGraph _graph;
@@ -66,8 +66,7 @@ namespace Assets.Classes.CoreVisualization
             {
                 return;
             }
-
-            _lastSelected = entryView;
+            
             controller.StartCoroutine(FocusOnEntryRoutine(entryView));
         }
 
@@ -90,28 +89,29 @@ namespace Assets.Classes.CoreVisualization
             // focus on entry
             yield return FocusOnEntryRoutine(entryView);
             
-            // connect to last selected entry
-            if (_lastSelected != null)
-            {
-                yield return LoadPathTo(entryView);
-            }
-
-            _lastSelected = entryView;
+            // connect to nearest entry
+            yield return ConnectToNearest(entryView);
         }
 
-        private IEnumerator LoadPathTo(EntryView entryView)
+        private IEnumerator ConnectToNearest(EntryView entryViewToConnect)
         {
-            var steps = _graph.GetShortestPath(entryView.Entry.Id, _lastSelected.Entry.Id);
-
-            if (steps.Count < 2)
+            var allSteps = _graph.GetShortestPaths(entryViewToConnect.Entry.Id, _provider.ActiveEntryViews.Select(e => e.Entry.Id).ToList());
+            if (allSteps.Count == 0)
             {
                 yield break;
             }
 
-            EntryView currentEntryView = entryView;
-            for (int i = 1; i < steps.Count; i++)
+            var shortestSteps = allSteps.Aggregate((currentBest, next) => currentBest.Count < next.Count ? currentBest : next);
+            
+            if (shortestSteps.Count < 2)
             {
-                var next = steps[i];
+                yield break;
+            }
+
+            EntryView currentEntryView = entryViewToConnect;
+            for (int i = 1; i < shortestSteps.Count; i++)
+            {
+                var next = shortestSteps[i];
                 
                 var awaitableNextEntryView = _provider.GetEntryViewAsync(next);
                 yield return awaitableNextEntryView.Await();
