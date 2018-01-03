@@ -179,6 +179,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
             {
                 asyncCall = new AsyncCall<Entry, EntryView>(() => null, x => _cachedEntryViews[entryId]);
                 yield return asyncCall.Execute();
+                asyncCall.Result?.gameObject.SetActive(true);
                 _routineResult = asyncCall.Result;
                 yield break;
             }
@@ -217,7 +218,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
         {
             var result = new List<ConnectionView>();
 
-            var validConnections = adjacentEntryView.Entry == null
+            var validConnections = adjacentEntryView?.Entry == null
                 ? entryView.Entry.Connections.Where(c => connectionTypes.Contains(c.Type))
                 : entryView.Entry.Connections.Where(c => c.ConnectedId == adjacentEntryView.Entry.Id && connectionTypes.Contains(c.Type));
 
@@ -231,7 +232,9 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
             {
                 if (_cachedConnectionViews.ContainsKey(connection.Identifier))
                 {
-                    result.Add(_cachedConnectionViews[connection.Identifier]);
+                    var existingConnection = _cachedConnectionViews[connection.Identifier];
+                    existingConnection.gameObject.SetActive(true);
+                    result.Add(existingConnection);
                     continue;
                 }
 
@@ -354,6 +357,20 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
         {
             //entryView.OnClicked -= FireCLickedEvent;
             entryView.gameObject.SetActive(false);
+
+            foreach (var connection in entryView.Entry.Connections)
+            {
+                var identifier = ConnectionView.GetIdentifier(entryView.Entry.Id, connection.ConnectedId);
+                if (_cachedConnectionViews.ContainsKey(identifier))
+                {
+                    Unload(_cachedConnectionViews[identifier]);
+                }
+            }
+        }
+
+        private void Unload(ConnectionView connectionView)
+        {
+            connectionView.gameObject.SetActive(false);
         }
 
         public void Unload(SearchResultView searchResultView)

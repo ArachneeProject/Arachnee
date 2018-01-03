@@ -1,4 +1,5 @@
-﻿using Assets.Classes.Core.Models;
+﻿using System;
+using Assets.Classes.CoreVisualization.ModelViews;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,7 +15,11 @@ namespace Assets.Classes.CoreVisualization
         public Button foldUpButton;
         public Button hideButton;
         
-        private Entry _selectedEntry;
+        private EntryView _selectedEntry;
+
+        public event Action<EntryView> OnExpandRequested;
+        public event Action<EntryView> OnFoldUpRequested;
+        public event Action<EntryView> OnHideRequested;
 
         public void Start()
         {
@@ -30,11 +35,10 @@ namespace Assets.Classes.CoreVisualization
             ClosePanel();
         }
 
-        public void OpenPanel(Entry selectedEntry)
+        public void OpenPanel(EntryView selectedEntry)
         {
             _selectedEntry = selectedEntry;
-
-            entryText.text = selectedEntry.ToString();
+            entryText.text = selectedEntry.Entry.ToString();
 
             this.gameObject.SetActive(true);
         }
@@ -42,21 +46,31 @@ namespace Assets.Classes.CoreVisualization
         public void ClosePanel()
         {
             this.gameObject.SetActive(false);
+            _selectedEntry = null;
         }
         
-        private void Hide()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        private void FoldUp()
-        {
-            throw new System.NotImplementedException();
-        }
-
         private void Expand()
         {
-            throw new System.NotImplementedException();
+            if (_selectedEntry != null)
+            {
+                OnExpandRequested?.Invoke(_selectedEntry);
+            }
+        }
+        
+        private void FoldUp()
+        {
+            if (_selectedEntry != null)
+            {
+                OnFoldUpRequested?.Invoke(_selectedEntry);
+            }
+        }
+
+        private void Hide()
+        {
+            if (_selectedEntry != null)
+            {
+                OnHideRequested?.Invoke(_selectedEntry);
+            }
         }
     }
 }
