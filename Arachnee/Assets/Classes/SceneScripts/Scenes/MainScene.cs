@@ -1,39 +1,36 @@
 ﻿using Assets.Classes.Core.EntryProviders.OnlineDatabase;
 using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization;
-using Assets.Classes.CoreVisualization.Layouts;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
 using Assets.Classes.CoreVisualization.ModelViewManagement.Builders;
 using Assets.Classes.CoreVisualization.ModelViews;
 using Assets.Classes.CoreVisualization.PhysicsEngine;
 using Assets.Classes.SceneScripts.Controllers;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Assets.Classes.SceneScripts.Scenes
 {
     public class MainScene : MonoBehaviour
     {
         public ControllerBase controller;
-        
+
+        public SearchEngine searchEngine;
+        public SearchResultView searchResultViewPrefab;
+
         public EntryView moviePrefab;
         public EntryView artistPrefab;
         public ConnectionView connectionPrefab;
-
-        public SearchResultView searchResultViewPrefab;
         
-        public InputField mainInputField;
         public GameObject loadingFeedback;
-        public VerticalLayout verticalLayout;
+
+        public Explorer explorer;
         public SidePanel sidePanel;
 
         public GraphEngine graphEngine;
         
         private ModelViewBuilder _builder;
         private ModelViewProvider _provider;
-
-        private SearchEngine _searchEngine;
-        private Explorer _explorer;
+        
         
         void Start()
         {
@@ -45,8 +42,9 @@ namespace Assets.Classes.SceneScripts.Scenes
 
             _provider = new ModelViewProvider(new OnlineDatabase(), _builder);
 
-            _searchEngine = new SearchEngine(mainInputField, _provider, loadingFeedback, verticalLayout);
-            _explorer = new Explorer(_provider, _searchEngine, controller, graphEngine, sidePanel);
+            searchEngine.Provider = _provider;
+            searchEngine.Start();
+            explorer.Start();
         }
     }
 }

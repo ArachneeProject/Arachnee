@@ -11,33 +11,68 @@ using Logger = Assets.Classes.Logging.Logger;
 
 namespace Assets.Classes.CoreVisualization
 {
-    public class SearchEngine : IDisposable
+    public class SearchEngine : MonoBehaviour
     {
-        private readonly InputField _inputField;
-        private readonly ModelViewProvider _provider;
-        private readonly GameObject _loadingFeedback;
-        private readonly LayoutBase _layout;
+        public InputField inputField;
+        public GameObject loadingFeedback;
+        public LayoutBase layout;
 
         private readonly List<SearchResultView> _lastSearch = new List<SearchResultView>();
         
-        public event Action<string> OnSearchResultSelected;
+        private ModelViewProvider _provider;
 
-        public SearchEngine(InputField inputField, ModelViewProvider provider, GameObject loadingFeedback, LayoutBase layout)
+        public ModelViewProvider Provider
         {
-            _inputField = inputField;
-            _provider = provider;
-            _loadingFeedback = loadingFeedback;
-            _layout = layout;
-            
-            inputField.onEndEdit.AddListener(RunSearch);
-            _loadingFeedback.SetActive(false);
-            _layout.Start();
-            _layout.gameObject.SetActive(false);
+            get { return _provider; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException();
+                }
+
+                if (_provider != null)
+                {
+                    throw new ArgumentException("Provider already set.");
+                }
+
+                _provider = value;
+            }
         }
 
+        public event Action<string> OnSearchResultSelected;
+
+        public void Start()
+        {
+            if (_provider == null)
+            {
+                Logger.LogError("Provider is not set.");
+                return;
+            }
+
+            inputField.onEndEdit.RemoveListener(RunSearch);
+            inputField.onEndEdit.AddListener(RunSearch);
+
+            this.loadingFeedback.SetActive(false);
+            this.layout.Start();
+            this.layout.gameObject.SetActive(false);
+        }
+        
         private void RunSearch(string searchQuery)
         {
-            _inputField.StartCoroutine(RunSearchRoutine(searchQuery));
+            inputField.StartCoroutine(RunSearchRoutine(searchQuery));
+        }
+        
+        private void ClearSearch()
+        {
+            foreach (var searchResultView in _lastSearch)
+            {
+                searchResultView.OnClicked -= OnSelectedResultView;
+                Provider.Unload(searchResultView);
+            }
+
+            layout.gameObject.SetActive(false);
+            _lastSearch.Clear();
         }
 
         private IEnumerator RunSearchRoutine(string searchQuery)
@@ -45,16 +80,16 @@ namespace Assets.Classes.CoreVisualization
             ClearSearch();
 
             Logger.LogInfo($"Searching for \"{searchQuery}\"...");
-            _loadingFeedback.SetActive(true);
+            loadingFeedback.SetActive(true);
 
-            var awaitableQueue = _provider.GetSearchResultViewsAsync(searchQuery);
+            var awaitableQueue = Provider.GetSearchResultViewsAsync(searchQuery);
             yield return awaitableQueue.Await();
             var queue = awaitableQueue.Result;
 
             if (!queue.Any())
             {
                 Logger.LogInfo($"No result for \"{searchQuery}\".");
-                _loadingFeedback.SetActive(false);
+                loadingFeedback.SetActive(false);
                 yield break;
             }
             
@@ -66,11 +101,11 @@ namespace Assets.Classes.CoreVisualization
                 var searchResultView = queue.Dequeue();
                 searchResultView.OnClicked += OnSelectedResultView;
 
-                _layout.Add(searchResultView.transform);
+                layout.Add(searchResultView.transform);
             }
 
-            _layout.gameObject.SetActive(true);
-            _loadingFeedback.SetActive(false);
+            layout.gameObject.SetActive(true);
+            loadingFeedback.SetActive(false);
         }
 
         private void OnSelectedResultView(SearchResultView searchresultview)
@@ -80,27 +115,15 @@ namespace Assets.Classes.CoreVisualization
             ClearSearch();
             OnSearchResultSelected?.Invoke(selectedEntry);
         }
-
-        public void ClearSearch()
+        
+        void OnDestroy()
         {
-            foreach (var searchResultView in _lastSearch)
-            {
-                searchResultView.OnClicked -= OnSelectedResultView;
-                _provider.Unload(searchResultView);
-            }
-
-            _layout.gameObject.SetActive(false);
-            _lastSearch.Clear();
-        }
-
-        public void Dispose()
-        {
-            if (_inputField == null)
+            if (inputField == null)
             {
                 return;
             }
 
-            _inputField.onEndEdit.RemoveListener(RunSearch);
+            inputField.onEndEdit.RemoveListener(RunSearch);
         }
     }
 }

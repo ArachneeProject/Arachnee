@@ -7,7 +7,6 @@ using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization.ModelViewManagement.Builders;
 using Assets.Classes.CoreVisualization.ModelViews;
 using JetBrains.Annotations;
-using UnityEngine;
 using Logger = Assets.Classes.Logging.Logger;
 using Object = UnityEngine.Object;
 

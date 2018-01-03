@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
 using Assets.Classes.CoreVisualization.ModelViews;
 using Assets.Classes.CoreVisualization.PhysicsEngine;
@@ -8,27 +9,29 @@ using Logger = Assets.Classes.Logging.Logger;
 
 namespace Assets.Classes.CoreVisualization
 {
-    public class Explorer
+    public class Explorer : MonoBehaviour
     {
-        private readonly ModelViewProvider _provider;
-        private readonly SearchEngine _searchEngine;
-        private readonly ControllerBase _controller;
-        private readonly GraphEngine _graphEngine;
-        private readonly SidePanel _sidePanel;
+        public SearchEngine searchEngine;
+        public ControllerBase controller;
+        public GraphEngine graphEngine;
+        public SidePanel sidePanel;
 
-        public Explorer(ModelViewProvider provider, SearchEngine searchEngine, ControllerBase controller,
-            GraphEngine graphEngine, SidePanel sidePanel)
+        private Entry _lastSelected;
+
+        private ModelViewProvider _provider;
+        
+        public void Start()
         {
-            _provider = provider;
-            _searchEngine = searchEngine;
-            _controller = controller;
-            _graphEngine = graphEngine;
-            _sidePanel = sidePanel;
+            _provider = searchEngine.Provider;
 
-            _searchEngine.OnSearchResultSelected += OnSearchResultSelected;
+            this.searchEngine.OnSearchResultSelected -= OnSearchResultSelected;
+            this.searchEngine.OnSearchResultSelected += OnSearchResultSelected;
+            _provider.OnEntryViewSelected -= OnEntrySelected;
             _provider.OnEntryViewSelected += OnEntrySelected;
+            _provider.Builder.OnConnectionViewBuilt -= OnConnectionBuilt;
             _provider.Builder.OnConnectionViewBuilt += OnConnectionBuilt;
-            _sidePanel.Start();
+
+            this.sidePanel.Start();
         }
 
         private void OnConnectionBuilt(ConnectionView connectionView)
@@ -41,21 +44,28 @@ namespace Assets.Classes.CoreVisualization
                 return;
             }
 
-            _graphEngine.AddEdge(left.Rigidbody, right.Rigidbody);
+            graphEngine.AddEdge(left.Rigidbody, right.Rigidbody);
         }
 
         private void OnEntrySelected(EntryView entryView)
         {
-            _controller.StartCoroutine(FocusOnEntryRoutine(entryView));
+            if (entryView?.Entry == null || entryView.Entry == DefaultEntry.Instance)
+            {
+                return;
+            }
+
+            _lastSelected = entryView.Entry;
+            controller.StartCoroutine(FocusOnEntryRoutine(entryView));
         }
 
         private void OnSearchResultSelected(string entryId)
         {
-            _controller.StartCoroutine(LoadAndFocusOnEntryRoutine(entryId));
+            controller.StartCoroutine(LoadAndFocusOnEntryRoutine(entryId));
         }
 
         private IEnumerator LoadAndFocusOnEntryRoutine(string entryId)
         {
+            // load entry
             var awaitableEntryView = _provider.GetEntryViewAsync(entryId);
             yield return awaitableEntryView.Await();
             var entryView = awaitableEntryView.Result;
@@ -64,10 +74,17 @@ namespace Assets.Classes.CoreVisualization
                 yield break;
             }
 
-            yield return FocusOnEntryRoutine(entryView);
-            _sidePanel.OpenPanel(entryView.Entry);
+            // connect to last selected entry
+            if (_lastSelected != null)
+            {
+                
+            }
 
-            //yield return _provider.GetAdjacentEntryViewsAsync(entryView, Connection.AllTypes()).Await();
+            _lastSelected = entryView.Entry;
+
+            // focus on entry
+            yield return FocusOnEntryRoutine(entryView);
+            sidePanel.OpenPanel(entryView.Entry);
         }
 
         private IEnumerator FocusOnEntryRoutine(EntryView e)
@@ -78,16 +95,16 @@ namespace Assets.Classes.CoreVisualization
                 yield break;
             }
 
-            _graphEngine.AddRigidbody(entryView.Rigidbody);
+            graphEngine.AddRigidbody(entryView.Rigidbody);
 
-            Quaternion fromRotation = _controller.transform.rotation;
+            Quaternion fromRotation = controller.transform.rotation;
             
             float time = 0;
             while (time < 1)
             {
                 time += Time.deltaTime;
-                Quaternion toRotation = Quaternion.LookRotation(entryView.transform.position - _controller.transform.position);
-                _controller.transform.rotation = Quaternion.Lerp(fromRotation, toRotation, time);
+                Quaternion toRotation = Quaternion.LookRotation(entryView.transform.position - controller.transform.position);
+                controller.transform.rotation = Quaternion.Lerp(fromRotation, toRotation, time);
                 yield return new WaitForEndOfFrame();
             }
         }

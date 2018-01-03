@@ -13,17 +13,20 @@ namespace Assets.Classes.CoreVisualization
         public Button expandButton;
         public Button foldUpButton;
         public Button hideButton;
-        public Button connectedToButton;
-
+        
         private Entry _selectedEntry;
 
         public void Start()
         {
+            expandButton.onClick.RemoveListener(Expand);
             expandButton.onClick.AddListener(Expand);
-            foldUpButton.onClick.AddListener(FoldUp);
-            hideButton.onClick.AddListener(Hide);
-            connectedToButton.onClick.AddListener(ConnectTo);
 
+            foldUpButton.onClick.RemoveListener(FoldUp);
+            foldUpButton.onClick.AddListener(FoldUp);
+
+            hideButton.onClick.RemoveListener(Hide);
+            hideButton.onClick.AddListener(Hide);
+            
             ClosePanel();
         }
 
@@ -40,13 +43,7 @@ namespace Assets.Classes.CoreVisualization
         {
             this.gameObject.SetActive(false);
         }
-
-        private void ConnectTo()
-        {
-            mainInputField.ActivateInputField();
-            ClosePanel();
-        }
-
+        
         private void Hide()
         {
             throw new System.NotImplementedException();
