@@ -1,4 +1,6 @@
 ﻿using System.Collections;
+using System.IO;
+using Assets.Classes.Core.Graph;
 using Assets.Classes.Core.Models;
 using Assets.Classes.CoreVisualization.ModelViewManagement;
 using Assets.Classes.CoreVisualization.ModelViews;
@@ -16,22 +18,33 @@ namespace Assets.Classes.CoreVisualization
         public GraphEngine graphEngine;
         public SidePanel sidePanel;
 
-        private Entry _lastSelected;
+        private EntryView _lastSelected;
 
         private ModelViewProvider _provider;
-        
+
+        private CompactGraph _graph;
+
         public void Start()
         {
             _provider = searchEngine.Provider;
-
+            
             this.searchEngine.OnSearchResultSelected -= OnSearchResultSelected;
             this.searchEngine.OnSearchResultSelected += OnSearchResultSelected;
             _provider.OnEntryViewSelected -= OnEntrySelected;
             _provider.OnEntryViewSelected += OnEntrySelected;
             _provider.Builder.OnConnectionViewBuilt -= OnConnectionBuilt;
             _provider.Builder.OnConnectionViewBuilt += OnConnectionBuilt;
-
+            
             this.sidePanel.Start();
+            
+            string graphPath = Path.Combine(Application.dataPath, "Database", "graph.spdr");
+            if (!File.Exists(graphPath))
+            {
+                Logger.LogError($"Grpah not found at \"{graphPath}\".");
+                return;
+            }
+
+            _graph = CompactGraph.InitializeFrom(graphPath, Connection.AllTypes());
         }
 
         private void OnConnectionBuilt(ConnectionView connectionView)
@@ -54,7 +67,7 @@ namespace Assets.Classes.CoreVisualization
                 return;
             }
 
-            _lastSelected = entryView.Entry;
+            _lastSelected = entryView;
             controller.StartCoroutine(FocusOnEntryRoutine(entryView));
         }
 
@@ -73,18 +86,52 @@ namespace Assets.Classes.CoreVisualization
             {
                 yield break;
             }
-
+            
+            // focus on entry
+            yield return FocusOnEntryRoutine(entryView);
+            
             // connect to last selected entry
             if (_lastSelected != null)
             {
-                
+                yield return LoadPathTo(entryView);
             }
 
-            _lastSelected = entryView.Entry;
+            _lastSelected = entryView;
+        }
 
-            // focus on entry
-            yield return FocusOnEntryRoutine(entryView);
-            sidePanel.OpenPanel(entryView.Entry);
+        private IEnumerator LoadPathTo(EntryView entryView)
+        {
+            var steps = _graph.GetShortestPath(entryView.Entry.Id, _lastSelected.Entry.Id);
+
+            if (steps.Count < 2)
+            {
+                yield break;
+            }
+
+            EntryView currentEntryView = entryView;
+            for (int i = 1; i < steps.Count; i++)
+            {
+                var next = steps[i];
+                
+                var awaitableNextEntryView = _provider.GetEntryViewAsync(next);
+                yield return awaitableNextEntryView.Await();
+
+                var nextEntryView = awaitableNextEntryView.Result;
+                if (nextEntryView == null)
+                {
+                    yield break;
+                }
+
+                var awaitableConnectionViews = _provider.GetConnectionViewsAsync(currentEntryView, Connection.AllTypes(), nextEntryView);
+                yield return awaitableConnectionViews.Await();
+                var connectionView = awaitableConnectionViews.Result;
+                if (connectionView == null)
+                {
+                    yield break;
+                }
+
+                currentEntryView = nextEntryView;
+            }
         }
 
         private IEnumerator FocusOnEntryRoutine(EntryView e)

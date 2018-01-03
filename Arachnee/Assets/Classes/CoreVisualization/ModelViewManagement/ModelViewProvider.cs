@@ -73,16 +73,25 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
 
             return BuildEntryView(entry);
         }
-        
+
         /// <summary>
         /// Returns a collection of ConnectionViews linked to the given EntryView, 
         /// restricted to those having at least one of the given connection types.
         /// </summary>
         /// <param name="entryView">The EntryView to get the ConnectionViews from.</param>
         /// <param name="connectionTypes">The list of restricting connection types.</param>
-        public List<ConnectionView> GetConnectionViews(EntryView entryView, ICollection<ConnectionType> connectionTypes)
+        /// <param name="adjacentEntryView">Optionnal adjacent EntryView to get only its related ConnectionViews.</param>
+        public List<ConnectionView> GetConnectionViews(EntryView entryView, ICollection<ConnectionType> connectionTypes, EntryView adjacentEntryView = null)
         {
-            var validConnections = entryView.Entry.Connections.Where(c => connectionTypes.Contains(c.Type));
+            if (entryView == null)
+            {
+                return new List<ConnectionView>();
+            }
+
+            var validConnections = adjacentEntryView?.Entry == null 
+                ? entryView.Entry.Connections.Where(c => connectionTypes.Contains(c.Type)) 
+                : entryView.Entry.Connections.Where(c => c.ConnectedId == adjacentEntryView.Entry.Id && connectionTypes.Contains(c.Type));
+                
             var connectionsToGet = validConnections.Select(c => new { c.ConnectedId, Identifier = ConnectionView.GetIdentifier(entryView.Entry.Id, c.ConnectedId) });
 
             var result = new List<ConnectionView>();
@@ -197,16 +206,19 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
         /// <summary>
         /// Same as <see cref="GetConnectionViews"/>, but awaitable.
         /// </summary>
-        public AwaitableCall<List<ConnectionView>> GetConnectionViewsAsync(EntryView entryView, ICollection<ConnectionType> connectionTypes)
+        public AwaitableCall<List<ConnectionView>> GetConnectionViewsAsync(EntryView entryView, ICollection<ConnectionType> connectionTypes, EntryView adjacentEntryView = null)
         {
-            return new AwaitableCall<List<ConnectionView>>(() => GetConnectionViewsAsyncRoutine(entryView, connectionTypes), () => (List<ConnectionView>) _routineResult);
+            return new AwaitableCall<List<ConnectionView>>(() => GetConnectionViewsAsyncRoutine(entryView, connectionTypes, adjacentEntryView), () => (List<ConnectionView>) _routineResult);
         }
 
-        private IEnumerator GetConnectionViewsAsyncRoutine(EntryView entryView, ICollection<ConnectionType> connectionTypes)
+        private IEnumerator GetConnectionViewsAsyncRoutine(EntryView entryView, ICollection<ConnectionType> connectionTypes, EntryView adjacentEntryView)
         {
             var result = new List<ConnectionView>();
 
-            var validConnections = entryView.Entry.Connections.Where(c => connectionTypes.Contains(c.Type));
+            var validConnections = adjacentEntryView.Entry == null
+                ? entryView.Entry.Connections.Where(c => connectionTypes.Contains(c.Type))
+                : entryView.Entry.Connections.Where(c => c.ConnectedId == adjacentEntryView.Entry.Id && connectionTypes.Contains(c.Type));
+
             var connectionsToGet = validConnections.Select(c => new
             {
                 c.ConnectedId,

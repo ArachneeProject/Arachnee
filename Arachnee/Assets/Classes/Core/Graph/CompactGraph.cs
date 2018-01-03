@@ -12,15 +12,14 @@ namespace Assets.Classes.Core.Graph
 {
     public class CompactGraph : BidirectionalGraph<string, CompactEdge>
     {
-        public void InitializeFrom(string serializedGraphFilePath, ICollection<ConnectionType> acceptedConnectionTypes)
+        public static CompactGraph InitializeFrom(string serializedGraphFilePath, ICollection<ConnectionType> acceptedConnectionTypes)
         {
             if (!File.Exists(serializedGraphFilePath))
             {
                 throw new FileNotFoundException($"File not found at\"{serializedGraphFilePath}\".");
             }
-
-            this.Clear();
-
+            
+            var graph = new CompactGraph();
             using (var reader = new StreamReader(serializedGraphFilePath))
             {
                 while (!reader.EndOfStream)
@@ -120,11 +119,13 @@ namespace Assets.Classes.Core.Graph
                         continue;
                     }
                     
-                    this.AddVerticesAndEdgeRange(edges);
+                    graph.AddVerticesAndEdgeRange(edges);
                 }
 
-                Logger.LogInfo($"Loaded graph with {this.VertexCount} vertices and {this.EdgeCount} edges.");
+                Logger.LogInfo($"Loaded graph with {graph.VertexCount} vertices and {graph.EdgeCount} edges.");
             }
+
+            return graph;
         }
 
         public List<string> GetShortestPath(string sourceId, string targetId)
@@ -138,7 +139,7 @@ namespace Assets.Classes.Core.Graph
             }
 
             IEnumerable<CompactEdge> path;
-            var computeShortestPathFunc = this.ShortestPathsDijkstra(e => 1, sourceVertex);
+            var computeShortestPathFunc = this.ShortestPathsAStar(e => 1, v => 1, sourceVertex);
             computeShortestPathFunc(targetVertex, out path);
 
             var result = path.Select(edge => GetEntryId(edge.Source)).ToList();
