@@ -55,10 +55,11 @@ namespace Assets.Classes.CoreVisualization
 
             if (_graph == null)
             {
-                _graph = CompactGraph.InitializeFrom(graphPath, Connection.AllTypes());
+                _graph = new CompactGraph();
+                StartCoroutine(LoadGraph(graphPath));
             }
         }
-
+        
         void OnDestroy()
         {
             this.searchEngine.OnSearchResultSelected -= OnSearchResultSelected;
@@ -68,6 +69,15 @@ namespace Assets.Classes.CoreVisualization
             this.sidePanel.OnExpandRequested -= Expand;
             this.sidePanel.OnFoldUpRequested -= FoldUp;
             this.sidePanel.OnHideRequested -= Hide;
+        }
+
+        private IEnumerator LoadGraph(string graphPath)
+        {
+            var asyncCall = new AsyncCall<CompactGraph, CompactGraph>(
+                () => CompactGraph.InitializeFrom(graphPath, Connection.AllTypes()),
+                graph => graph);
+            yield return asyncCall.Execute();
+            _graph = asyncCall.Result;
         }
 
         private void OnConnectionBuilt(ConnectionView connectionView)
