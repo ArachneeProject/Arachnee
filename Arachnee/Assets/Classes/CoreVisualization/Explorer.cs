@@ -19,7 +19,8 @@ namespace Assets.Classes.CoreVisualization
         public ControllerBase controller;
         public GraphEngine graphEngine;
         public SidePanel sidePanel;
-        
+        public LoadingFeedback loadingFeedback;
+
         private ModelViewProvider _provider;
 
         private CompactGraph _graph;
@@ -73,11 +74,15 @@ namespace Assets.Classes.CoreVisualization
 
         private IEnumerator LoadGraph(string graphPath)
         {
+            loadingFeedback.StartLoading();
+
             var asyncCall = new AsyncCall<CompactGraph, CompactGraph>(
                 () => CompactGraph.InitializeFrom(graphPath, Connection.AllTypes()),
                 graph => graph);
             yield return asyncCall.Execute();
             _graph = asyncCall.Result;
+
+            loadingFeedback.StopLoading();
         }
 
         private void OnConnectionBuilt(ConnectionView connectionView)

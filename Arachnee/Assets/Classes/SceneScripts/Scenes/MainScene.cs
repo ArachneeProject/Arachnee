@@ -21,7 +21,7 @@ namespace Assets.Classes.SceneScripts.Scenes
         public EntryView artistPrefab;
         public ConnectionView connectionPrefab;
         
-        public GameObject loadingFeedback;
+        public LoadingFeedback loadingFeedback;
 
         public Explorer explorer;
         public SidePanel sidePanel;
@@ -45,6 +45,8 @@ namespace Assets.Classes.SceneScripts.Scenes
             searchEngine.Provider = _provider;
             searchEngine.Start();
             explorer.Start();
+
+            loadingFeedback.Start();
         }
     }
 }

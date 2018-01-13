@@ -14,7 +14,7 @@ namespace Assets.Classes.CoreVisualization
     public class SearchEngine : MonoBehaviour
     {
         public InputField inputField;
-        public GameObject loadingFeedback;
+        public LoadingFeedback loadingFeedback;
         public LayoutBase layout;
 
         private readonly List<SearchResultView> _lastSearch = new List<SearchResultView>();
@@ -53,7 +53,7 @@ namespace Assets.Classes.CoreVisualization
             inputField.onEndEdit.RemoveListener(RunSearch);
             inputField.onEndEdit.AddListener(RunSearch);
 
-            this.loadingFeedback.SetActive(false);
+            this.loadingFeedback.Start();
             this.layout.Start();
             this.layout.gameObject.SetActive(false);
         }
@@ -80,7 +80,7 @@ namespace Assets.Classes.CoreVisualization
             ClearSearch();
 
             Logger.LogInfo($"Searching for \"{searchQuery}\"...");
-            loadingFeedback.SetActive(true);
+            loadingFeedback.StartLoading();
 
             var awaitableQueue = Provider.GetSearchResultViewsAsync(searchQuery);
             yield return awaitableQueue.Await();
@@ -89,7 +89,7 @@ namespace Assets.Classes.CoreVisualization
             if (!queue.Any())
             {
                 Logger.LogInfo($"No result for \"{searchQuery}\".");
-                loadingFeedback.SetActive(false);
+                loadingFeedback.StopLoading();
                 yield break;
             }
             
@@ -105,7 +105,7 @@ namespace Assets.Classes.CoreVisualization
             }
 
             layout.gameObject.SetActive(true);
-            loadingFeedback.SetActive(false);
+            loadingFeedback.StopLoading();
         }
 
         private void OnSelectedResultView(SearchResultView searchresultview)

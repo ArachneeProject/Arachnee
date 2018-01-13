@@ -7,10 +7,11 @@ using Assets.Classes.Core.Models;
 using Assets.Classes.Logging;
 using QuickGraph;
 using QuickGraph.Algorithms;
+using QuickGraph.Algorithms.Search;
 
 namespace Assets.Classes.Core.Graph
 {
-    public class CompactGraph : BidirectionalGraph<string, CompactEdge>
+    public class CompactGraph : AdjacencyGraph<string, CompactEdge>
     {
         public static CompactGraph InitializeFrom(string serializedGraphFilePath, ICollection<ConnectionType> acceptedConnectionTypes)
         {
