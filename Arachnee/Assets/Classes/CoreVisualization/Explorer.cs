@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Assets.Classes.Core.Graph;
@@ -74,6 +75,8 @@ namespace Assets.Classes.CoreVisualization
 
         private IEnumerator LoadGraph(string graphPath)
         {
+            Logger.LogInfo("Loading graph...");
+            var chrono = Stopwatch.StartNew();
             loadingFeedback.StartLoading();
 
             var asyncCall = new AsyncCall<CompactGraph, CompactGraph>(
@@ -83,6 +86,8 @@ namespace Assets.Classes.CoreVisualization
             _graph = asyncCall.Result;
 
             loadingFeedback.StopLoading();
+            chrono.Stop();
+            Logger.LogInfo($"Graph loaded in {chrono.Elapsed.TotalSeconds}s.");
         }
 
         private void OnConnectionBuilt(ConnectionView connectionView)

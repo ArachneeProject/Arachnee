@@ -5,14 +5,16 @@ using System.IO;
 using System.Linq;
 using Assets.Classes.Core.Models;
 using Assets.Classes.Logging;
-using QuickGraph;
-using QuickGraph.Algorithms;
-using QuickGraph.Algorithms.Search;
 
 namespace Assets.Classes.Core.Graph
 {
-    public class CompactGraph : AdjacencyGraph<string, CompactEdge>
+    public class CompactGraph
     {
+        private readonly Dictionary<string, HashSet<string>> _adjacencyCollection = new Dictionary<string, HashSet<string>>();
+        
+        public int VertexCount => _adjacencyCollection.Keys.Count;
+        public int EdgeCount => _adjacencyCollection.Values.Sum(adjacencyCollectionValue => adjacencyCollectionValue.Count) / 2;
+
         public static CompactGraph InitializeFrom(string serializedGraphFilePath, ICollection<ConnectionType> acceptedConnectionTypes)
         {
             if (!File.Exists(serializedGraphFilePath))
@@ -55,7 +57,7 @@ namespace Assets.Classes.Core.Graph
                         continue;
                     }
 
-                    var edges = new List<CompactEdge>();
+                    var edges = new List<Tuple<string,string>>();
 
                     foreach (var serializedEdges in split2)
                     {
@@ -97,12 +99,11 @@ namespace Assets.Classes.Core.Graph
                             continue;
                         }
 
-                        var edgeWithSameType = new List<CompactEdge>();
+                        var edgeWithSameType = new List<Tuple<string,string>>();
                         foreach (var connectedVertexId in split4)
                         {
                             // process "m5B343"
-                            edgeWithSameType.Add(new CompactEdge(vertexId, connectedVertexId));
-                            edgeWithSameType.Add(new CompactEdge(connectedVertexId, vertexId));
+                            edgeWithSameType.Add(new Tuple<string, string>(vertexId, connectedVertexId));
                         }
 
                         if (edgeWithSameType.Count == 0)
@@ -128,6 +129,38 @@ namespace Assets.Classes.Core.Graph
 
             return graph;
         }
+        
+        public bool AddVerticesAndEdgeRange(ICollection<Tuple<string,string>> edges)
+        {
+            bool added = true;
+
+            foreach (var edge in edges)
+            {
+                var source = edge.Item1;
+                var target = edge.Item2;
+
+                if (source == target)
+                {
+                    added = false;
+                    continue;
+                }
+
+                if (!_adjacencyCollection.ContainsKey(source))
+                {
+                    _adjacencyCollection[source] = new HashSet<string>();
+                }
+                
+                if (!_adjacencyCollection.ContainsKey(target))
+                {
+                    _adjacencyCollection[target] = new HashSet<string>();
+                }
+
+                added &= _adjacencyCollection[source].Add(target);
+                added &= _adjacencyCollection[target].Add(source);
+            }
+
+            return added;
+        }
 
         public List<string> GetShortestPath(string sourceId, string targetId)
         {
@@ -147,48 +180,33 @@ namespace Assets.Classes.Core.Graph
                 return results;
             }
 
-            var computeShortestPathFunc = this.ShortestPathsAStar(e => 1, v => 1, sourceVertex);
+            //var computeShortestPathFunc = this.ShortestPathsAStar(e => 1, v => 1, sourceVertex);
 
-            foreach (var targetId in targetIds)
-            {
-                var targetVertex = GetVertexFrom(targetId);
+            //foreach (var targetId in targetIds)
+            //{
+            //    var targetVertex = GetVertexFrom(targetId);
 
-                if (!this.ContainsVertex(targetVertex)
-                    || targetVertex == sourceVertex)
-                {
-                    continue;
-                }
+            //    if (!this.ContainsVertex(targetVertex)
+            //        || targetVertex == sourceVertex)
+            //    {
+            //        continue;
+            //    }
 
-                IEnumerable<CompactEdge> path;
-                computeShortestPathFunc(targetVertex, out path);
+            //    IEnumerable<CompactEdge> path;
+            //    computeShortestPathFunc(targetVertex, out path);
 
-                var result = path.Select(edge => GetEntryId(edge.Source)).ToList();
-                result.Add(targetId);
+            //    var result = path.Select(edge => GetEntryId(edge.Source)).ToList();
+            //    result.Add(targetId);
 
-                results.Add(result);
-            }
+            //    results.Add(result);
+            //}
             
             return results;
         }
 
-        public override bool AddEdge(CompactEdge e)
+        private bool ContainsVertex(string sourceVertex)
         {
-            if (this.ContainsEdge(e))
-            {
-                return false;
-            }
-
-            return base.AddEdge(e);
-        }
-
-        public override bool AddVerticesAndEdge(CompactEdge e)
-        {
-            if (this.ContainsEdge(e))
-            {
-                return false;
-            }
-
-            return base.AddVerticesAndEdge(e);
+            return _adjacencyCollection.Keys.Contains(sourceVertex);
         }
         
         private string GetVertexFrom(string entryId)
@@ -252,6 +270,26 @@ namespace Assets.Classes.Core.Graph
                 default:
                     throw new ArgumentException($"Chunk \"{compressedEntryType}\" of \"{vertexId}\" is not handled.");
             }
+        }
+
+        public bool ContainsEdge(string vertex1, string vertex2)
+        {
+            return _adjacencyCollection.ContainsKey(vertex1)
+                   && _adjacencyCollection[vertex1].Contains(vertex2)
+                   && _adjacencyCollection.ContainsKey(vertex2)
+                   && _adjacencyCollection[vertex2].Contains(vertex1);
+        }
+
+        public bool AddVertex(string vertexId)
+        {
+            var alreadyPresent = _adjacencyCollection.ContainsKey(vertexId);
+            if (alreadyPresent)
+            {
+                return false;
+            }
+
+            _adjacencyCollection[vertexId] = new HashSet<string>();
+            return true;
         }
     }
 }

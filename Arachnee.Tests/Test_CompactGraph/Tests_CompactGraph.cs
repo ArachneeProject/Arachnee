@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Assets.Classes.Core.Graph;
 using Assets.Classes.Core.Models;
 using Assets.Classes.Logging;
@@ -25,11 +26,23 @@ namespace Arachnee.Tests.Test_CompactGraph
         {
             var compactGraph = new CompactGraph();
 
-            var edge = new CompactEdge("Arnold Schwarzenegger", "The Terminator");
+            var edge = new Tuple<string, string>("Arnold Schwarzenegger", "The Terminator");
 
-            var added = compactGraph.AddVerticesAndEdge(edge);
+            var added = compactGraph.AddVerticesAndEdgeRange(new[] { edge });
 
             Assert.IsTrue(added);
+        }
+
+        [TestMethod]
+        public void AddVerticesAndEdge_SelfEdge_ReturnsFalse()
+        {
+            var compactGraph = new CompactGraph();
+
+            var edge = new Tuple<string, string>("Arnold Schwarzenegger", "Arnold Schwarzenegger");
+
+            var added = compactGraph.AddVerticesAndEdgeRange(new[] { edge });
+
+            Assert.IsFalse(added);
         }
 
         [TestMethod]
@@ -37,10 +50,10 @@ namespace Arachnee.Tests.Test_CompactGraph
         {
             var compactGraph = new CompactGraph();
 
-            var edge = new CompactEdge("Arnold Schwarzenegger", "The Terminator");
+            var edge = new Tuple<string, string>("Arnold Schwarzenegger", "The Terminator");
 
-            compactGraph.AddVerticesAndEdge(edge);
-            var added = compactGraph.AddVerticesAndEdge(edge);
+            compactGraph.AddVerticesAndEdgeRange(new [] { edge });
+            var added = compactGraph.AddVerticesAndEdgeRange(new[] { edge });
 
             Assert.IsFalse(added);
         }
@@ -50,11 +63,11 @@ namespace Arachnee.Tests.Test_CompactGraph
         {
             var compactGraph = new CompactGraph();
 
-            var edge1 = new CompactEdge("Arnold Schwarzenegger", "The Terminator");
-            var edge2 = new CompactEdge("Arnold Schwarzenegger", "The Terminator");
+            var edge1 = new Tuple<string, string>("Arnold Schwarzenegger", "The Terminator");
+            var edge2 = new Tuple<string, string>("Arnold Schwarzenegger", "The Terminator");
 
-            compactGraph.AddVerticesAndEdge(edge1);
-            var added = compactGraph.AddVerticesAndEdge(edge2);
+            compactGraph.AddVerticesAndEdgeRange(new[] { edge1 });
+            var added = compactGraph.AddVerticesAndEdgeRange(new[] { edge2 });
 
             Assert.IsFalse(added);
         }
@@ -68,7 +81,7 @@ namespace Arachnee.Tests.Test_CompactGraph
             var compactGraph = CompactGraph.InitializeFrom(filePath, Connection.AllTypes());
             
             Assert.AreEqual(4, compactGraph.VertexCount);
-            Assert.AreEqual(6, compactGraph.EdgeCount);
+            Assert.AreEqual(3, compactGraph.EdgeCount);
 
             Assert.IsTrue(compactGraph.ContainsEdge("a14B1B2", "m5B343"));
             Assert.IsTrue(compactGraph.ContainsEdge("sEF2F", "a14B1B2"));

@@ -235,7 +235,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 138416715}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -265, z: 0}
+  m_LocalPosition: {x: 0, y: -95, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1571203699}
@@ -363,7 +363,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 248971968}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 190.5, z: 0}
+  m_LocalPosition: {x: 0, y: 191, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1100724341}
@@ -645,6 +645,7 @@ GameObject:
   - component: {fileID: 730915919}
   - component: {fileID: 730915918}
   - component: {fileID: 730915917}
+  - component: {fileID: 730915920}
   m_Layer: 5
   m_Name: LoadingFeedback
   m_TagString: Untagged
@@ -659,7 +660,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 730915915}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 507.5, y: -240.5, z: 0}
+  m_LocalPosition: {x: 507.5, y: -241, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1973782319}
@@ -716,6 +717,17 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 730915915}
+--- !u!114 &730915920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 730915915}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23de51c272ec6b84a8531c79884cdd78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &845214886
 Prefab:
   m_ObjectHideFlags: 0
@@ -890,7 +902,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1050858047}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -195, z: 0}
+  m_LocalPosition: {x: 0, y: 200.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1512860234}
@@ -1121,7 +1133,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1100724340}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -5, z: 0}
+  m_LocalPosition: {x: -260.359, y: -66.36078, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 248971969}
@@ -1198,7 +1210,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1106995757}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -125, z: 0}
+  m_LocalPosition: {x: 0, y: -68.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2124202961}
@@ -1328,7 +1340,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1132862465}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 240.5, z: 0}
+  m_LocalPosition: {x: 0, y: 241, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1535174418}
@@ -1944,7 +1956,7 @@ MonoBehaviour:
     type: 2}
   connectionPrefab: {fileID: 114045022691562874, guid: 10e1a1a77643d764593381f43035adb1,
     type: 2}
-  loadingFeedback: {fileID: 730915915}
+  loadingFeedback: {fileID: 730915920}
   explorer: {fileID: 2029401062}
   sidePanel: {fileID: 2025602685}
   graphEngine: {fileID: 325465623}
@@ -2003,7 +2015,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputField: {fileID: 1132862467}
-  loadingFeedback: {fileID: 730915915}
+  loadingFeedback: {fileID: 730915920}
   layout: {fileID: 1424864907}
 --- !u!1 &1819954248
 GameObject:
@@ -2155,7 +2167,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1973782315}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 557.5, y: 290.5, z: 0}
+  m_LocalPosition: {x: 557.5, y: 291, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 94822649}
@@ -2188,7 +2200,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2025602682
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2288,6 +2300,7 @@ MonoBehaviour:
   controller: {fileID: 1246603045}
   graphEngine: {fileID: 325465623}
   sidePanel: {fileID: 2025602685}
+  loadingFeedback: {fileID: 730915920}
 --- !u!4 &2029401063
 Transform:
   m_ObjectHideFlags: 0
