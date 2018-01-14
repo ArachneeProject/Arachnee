@@ -162,44 +162,45 @@ namespace Assets.Classes.CoreVisualization
                 yield break;
             }
 
-            // tries to connect the EntryView to the nearest available EntryView
-            var allSteps = _graph.GetShortestPaths(entryViewToConnect.Entry.Id, otherActiveIds);
-            if (allSteps.Count == 0)
-            {
-                yield break;
-            }
+            // TODO:
+            //// tries to connect the EntryView to the nearest available EntryView
+            //var allSteps = _graph.GetShortestPaths(entryViewToConnect.Entry.Id, otherActiveIds);
+            //if (allSteps.Count == 0)
+            //{
+            //    yield break;
+            //}
 
-            var shortestSteps = allSteps.Aggregate((currentBest, next) => currentBest.Count < next.Count ? currentBest : next);
+            //var shortestSteps = allSteps.Aggregate((currentBest, next) => currentBest.Count < next.Count ? currentBest : next);
             
-            if (shortestSteps.Count < 2)
-            {
-                yield break;
-            }
+            //if (shortestSteps.Count < 2)
+            //{
+            //    yield break;
+            //}
 
-            EntryView currentEntryView = entryViewToConnect;
-            for (int i = 1; i < shortestSteps.Count; i++)
-            {
-                var next = shortestSteps[i];
+            //EntryView currentEntryView = entryViewToConnect;
+            //for (int i = 1; i < shortestSteps.Count; i++)
+            //{
+            //    var next = shortestSteps[i];
                 
-                var awaitableNextEntryView = _provider.GetEntryViewAsync(next);
-                yield return awaitableNextEntryView.Await();
+            //    var awaitableNextEntryView = _provider.GetEntryViewAsync(next);
+            //    yield return awaitableNextEntryView.Await();
 
-                var nextEntryView = awaitableNextEntryView.Result;
-                if (nextEntryView == null)
-                {
-                    yield break;
-                }
+            //    var nextEntryView = awaitableNextEntryView.Result;
+            //    if (nextEntryView == null)
+            //    {
+            //        yield break;
+            //    }
 
-                var awaitableConnectionViews = _provider.GetConnectionViewsAsync(currentEntryView, Connection.AllTypes(), nextEntryView);
-                yield return awaitableConnectionViews.Await();
-                var connectionView = awaitableConnectionViews.Result;
-                if (connectionView == null)
-                {
-                    yield break;
-                }
+            //    var awaitableConnectionViews = _provider.GetConnectionViewsAsync(currentEntryView, Connection.AllTypes(), nextEntryView);
+            //    yield return awaitableConnectionViews.Await();
+            //    var connectionView = awaitableConnectionViews.Result;
+            //    if (connectionView == null)
+            //    {
+            //        yield break;
+            //    }
 
-                currentEntryView = nextEntryView;
-            }
+            //    currentEntryView = nextEntryView;
+            //}
         }
 
         private IEnumerator FocusOnEntryRoutine(EntryView e)

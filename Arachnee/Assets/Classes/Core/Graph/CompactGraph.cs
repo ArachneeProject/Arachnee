@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -8,13 +9,8 @@ using Assets.Classes.Logging;
 
 namespace Assets.Classes.Core.Graph
 {
-    public class CompactGraph
+    public class CompactGraph : UndirectedUnweightedGraph<string>
     {
-        private readonly Dictionary<string, HashSet<string>> _adjacencyCollection = new Dictionary<string, HashSet<string>>();
-        
-        public int VertexCount => _adjacencyCollection.Keys.Count;
-        public int EdgeCount => _adjacencyCollection.Values.Sum(adjacencyCollectionValue => adjacencyCollectionValue.Count) / 2;
-
         public static CompactGraph InitializeFrom(string serializedGraphFilePath, ICollection<ConnectionType> acceptedConnectionTypes)
         {
             if (!File.Exists(serializedGraphFilePath))
@@ -129,86 +125,17 @@ namespace Assets.Classes.Core.Graph
 
             return graph;
         }
-        
-        public bool AddVerticesAndEdgeRange(ICollection<Tuple<string,string>> edges)
+
+        public override List<string> GetShortestPath(string sourceEntryId, string targetEntryId)
         {
-            bool added = true;
+            var sourceVertex = GetVertexFrom(sourceEntryId);
+            var targetVertex = GetVertexFrom(targetEntryId);
 
-            foreach (var edge in edges)
-            {
-                var source = edge.Item1;
-                var target = edge.Item2;
-
-                if (source == target)
-                {
-                    added = false;
-                    continue;
-                }
-
-                if (!_adjacencyCollection.ContainsKey(source))
-                {
-                    _adjacencyCollection[source] = new HashSet<string>();
-                }
-                
-                if (!_adjacencyCollection.ContainsKey(target))
-                {
-                    _adjacencyCollection[target] = new HashSet<string>();
-                }
-
-                added &= _adjacencyCollection[source].Add(target);
-                added &= _adjacencyCollection[target].Add(source);
-            }
-
-            return added;
+            var vertices = base.GetShortestPath(sourceVertex, targetVertex);
+            vertices = vertices.Select(GetEntryId).ToList();
+            return vertices;
         }
 
-        public List<string> GetShortestPath(string sourceId, string targetId)
-        {
-            var res = GetShortestPaths(sourceId, new List<string> {targetId});
-            return res.Any() 
-                ? res.First() 
-                : new List<string>();
-        }
-        
-        public List<List<string>> GetShortestPaths(string sourceId, ICollection<string> targetIds)
-        {
-            var sourceVertex = GetVertexFrom(sourceId);
-            
-            var results = new List<List<string>>();
-            if (!this.ContainsVertex(sourceVertex))
-            {
-                return results;
-            }
-
-            //var computeShortestPathFunc = this.ShortestPathsAStar(e => 1, v => 1, sourceVertex);
-
-            //foreach (var targetId in targetIds)
-            //{
-            //    var targetVertex = GetVertexFrom(targetId);
-
-            //    if (!this.ContainsVertex(targetVertex)
-            //        || targetVertex == sourceVertex)
-            //    {
-            //        continue;
-            //    }
-
-            //    IEnumerable<CompactEdge> path;
-            //    computeShortestPathFunc(targetVertex, out path);
-
-            //    var result = path.Select(edge => GetEntryId(edge.Source)).ToList();
-            //    result.Add(targetId);
-
-            //    results.Add(result);
-            //}
-            
-            return results;
-        }
-
-        private bool ContainsVertex(string sourceVertex)
-        {
-            return _adjacencyCollection.Keys.Contains(sourceVertex);
-        }
-        
         private string GetVertexFrom(string entryId)
         {
             if (string.IsNullOrEmpty(entryId))
@@ -270,26 +197,6 @@ namespace Assets.Classes.Core.Graph
                 default:
                     throw new ArgumentException($"Chunk \"{compressedEntryType}\" of \"{vertexId}\" is not handled.");
             }
-        }
-
-        public bool ContainsEdge(string vertex1, string vertex2)
-        {
-            return _adjacencyCollection.ContainsKey(vertex1)
-                   && _adjacencyCollection[vertex1].Contains(vertex2)
-                   && _adjacencyCollection.ContainsKey(vertex2)
-                   && _adjacencyCollection[vertex2].Contains(vertex1);
-        }
-
-        public bool AddVertex(string vertexId)
-        {
-            var alreadyPresent = _adjacencyCollection.ContainsKey(vertexId);
-            if (alreadyPresent)
-            {
-                return false;
-            }
-
-            _adjacencyCollection[vertexId] = new HashSet<string>();
-            return true;
         }
     }
 }
