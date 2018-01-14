@@ -50,7 +50,7 @@ namespace Arachnee.Tests.Tests_OnlineDatabaseProvider
             Assert.IsTrue(results.Any());
             Assert.AreEqual("Jackie Chan Adventures", bestResult.Name);
             Assert.AreEqual("Serie-240", bestResult.EntryId);
-            Assert.AreEqual("/6bsg03VVkB41Vzs6w1NvpFvq2yH.jpg", bestResult.ImagePath);
+            Assert.IsFalse(string.IsNullOrEmpty(bestResult.ImagePath));
         }
 
         [TestMethod]

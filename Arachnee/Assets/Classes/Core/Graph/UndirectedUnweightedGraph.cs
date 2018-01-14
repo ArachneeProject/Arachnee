@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Classes.Logging;
 
 namespace Assets.Classes.Core.Graph
 {
@@ -40,6 +41,7 @@ namespace Assets.Classes.Core.Graph
 
                 if (source.Equals(target))
                 {
+                    Logger.LogError($"Self edge on \"{source}\" is ignored.");
                     added = false;
                     continue;
                 }
@@ -60,9 +62,44 @@ namespace Assets.Classes.Core.Graph
 
             return added;
         }
-        
+
+        /// <summary>
+        /// Returns a collection of <see cref="T"/> representing the path from the given source to the given target.<br/> 
+        /// The collection doesn't contain the source, but include the target as the last <see cref="T"/> of the collection.<br/> 
+        /// Thus, an empty collection means no path exists between the source and the target.
+        /// </summary>
+        /// <param name="sourceVertex"></param>
+        /// <param name="targetVertex"></param>
+        /// <returns></returns>
         public virtual List<T> GetShortestPath(T sourceVertex, T targetVertex)
         {
+            if (sourceVertex == null)
+            {
+                throw new ArgumentNullException(nameof(sourceVertex));
+            }
+            if (targetVertex == null)
+            {
+                throw new ArgumentNullException(nameof(targetVertex));
+            }
+
+            if (!this.ContainsVertex(sourceVertex))
+            {
+                Logger.LogError($"\"{sourceVertex}\" doesn't exist.");
+                return new List<T>();
+            }
+
+            if (!this.ContainsVertex(targetVertex))
+            {
+                Logger.LogError($"\"{targetVertex}\" doesn't exist.");
+                return new List<T>();
+            }
+
+            if (sourceVertex.Equals(targetVertex))
+            {
+                Logger.LogWarning($"Asking for shortest path between a vertex and itself \"{sourceVertex}\" returns an empty path.");
+                return new List<T>();
+            }
+
             return null;
         }
         
