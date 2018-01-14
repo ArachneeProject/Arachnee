@@ -121,6 +121,8 @@ namespace Assets.Classes.CoreVisualization
 
         private IEnumerator LoadAndFocusOnEntryRoutine(string entryId)
         {
+            loadingFeedback.StartLoading();
+
             // load entry
             var awaitableEntryView = _provider.GetEntryViewAsync(entryId);
             yield return awaitableEntryView.Await();
@@ -133,74 +135,46 @@ namespace Assets.Classes.CoreVisualization
             // focus on entry
             yield return FocusOnEntryRoutine(entryView);
             
-            // connect to nearest entry
-            yield return ConnectToNearest(entryView);
+            // connect to other entries
+            yield return ConnectToAll(entryView);
+
+            loadingFeedback.StopLoading();
         }
 
-        private IEnumerator ConnectToNearest(EntryView entryViewToConnect)
+        // TODO: should connect to previously requested by user only
+        private IEnumerator ConnectToAll(EntryView entryViewToConnect)
         {
-            var connectedIds = entryViewToConnect.Entry.Connections.Select(c => c.ConnectedId).ToList();
-            var otherActiveIds = new List<string>();
-            bool alreadyLinked = false;
-
-            // tries to connect the EntryView to its adjacent EntryViews if they are already here
             foreach (var activeEntryView in _provider.ActiveEntryViews.ToList())
             {
-                if (connectedIds.Contains(activeEntryView.Entry.Id))
+                if (activeEntryView == entryViewToConnect)
                 {
-                    yield return  _provider.GetConnectionViewsAsync(entryViewToConnect, Connection.AllTypes(), activeEntryView).Await();
-                    alreadyLinked = true;
+                    continue;
                 }
-                else
+
+                var asyncCall = new AsyncCall<List<string>, List<string>>(
+                    () => _graph.GetShortestPath(entryViewToConnect.Entry.Id, activeEntryView.Entry.Id),
+                    result => result);
+
+                yield return asyncCall.Execute();
+
+                var path = asyncCall.Result;
+
+                var currentEntryView = entryViewToConnect;
+
+                foreach (string nextId in path)
                 {
-                    otherActiveIds.Add(activeEntryView.Entry.Id);
+                    var awaitableEntryView = _provider.GetEntryViewAsync(nextId);
+                    yield return awaitableEntryView.Await();
+
+                    var nextEntryView = awaitableEntryView.Result;
+
+                    var awaitableConnections = _provider.GetConnectionViewsAsync(currentEntryView, Connection.AllTypes(), nextEntryView);
+
+                    yield return awaitableConnections.Await(); // here the connections are loaded, so there is nothing else to do
+
+                    currentEntryView = nextEntryView;
                 }
             }
-
-            if (alreadyLinked)
-            {
-                yield break;
-            }
-
-            // TODO:
-            //// tries to connect the EntryView to the nearest available EntryView
-            //var allSteps = _graph.GetShortestPaths(entryViewToConnect.Entry.Id, otherActiveIds);
-            //if (allSteps.Count == 0)
-            //{
-            //    yield break;
-            //}
-
-            //var shortestSteps = allSteps.Aggregate((currentBest, next) => currentBest.Count < next.Count ? currentBest : next);
-            
-            //if (shortestSteps.Count < 2)
-            //{
-            //    yield break;
-            //}
-
-            //EntryView currentEntryView = entryViewToConnect;
-            //for (int i = 1; i < shortestSteps.Count; i++)
-            //{
-            //    var next = shortestSteps[i];
-                
-            //    var awaitableNextEntryView = _provider.GetEntryViewAsync(next);
-            //    yield return awaitableNextEntryView.Await();
-
-            //    var nextEntryView = awaitableNextEntryView.Result;
-            //    if (nextEntryView == null)
-            //    {
-            //        yield break;
-            //    }
-
-            //    var awaitableConnectionViews = _provider.GetConnectionViewsAsync(currentEntryView, Connection.AllTypes(), nextEntryView);
-            //    yield return awaitableConnectionViews.Await();
-            //    var connectionView = awaitableConnectionViews.Result;
-            //    if (connectionView == null)
-            //    {
-            //        yield break;
-            //    }
-
-            //    currentEntryView = nextEntryView;
-            //}
         }
 
         private IEnumerator FocusOnEntryRoutine(EntryView e)

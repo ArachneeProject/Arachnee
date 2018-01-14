@@ -3,8 +3,10 @@ using System.Collections.Generic;
 
 namespace Assets.Classes.Core.Graph
 {
-    public class GraphAlgorithms
+    public class GraphAlgorithms<T>
     {
+        private readonly Dictionary<T, Func<T, ICollection<T>>> _cachedFunctions = new Dictionary<T, Func<T, ICollection<T>>>();
+
         public HashSet<T> BreadthFirstSearch<T>(IGraph<T> graph, T sourceVertex, Action<T> discoverAccessibleFunc = null)
         {
             var accessibleVertices = new HashSet<T>();
@@ -42,8 +44,13 @@ namespace Assets.Classes.Core.Graph
             return accessibleVertices;
         }
 
-        public Func<T, ICollection<T>> ComputeShortestPathAndGetQueryFunc<T>(IGraph<T> graph, T sourceVertex)
+        public Func<T, ICollection<T>> ComputeShortestPathAndGetQueryFunc(IGraph<T> graph, T sourceVertex)
         {
+            if (_cachedFunctions.ContainsKey(sourceVertex))
+            {
+                return _cachedFunctions[sourceVertex];
+            }
+            
             var parents = new Dictionary<T, T>();
 
             var queue = new Queue<T>();
@@ -64,7 +71,8 @@ namespace Assets.Classes.Core.Graph
                 }
             }
 
-            Func<T, ICollection<T>> shortestPathFunc = v => {
+            Func<T, ICollection<T>> shortestPathFunc = v => 
+            {
                 var path = new List<T>();
 
                 var current = v;
@@ -79,6 +87,8 @@ namespace Assets.Classes.Core.Graph
 
                 return path;
             };
+
+            _cachedFunctions[sourceVertex] = shortestPathFunc;
 
             return shortestPathFunc;
         }

@@ -102,7 +102,7 @@ namespace Assets.Classes.Core.Graph
                 return new List<T>();
             }
 
-            var algo = new GraphAlgorithms();
+            var algo = new GraphAlgorithms<T>();
             var queryFunc = algo.ComputeShortestPathAndGetQueryFunc(this, sourceVertex);
             var result = queryFunc.Invoke(targetVertex).ToList();
 
