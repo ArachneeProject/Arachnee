@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Classes.Logging;
+using JetBrains.Annotations;
+using QuickGraph;
 
 namespace Assets.Classes.Core.Graph
 {
-    public class UndirectedUnweightedGraph<T>
+    public class UndirectedUnweightedGraph<T> : IGraph<T>
     {
         private readonly Dictionary<T, HashSet<T>> _adjacencyCollection = new Dictionary<T, HashSet<T>>();
 
@@ -100,17 +102,35 @@ namespace Assets.Classes.Core.Graph
                 return new List<T>();
             }
 
-            return null;
+            var algo = new GraphAlgorithms();
+            var queryFunc = algo.ComputeShortestPathAndGetQueryFunc(this, sourceVertex);
+            var result = queryFunc.Invoke(targetVertex).ToList();
+
+            return result;
         }
         
-        public virtual bool ContainsEdge(T vertex1, T vertex2)
+        public virtual bool ContainsEdge(T sourceVertex, T targetVertex)
         {
-            return _adjacencyCollection.ContainsKey(vertex1)
-                   && _adjacencyCollection[vertex1].Contains(vertex2)
-                   && _adjacencyCollection.ContainsKey(vertex2)
-                   && _adjacencyCollection[vertex2].Contains(vertex1);
+            return _adjacencyCollection.ContainsKey(sourceVertex)
+                   && _adjacencyCollection[sourceVertex].Contains(targetVertex)
+                   && _adjacencyCollection.ContainsKey(targetVertex)
+                   && _adjacencyCollection[targetVertex].Contains(sourceVertex);
         }
 
-        
+        public HashSet<T> GetChildren(T vertex)
+        {
+            if (vertex == null)
+            {
+                throw new ArgumentNullException(nameof(vertex));
+            }
+
+            if (ContainsVertex(vertex))
+            {
+                return _adjacencyCollection[vertex];
+            }
+
+            Logger.LogError($"\"{vertex}\" doesn't exist.");
+            return new HashSet<T>();
+        }
     }
 }

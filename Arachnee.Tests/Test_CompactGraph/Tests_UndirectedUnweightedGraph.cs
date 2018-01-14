@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Classes.Core.Graph;
 using Assets.Classes.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,6 +14,40 @@ namespace Arachnee.Tests.Test_CompactGraph
         public void SetUp()
         {
             Logger.Mode = LogMode.SystemConsole;
+        }
+
+        [TestMethod]
+        public void ContainsVertex_VertexExist_ReturnsTrue()
+        {
+            var graph = new UndirectedUnweightedGraph<int>();
+            graph.AddVertex(1);
+
+            Assert.IsTrue(graph.ContainsVertex(1));
+        }
+
+        [TestMethod]
+        public void ContainsVertex_VertexDoesntExist_ReturnsFalse()
+        {
+            var graph = new UndirectedUnweightedGraph<int>();
+
+            Assert.IsFalse(graph.ContainsVertex(1));
+        }
+
+        [TestMethod]
+        public void GetChildren_VertexExist_ReturnsChildren()
+        {
+            var graph = new UndirectedUnweightedGraph<int>();
+            graph.AddVerticesAndEdgeRange(new List<Tuple<int, int>>
+            {
+                new Tuple<int, int>(1, 2),
+                new Tuple<int, int>(1, 3)
+            });
+
+            var res = graph.GetChildren(1);
+
+            Assert.AreEqual(2, res.Count);
+            Assert.IsTrue(res.Contains(2));
+            Assert.IsTrue(res.Contains(3));
         }
 
         [TestMethod]
