@@ -10,6 +10,7 @@ using Assets.Classes.CoreVisualization.ModelViews;
 using Assets.Classes.CoreVisualization.PhysicsEngine;
 using Assets.Classes.SceneScripts.Controllers;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Logger = Assets.Classes.Logging.Logger;
 
 namespace Assets.Classes.CoreVisualization
@@ -25,7 +26,7 @@ namespace Assets.Classes.CoreVisualization
 
         private CompactGraph _graph;
         private readonly HashSet<string> _requestedByUser = new HashSet<string>();
-
+        
         public void Start()
         {
             _provider = searchEngine.Provider;
@@ -50,7 +51,12 @@ namespace Assets.Classes.CoreVisualization
                 StartCoroutine(LoadGraph(graphPath));
             }
         }
-        
+
+        public void Reset()
+        {
+            SceneManager.LoadScene(0); // brutal
+        }
+
         void OnDestroy()
         {
             this.searchEngine.OnSearchResultSelected -= OnSearchResultSelected;

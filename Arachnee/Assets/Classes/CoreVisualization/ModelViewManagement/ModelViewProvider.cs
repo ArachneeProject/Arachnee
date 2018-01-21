@@ -9,6 +9,7 @@ using Assets.Classes.CoreVisualization.ModelViews;
 using JetBrains.Annotations;
 using Logger = Assets.Classes.Logging.Logger;
 using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace Assets.Classes.CoreVisualization.ModelViewManagement
 {
@@ -357,6 +358,7 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
         {
             //entryView.OnClicked -= FireCLickedEvent;
             entryView.gameObject.SetActive(false);
+            entryView.transform.position = Random.onUnitSphere;
 
             foreach (var connection in entryView.Entry.Connections)
             {
@@ -382,6 +384,24 @@ namespace Assets.Classes.CoreVisualization.ModelViewManagement
             else
             {
                 Object.DestroyImmediate(searchResultView.gameObject);
+            }
+        }
+
+        public void UnloadAll()
+        {
+            foreach (var item in _cachedEntryViews.Values)
+            {
+                Unload(item);
+            }
+
+            foreach (var item in _cachedConnectionViews.Values)
+            {
+                Unload(item);
+            }
+
+            foreach (var item in _cachedSearchResultViews.Values)
+            {
+                Unload(item);
             }
         }
     }
