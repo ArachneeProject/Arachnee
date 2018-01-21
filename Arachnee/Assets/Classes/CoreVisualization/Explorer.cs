@@ -25,6 +25,7 @@ namespace Assets.Classes.CoreVisualization
         private ModelViewProvider _provider;
 
         private CompactGraph _graph;
+        private readonly HashSet<string> _requestedByUser = new HashSet<string>();
 
         public void Start()
         {
@@ -136,21 +137,22 @@ namespace Assets.Classes.CoreVisualization
             yield return FocusOnEntryRoutine(entryView);
             
             // connect to other entries
-            yield return ConnectToAll(entryView);
-
+            if (!_requestedByUser.Contains(entryId))
+            {
+                _requestedByUser.Add(entryId);
+                yield return ConnectToPreviousRequests(entryView);
+            }
+            
             loadingFeedback.StopLoading();
         }
-
-        // TODO: should connect to previously requested by user only
-        private IEnumerator ConnectToAll(EntryView entryViewToConnect)
+        
+        private IEnumerator ConnectToPreviousRequests(EntryView entryViewToConnect)
         {
-            foreach (var activeEntryView in _provider.ActiveEntryViews.ToList())
-            {
-                if (activeEntryView == entryViewToConnect)
-                {
-                    continue;
-                }
+            var toConnect = _provider.ActiveEntryViews.Where(e => _requestedByUser.Contains(e.Entry.Id)).ToList();
+            toConnect.Remove(entryViewToConnect);
 
+            foreach (var activeEntryView in toConnect)
+            {
                 var asyncCall = new AsyncCall<List<string>, List<string>>(
                     () => _graph.GetShortestPath(entryViewToConnect.Entry.Id, activeEntryView.Entry.Id),
                     result => result);
