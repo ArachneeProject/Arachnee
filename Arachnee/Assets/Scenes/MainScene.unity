@@ -1954,7 +1954,7 @@ MonoBehaviour:
     type: 2}
   artistPrefab: {fileID: 114807747099015826, guid: 184d8fd39e3350243a46f8e5db0a3b06,
     type: 2}
-  connectionPrefab: {fileID: 114045022691562874, guid: 10e1a1a77643d764593381f43035adb1,
+  connectionPrefab: {fileID: 114604043459607924, guid: 42a945cd6361c2a4194967aaf568e5b3,
     type: 2}
   loadingFeedback: {fileID: 730915920}
   explorer: {fileID: 2029401062}

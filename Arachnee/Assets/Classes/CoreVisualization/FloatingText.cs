@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Logger = Assets.Classes.Logging.Logger;
 
-namespace Assets.Classes.SceneScripts
+namespace Assets.Classes.CoreVisualization
 {
     [RequireComponent(typeof(TextMesh))]
     public class FloatingText : MonoBehaviour
@@ -20,6 +20,11 @@ namespace Assets.Classes.SceneScripts
         
         public void SetText(string text)
         {
+            if (_textMesh == null)
+            {
+                Start();
+            }
+
             if (text == null)
             {
                 Logger.LogError("Text to set was null.");
