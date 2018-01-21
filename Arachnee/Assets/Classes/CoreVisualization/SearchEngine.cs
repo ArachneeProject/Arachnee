@@ -65,6 +65,8 @@ namespace Assets.Classes.CoreVisualization
         
         private void ClearSearch()
         {
+            this.layout.Clear();
+
             foreach (var searchResultView in _lastSearch)
             {
                 searchResultView.OnClicked -= OnSelectedResultView;
@@ -95,13 +97,17 @@ namespace Assets.Classes.CoreVisualization
             
             _lastSearch.AddRange(queue);
             Logger.LogInfo($"{queue.Count} results for \"{searchQuery}\".");
-            
+
             while (queue.Any())
             {
                 var searchResultView = queue.Dequeue();
                 searchResultView.OnClicked += OnSelectedResultView;
 
-                layout.Add(searchResultView.transform);
+                bool added = layout.Add(searchResultView.transform as RectTransform);
+                if (!added)
+                {
+                    _provider.Unload(searchResultView);
+                }
             }
 
             layout.gameObject.SetActive(true);

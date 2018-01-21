@@ -47,7 +47,10 @@ namespace Assets.Classes.CoreVisualization.ModelViews
         [UsedImplicitly]
         void OnDestroy()
         {
-            _button.onClick.RemoveListener(OnMouseUpAsButton);
+            if (_button != null)
+            {
+                _button.onClick.RemoveListener(OnMouseUpAsButton);
+            }
         }
     }
 }

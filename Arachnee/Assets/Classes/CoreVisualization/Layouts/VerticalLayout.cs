@@ -1,26 +1,55 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 using Logger = Assets.Classes.Logging.Logger;
 
 namespace Assets.Classes.CoreVisualization.Layouts
 {
     public class VerticalLayout : LayoutBase
     {
-        private VerticalLayoutGroup _verticalLayoutGroup;
+        public RectTransform start;
+        public RectTransform end;
+
+        public float spacing = 100;
+
+        private RectTransform _area;
+        private readonly Stack<RectTransform> _stack = new Stack<RectTransform>();
 
         public override void Start()
         {
-            _verticalLayoutGroup = this.GetComponentInChildren<VerticalLayoutGroup>();
-            if (_verticalLayoutGroup == null)
+            _area = this.GetComponent<RectTransform>();
+            if (_area == null)
             {
-                Logger.LogError($"No {nameof(VerticalLayoutGroup)} component found on children of {nameof(VerticalLayout)} GameObject.");
+                Logger.LogError($"No {nameof(RectTransform)} component found in {nameof(VerticalLayout)} GameObject.");
                 return;
             }
         }
 
-        public override void Add(Transform transformToAdd)
+        public override void Clear()
         {
-            transformToAdd.SetParent(_verticalLayoutGroup.transform);
+            _stack.Clear();
+        }
+
+        public override bool Add(RectTransform transformToAdd)
+        {
+            if (transformToAdd == null)
+            {
+                Logger.LogError($"Unable to add null item to {nameof(VerticalLayout)}.");
+                return false;
+            }
+
+            transformToAdd.SetParent(_area.transform);
+            transformToAdd.position = start.position;
+
+            transformToAdd.Translate(Vector3.down * (transformToAdd.sizeDelta.y / 2f + _stack.Count * (transformToAdd.sizeDelta.y + spacing)));
+            
+            if (transformToAdd.position.y - transformToAdd.sizeDelta.y / 2f < end.position.y)
+            {
+                return false;
+            }
+
+            _stack.Push(transformToAdd);
+            return true;
         }
     }
 }
