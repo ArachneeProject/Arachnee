@@ -7,16 +7,16 @@ namespace Assets.Classes.Core.Graph
     {
         private readonly Dictionary<T, Func<T, ICollection<T>>> _cachedFunctions = new Dictionary<T, Func<T, ICollection<T>>>();
 
-        public HashSet<T> BreadthFirstSearch<T>(IGraph<T> graph, T sourceVertex, Action<T> discoverAccessibleFunc = null)
+        public HashSet<TVertex> BreadthFirstSearch<TVertex>(IGraph<TVertex> graph, TVertex sourceVertex, Action<TVertex> discoverAccessibleFunc = null)
         {
-            var accessibleVertices = new HashSet<T>();
+            var accessibleVertices = new HashSet<TVertex>();
 
             if (!graph.ContainsVertex(sourceVertex))
             {
                 return accessibleVertices;
             }
 
-            var queue = new Queue<T>();
+            var queue = new Queue<TVertex>();
             queue.Enqueue(sourceVertex);
 
             while (queue.Count > 0)
