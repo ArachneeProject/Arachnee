@@ -19,7 +19,6 @@ namespace Assets.Classes.CoreVisualization
         public SearchEngine searchEngine;
         public ControllerBase controller;
         public GraphEngine graphEngine;
-        public SidePanel sidePanel;
         public LoadingFeedback loadingFeedback;
 
         private ModelViewProvider _provider;
@@ -37,17 +36,6 @@ namespace Assets.Classes.CoreVisualization
             _provider.OnEntryViewSelected += OnEntrySelected;
             _provider.Builder.OnConnectionViewBuilt -= OnConnectionBuilt;
             _provider.Builder.OnConnectionViewBuilt += OnConnectionBuilt;
-
-            this.sidePanel.OnExpandRequested -= Expand;
-            this.sidePanel.OnExpandRequested += Expand;
-
-            this.sidePanel.OnFoldUpRequested -= FoldUp;
-            this.sidePanel.OnFoldUpRequested += FoldUp;
-
-            this.sidePanel.OnHideRequested -= Hide;
-            this.sidePanel.OnHideRequested += Hide;
-
-            this.sidePanel.Start();
             
             string graphPath = Path.Combine(Application.dataPath, "Database", "graph.spdr");
             if (!File.Exists(graphPath))
@@ -68,10 +56,6 @@ namespace Assets.Classes.CoreVisualization
             this.searchEngine.OnSearchResultSelected -= OnSearchResultSelected;
             _provider.OnEntryViewSelected -= OnEntrySelected;
             _provider.Builder.OnConnectionViewBuilt -= OnConnectionBuilt;
-            
-            this.sidePanel.OnExpandRequested -= Expand;
-            this.sidePanel.OnFoldUpRequested -= FoldUp;
-            this.sidePanel.OnHideRequested -= Hide;
         }
 
         private IEnumerator LoadGraph(string graphPath)
@@ -111,7 +95,6 @@ namespace Assets.Classes.CoreVisualization
                 return;
             }
             
-            sidePanel.OpenPanel(entryView);
             controller.StartCoroutine(FocusOnEntryRoutine(entryView));
         }
 
@@ -200,41 +183,5 @@ namespace Assets.Classes.CoreVisualization
                 yield return new WaitForEndOfFrame();
             }
         }
-
-        #region ExpandFoldUpHide
-
-
-        private void Hide(EntryView entryView)
-        {
-            var entryViewRigidbody = (entryView as RigidbodyImageTextEntryView)?.Rigidbody;
-            if (entryViewRigidbody != null)
-            {
-                graphEngine.RemoveRigidbody(entryViewRigidbody);
-            }
-
-            _provider.Unload(entryView);
-
-            sidePanel.ClosePanel();
-        }
-
-        private void FoldUp(EntryView entryView)
-        {
-            var connectedIds = entryView.Entry.Connections.Select(c => c.ConnectedId);
-            
-            
-        }
-
-        private void Expand(EntryView entryView)
-        {
-            StartCoroutine(ExpandRoutine(entryView));
-        }
-
-        private IEnumerator ExpandRoutine(EntryView entryView)
-        {
-            var awaitable = _provider.GetAdjacentEntryViewsAsync(entryView, Connection.AllTypes());
-            yield return awaitable.Await();
-        }
-
-        #endregion
     }
 }

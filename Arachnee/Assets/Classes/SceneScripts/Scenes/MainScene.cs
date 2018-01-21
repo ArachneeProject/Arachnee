@@ -24,8 +24,7 @@ namespace Assets.Classes.SceneScripts.Scenes
         public LoadingFeedback loadingFeedback;
 
         public Explorer explorer;
-        public SidePanel sidePanel;
-
+        
         public GraphEngine graphEngine;
         
         private ModelViewBuilder _builder;
