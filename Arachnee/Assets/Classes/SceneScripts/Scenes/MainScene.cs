@@ -19,6 +19,7 @@ namespace Assets.Classes.SceneScripts.Scenes
 
         public EntryView moviePrefab;
         public EntryView artistPrefab;
+        public EntryView tvSeriesPrefab;
         public ConnectionView connectionPrefab;
         
         public LoadingFeedback loadingFeedback;
@@ -37,6 +38,7 @@ namespace Assets.Classes.SceneScripts.Scenes
             _builder.SetPrefab(searchResultViewPrefab);
             _builder.SetPrefab<Movie>(moviePrefab);
             _builder.SetPrefab<Artist>(artistPrefab);
+            _builder.SetPrefab<TvSeries>(tvSeriesPrefab);
             _builder.SetPrefab(connectionPrefab);
 
             _provider = new ModelViewProvider(new OnlineDatabase(), _builder);

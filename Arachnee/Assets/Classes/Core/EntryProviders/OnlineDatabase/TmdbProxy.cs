@@ -47,6 +47,12 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
                 return GetImage(ImageType.Profile, ImageSize.Large, artist.MainImagePath);
             }
 
+            var tv = entry as TvSeries;
+            if (tv != null)
+            {
+                return GetImage(ImageType.Poster, ImageSize.Large, tv.MainImagePath);
+            }
+
             throw new ArgumentOutOfRangeException($"{entry.GetType().Name} is not handled.");
         }
 
@@ -84,13 +90,16 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
                 throw new ArgumentException($"\"{searchResult.EntryId}\" is not a valid id.");
             }
             
-            switch (entryType) // TODO: Handle Serie
+            switch (entryType)
             {
                 case nameof(Movie):
                     return GetImage(ImageType.Poster, ImageSize.Small, searchResult.ImagePath);
 
                 case nameof(Artist):
                     return GetImage(ImageType.Profile, ImageSize.Small, searchResult.ImagePath);
+
+                case nameof(TvSeries):
+                    return GetImage(ImageType.Poster, ImageSize.Small, searchResult.ImagePath);
 
                 default:
                     throw new ArgumentException($"\"{searchResult.EntryId}\" cannot be processed because \"{entryType}\" is not a handled entry type.");
@@ -138,7 +147,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
                     case "tv":
                         results.Add(new SearchResult
                         {
-                            EntryId = nameof(Serie) + IdSeparator + result.Id,
+                            EntryId = nameof(TvSeries) + IdSeparator + result.Id,
                             ImagePath = result.PosterPath,
                             Name = result.Name,
                             Date = result.FirstAirDate
@@ -195,6 +204,11 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
                     entry = ConvertToArtist(tmdbPerson);
                     break;
 
+                case nameof(TvSeries):
+                    var tmdbTvSeries = _client.GetTvSeries(id);
+                    entry = ConvertToTvSeries(tmdbTvSeries);
+                    break;
+
                 default:
                     throw new ArgumentException(
                         $"\"{entryId}\" cannot be processed because \"{entryType}\" is not a handled entry type.",
@@ -202,6 +216,24 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
             }
 
             return entry;
+        }
+
+        private TvSeries ConvertToTvSeries(TmdbTvSeries tmdbTvSeries)
+        {
+            var tvSeries = JsonConvert.DeserializeObject<TvSeries>(
+                JsonConvert.SerializeObject(tmdbTvSeries, TmdbJsonSettings.Instance), TmdbJsonSettings.Instance);
+
+            var creators = tmdbTvSeries.CreatedBy.Select(creator => nameof(Artist) + IdSeparator + creator.Id.ToString());
+            tvSeries.Connections.AddRange(creators.Select(creator => new Connection
+            {
+                ConnectedId = creator,
+                Label = "Created by",
+                Type = ConnectionType.CreatedBy
+            }));
+
+            tvSeries.MainImagePath = tmdbTvSeries.PosterPath;
+
+            return tvSeries;
         }
 
         private Artist ConvertToArtist(TmdbPerson tmdbPerson)
@@ -221,7 +253,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
             foreach (var cast in tmdbPerson.CombinedCredits.Cast.Where(c => !string.IsNullOrEmpty(c.PosterPath)))
             {
                 var id = cast.MediaType == "tv"
-                    ? nameof(Serie) + IdSeparator + cast.Id
+                    ? nameof(TvSeries) + IdSeparator + cast.Id
                     : nameof(Movie) + IdSeparator + cast.Id;
 
                 artist.Connections.Add(new Connection

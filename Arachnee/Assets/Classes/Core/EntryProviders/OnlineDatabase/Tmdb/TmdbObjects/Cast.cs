@@ -12,7 +12,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects
         public string Department { get; set; }
         public long? EpisodeCount { get; set; }
         public string FirstAirDate { get; set; }
-        public long Gender { get; set; }
+        public long? Gender { get; set; }
         public List<long> GenreIds { get; set; }
         public ulong Id { get; set; }
         public string Job { get; set; }

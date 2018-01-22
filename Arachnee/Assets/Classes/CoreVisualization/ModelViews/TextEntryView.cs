@@ -32,6 +32,10 @@ namespace Assets.Classes.CoreVisualization.ModelViews
             {
                 text.SetText(((Artist)this.Entry).Name);
             }
+            else if (this.Entry is TvSeries)
+            {
+                text.SetText(((TvSeries) this.Entry).Name);
+            }
             else
             {
                 text.SetText($"{this.Entry.GetType().Name} {this.Entry.Id}");

@@ -172,6 +172,9 @@ namespace Assets.Classes.Core.Graph
                 case nameof(Artist):
                     return "a" + id.ToString("X");
 
+                case nameof(TvSeries):
+                    return "s" + id.ToString("X");
+
                 default:
                     throw new ArgumentException($"Chunk \"{entryType}\" of \"{entryId}\" is not handled.");
             }
@@ -194,6 +197,10 @@ namespace Assets.Classes.Core.Graph
 
                 case 'a':
                     return nameof(Artist) + '-' + uint.Parse(compressedEntryId, NumberStyles.HexNumber);
+
+                case 's':
+                    return nameof(TvSeries) + '-' + uint.Parse(compressedEntryId, NumberStyles.HexNumber);
+
                 default:
                     throw new ArgumentException($"Chunk \"{compressedEntryType}\" of \"{vertexId}\" is not handled.");
             }

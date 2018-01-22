@@ -5,6 +5,7 @@
         Actor,
         Director,
         BoomOperator,
-        Crew
+        Crew,
+        CreatedBy
     }
 }

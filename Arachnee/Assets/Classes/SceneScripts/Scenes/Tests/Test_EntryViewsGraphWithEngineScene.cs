@@ -26,7 +26,7 @@ namespace Assets.Classes.SceneScripts.Scenes.Tests
             var builder = new ModelViewBuilder();
             builder.SetPrefab<Movie>(rigidbodyImageTextEntryViewPrefab);
             builder.SetPrefab<Artist>(rigidbodyImageTextEntryViewPrefab);
-            builder.SetPrefab<Serie>(rigidbodyImageTextEntryViewPrefab);
+            builder.SetPrefab<TvSeries>(rigidbodyImageTextEntryViewPrefab);
             builder.SetPrefab(lineConnectionViewPrefab);
 
             builder.OnEntryViewBuilt += AddEntryViewToEngine;

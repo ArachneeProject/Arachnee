@@ -10,7 +10,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb.TmdbObjects
         public string Birthday { get; set; }
         public CombinedCredits CombinedCredits { get; set; }
         public string Deathday { get; set; }
-        public long Gender { get; set; }
+        public long? Gender { get; set; }
         public string Homepage { get; set; }
         public ulong Id { get; set; }
         public Images Images { get; set; }

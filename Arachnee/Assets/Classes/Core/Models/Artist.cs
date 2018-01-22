@@ -9,9 +9,7 @@ namespace Assets.Classes.Core.Models
         public string Birthday { get; set; }
 
         public string Deathday { get; set; }
-
-        public int Gender { get; set; }
-
+        
         public string Homepage { get; set; }
 
         public string ImdbId { get; set; }

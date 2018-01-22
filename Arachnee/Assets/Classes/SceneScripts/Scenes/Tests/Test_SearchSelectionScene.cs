@@ -31,7 +31,7 @@ namespace Assets.Classes.SceneScripts.Scenes.Tests
             var builder = new ModelViewBuilder();
             builder.SetPrefab<Movie>(movieViewPrefab);
             builder.SetPrefab<Artist>(artistViewPrefab);
-            builder.SetPrefab<Serie>(serieViewPrefab);
+            builder.SetPrefab<TvSeries>(serieViewPrefab);
             builder.SetPrefab(searchResultViewPrefab);
 
             _provider = new ModelViewProvider(new OnlineDatabase(), builder);

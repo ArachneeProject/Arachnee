@@ -56,7 +56,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb
             };
 
             request.AddUrlSegment("id", tmdbMovieId.ToString());
-            request.AddQueryParameter("append_to_response", "credits,images");
+            request.AddQueryParameter("append_to_response", "credits");
             request.AddQueryParameter("api_key", Constant.ApiKey);
 
             var response = ExecuteRequest(request);
@@ -81,7 +81,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb
             };
 
             request.AddUrlSegment("id", tmdbPersonId.ToString());
-            request.AddQueryParameter("append_to_response", "combined_credits,images");
+            request.AddQueryParameter("append_to_response", "combined_credits");
             request.AddQueryParameter("api_key", Constant.ApiKey);
 
             var response = ExecuteRequest(request);
@@ -93,6 +93,28 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase.Tmdb
             }
 
             return person;
+        }
+
+        public TmdbTvSeries GetTvSeries(ulong tvId)
+        {
+            var request = new RestRequest("tv/{id}", Method.GET)
+            {
+                RequestFormat = DataFormat.Json
+            };
+
+            request.AddUrlSegment("id", tvId.ToString());
+            request.AddQueryParameter("append_to_response", "credits");
+            request.AddQueryParameter("api_key", Constant.ApiKey);
+
+            var response = ExecuteRequest(request);
+
+            var tv = JsonConvert.DeserializeObject<TmdbTvSeries>(response, TmdbJsonSettings.Instance);
+            if (tv.Id == default(ulong))
+            {
+                throw new InvalidTmdbRequestException($"Tv series id \"{tvId}\" didn't return any result.");
+            }
+
+            return tv;
         }
 
         /// <summary>

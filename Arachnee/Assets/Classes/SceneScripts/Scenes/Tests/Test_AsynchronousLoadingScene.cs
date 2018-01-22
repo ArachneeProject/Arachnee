@@ -27,7 +27,7 @@ namespace Assets.Classes.SceneScripts.Scenes.Tests
             var builder = new ModelViewBuilder();
             builder.SetPrefab<Movie>(imageTextEntryViewPrefab);
             builder.SetPrefab<Artist>(imageTextEntryViewPrefab);
-            builder.SetPrefab<Serie>(imageTextEntryViewPrefab);
+            builder.SetPrefab<TvSeries>(imageTextEntryViewPrefab);
             builder.SetPrefab(lineConnectionViewPrefab);
             
             var provider = new ModelViewProvider(new OnlineDatabase(), builder);
