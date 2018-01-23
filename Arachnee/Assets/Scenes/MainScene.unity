@@ -1178,11 +1178,11 @@ MonoBehaviour:
   searchEngine: {fileID: 1695316048}
   searchResultViewPrefab: {fileID: 114777067461109002, guid: 2363abb1dd55a0b4781040da2a47d634,
     type: 2}
-  moviePrefab: {fileID: 114807747099015826, guid: 184d8fd39e3350243a46f8e5db0a3b06,
+  moviePrefab: {fileID: 114382793903399556, guid: 227f6f1027e15b84894014f41944383e,
     type: 2}
-  artistPrefab: {fileID: 114807747099015826, guid: 184d8fd39e3350243a46f8e5db0a3b06,
+  artistPrefab: {fileID: 114783037684088710, guid: 104228abcc83aba4a91aafb635c9efe1,
     type: 2}
-  tvSeriesPrefab: {fileID: 114807747099015826, guid: 184d8fd39e3350243a46f8e5db0a3b06,
+  tvSeriesPrefab: {fileID: 114798581491466962, guid: 9906768c4e5820d47b323e54322d2b93,
     type: 2}
   connectionPrefab: {fileID: 114604043459607924, guid: 42a945cd6361c2a4194967aaf568e5b3,
     type: 2}
