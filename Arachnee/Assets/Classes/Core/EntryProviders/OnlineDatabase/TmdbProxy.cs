@@ -223,6 +223,42 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
             var tvSeries = JsonConvert.DeserializeObject<TvSeries>(
                 JsonConvert.SerializeObject(tmdbTvSeries, TmdbJsonSettings.Instance), TmdbJsonSettings.Instance);
 
+            tvSeries.Id = nameof(TvSeries) + IdSeparator + tmdbTvSeries.Id;
+            tvSeries.MainImagePath = tmdbTvSeries.PosterPath;
+
+            foreach (var cast in tmdbTvSeries.Credits.Cast.Where(c => !string.IsNullOrEmpty(c.ProfilePath)))
+            {
+                tvSeries.Connections.Add(new Connection
+                {
+                    ConnectedId = nameof(Artist) + IdSeparator + cast.Id,
+                    Type = ConnectionType.Actor,
+                    Label = cast.Character
+                });
+            }
+
+            foreach (var cast in tmdbTvSeries.Credits.Crew.Where(c => !string.IsNullOrEmpty(c.ProfilePath)))
+            {
+                ConnectionType type;
+                if (_handledCrewJobs.TryGetValue(cast.Job, out type))
+                {
+                    tvSeries.Connections.Add(new Connection
+                    {
+                        ConnectedId = nameof(Artist) + IdSeparator + cast.Id,
+                        Type = type,
+                        Label = cast.Job
+                    });
+                }
+                else
+                {
+                    tvSeries.Connections.Add(new Connection
+                    {
+                        ConnectedId = nameof(Artist) + IdSeparator + cast.Id,
+                        Type = ConnectionType.Crew,
+                        Label = cast.Job
+                    });
+                }
+            }
+
             var creators = tmdbTvSeries.CreatedBy.Select(creator => nameof(Artist) + IdSeparator + creator.Id.ToString());
             tvSeries.Connections.AddRange(creators.Select(creator => new Connection
             {
@@ -230,9 +266,7 @@ namespace Assets.Classes.Core.EntryProviders.OnlineDatabase
                 Label = "Created by",
                 Type = ConnectionType.CreatedBy
             }));
-
-            tvSeries.MainImagePath = tmdbTvSeries.PosterPath;
-
+            
             return tvSeries;
         }
 
