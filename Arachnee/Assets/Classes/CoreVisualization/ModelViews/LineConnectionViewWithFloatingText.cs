@@ -22,14 +22,22 @@ namespace Assets.Classes.CoreVisualization.ModelViews
                 return;
             }
 
-            var connectionToShow = Left.Entry.Connections.FirstOrDefault(c => c.ConnectedId == Right.Entry.Id);
-            if (connectionToShow == null)
+            var label = Left.Entry.Connections.FirstOrDefault(c => c.ConnectedId == Right.Entry.Id)?.Label;
+            if (string.IsNullOrEmpty(label))
             {
-                Logger.LogError($"Connection from {this.Left.Entry} to {this.Right.Entry} doesn't exist.");
-                return;
-            }
+                var rightToLeftConnection = Right.Entry.Connections.FirstOrDefault(c => c.ConnectedId == Left.Entry.Id);
+                if (rightToLeftConnection == null)
+                {
+                    Logger.LogError($"Connection between {this.Left.Entry} and {this.Right.Entry} doesn't exist.");
+                    return;
+                }
 
-            _floatingText.SetText(connectionToShow.Label);
+                label = string.IsNullOrEmpty(rightToLeftConnection.Label) 
+                    ? string.Empty 
+                    : rightToLeftConnection.Label;
+            }
+            
+            _floatingText.SetText(label);
         }
 
         protected override void Update()
