@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Classes.Logging;
-using JetBrains.Annotations;
-using QuickGraph;
 
 namespace Assets.Classes.Core.Graph
 {
